@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Planner | Gemini 기반 맞춤 여행 일정 플래너</title>
+    <!-- Pretendard & Inter 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- Lucide / FontAwesome 호환 아이콘 및 스타일시트 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Markdown 파서 (marked.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- 배경 장식용 그라디언트 글로우 -->
+    <div class="bg-glow-top"></div>
+    <div class="bg-glow-bottom"></div>
+
+    <div class="app-container">
+        <!-- 상단 헤더 & 히어로 섹션 -->
+        <header class="hero-header">
+            <div class="badge-pill">
+                <span class="badge-dot"></span>
+                <span>Gemini AI 최신 모델 탑재 · 스마트 여행 컨설턴트</span>
+            </div>
+            <h1 class="hero-title">
+                원하는 여행을 말하면,<br>
+                <span class="gradient-text">완벽한 맞춤 일정표</span>를 만들어 드립니다.
+            </h1>
+            <p class="hero-subtitle">
+                동선 최적화부터 가성비 맛집, 상세 예산표, 필수 준비물까지 10초 만에 체계적으로 설계하세요.
+            </p>
+
+            <!-- 빠른 체험을 위한 원클릭 추천 프리셋 버튼 -->
+            <div class="preset-wrapper">
+                <span class="preset-label">💡 원클릭 추천 코스:</span>
+                <div class="preset-chips">
+                    <button type="button" class="preset-chip" data-preset="osaka">🇯🇵 오사카·교토 3박4일</button>
+                    <button type="button" class="preset-chip" data-preset="jeju">🍊 제주도 힐링 2박3일</button>
+                    <button type="button" class="preset-chip" data-preset="paris">🇫🇷 파리 로맨틱 5박6일</button>
+                    <button type="button" class="preset-chip" data-preset="bangkok">🇹🇭 방콕 가성비 4박5일</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 2단 작업 공간 -->
+        <main class="main-layout">
+            <!-- 좌측: 여행 조건 입력 폼 -->
+            <section class="card form-card">
+                <div class="card-title-box">
+                    <div class="title-icon">🧭</div>
+                    <div>
+                        <h2>여행 조건 설정</h2>
+                        <p class="card-desc">조건을 상세히 적을수록 AI가 더 정교한 계획을 세웁니다.</p>
+                    </div>
+                </div>
+
+                <form id="travelForm" novalidate>
+                    <!-- 1. 여행지 -->
+                    <div class="input-field">
+                        <label for="destination">
+                            <span class="label-icon">📍</span> 1. 어디로 떠나시나요? <span class="req">*</span>
+                        </label>
+                        <div class="input-inner">
+                            <input type="text" id="destination" name="destination" placeholder="예: 일본 오사카 & 교토, 제주도, 스위스 인터라켄" required>
+                        </div>
+                    </div>
+
+                    <!-- 2. 여행 기간 & 3. 예산 (2열 배치) -->
+                    <div class="grid-2col">
+                        <div class="input-field">
+                            <label for="duration">
+                                <span class="label-icon">⏱️</span> 2. 여행 기간 <span class="req">*</span>
+                            </label>
+                            <div class="input-inner">
+                                <input type="text" id="duration" name="duration" placeholder="예: 3박 4일, 5일간" required>
+                            </div>
+                        </div>
+
+                        <div class="input-field">
+                            <label for="budget">
+                                <span class="label-icon">💰</span> 3. 예상 예산 <span class="req">*</span>
+                            </label>
+                            <div class="input-inner">
+                                <input type="text" id="budget" name="budget" placeholder="예: 1인 90만원, 총 200만원" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. 관심사 / 테마 -->
+                    <div class="input-field">
+                        <label for="interests">
+                            <span class="label-icon">🎯</span> 4. 주요 관심사 &amp; 선호 테마 <span class="req">*</span>
+                        </label>
+                        <div class="input-inner">
+                            <input type="text" id="interests" name="interests" placeholder="예: 미식 탐방, 인생샷 스팟, 유적지/박물관, 카페 투어" required>
+                        </div>
+                    </div>
+
+                    <!-- 5. 동행자 & 6. 이동수단 (2열 배치) -->
+                    <div class="grid-2col">
+                        <div class="input-field">
+                            <label for="companions">
+                                <span class="label-icon">👥</span> 5. 누구와 함께 가나요? <span class="req">*</span>
+                            </label>
+                            <div class="input-inner">
+                                <input type="text" id="companions" name="companions" placeholder="예: 혼자, 연인, 부모님과 4인" required>
+                            </div>
+                        </div>
+
+                        <div class="input-field">
+                            <label for="transportation">
+                                <span class="label-icon">🚆</span> 6. 선호 이동수단 <span class="req">*</span>
+                            </label>
+                            <div class="input-inner">
+                                <input type="text" id="transportation" name="transportation" placeholder="예: 대중교통(지하철/버스), 렌터카" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. 숙소 선호 -->
+                    <div class="input-field">
+                        <label for="accommodation">
+                            <span class="label-icon">🏨</span> 7. 숙소 선호 유형 <span class="req">*</span>
+                        </label>
+                        <div class="input-inner">
+                            <input type="text" id="accommodation" name="accommodation" placeholder="예: 역세권 가성비 호텔, 전통 료칸/한옥, 오션뷰 리조트" required>
+                        </div>
+                    </div>
+
+                    <!-- 8. 프롬프트 스타일 모드 선택 -->
+                    <div class="input-field style-mode-field">
+                        <label class="section-label">
+                            <span class="label-icon">✨</span> 8. 여행 기조 선택 <span class="req">*</span>
+                        </label>
+                        <div class="style-cards">
+                            <label class="style-card active" for="modeA">
+                                <input type="radio" id="modeA" name="mode" value="A" checked>
+                                <div class="card-check">✓</div>
+                                <div class="style-card-header">
+                                    <span class="tag tag-blue">Prompt A</span>
+                                    <h3>⚡ 알찬 가성비 &amp; 핵심 투어</h3>
+                                </div>
+                                <p class="style-desc">동선을 낭비 없이 꽉 채우고, 대표 랜드마크와 실패 없는 가성비 맛집 중심</p>
+                            </label>
+
+                            <label class="style-card" for="modeB">
+                                <input type="radio" id="modeB" name="mode" value="B">
+                                <div class="card-check">✓</div>
+                                <div class="style-card-header">
+                                    <span class="tag tag-green">Prompt B</span>
+                                    <h3>🌿 여유로운 힐링 &amp; 로컬 감성</h3>
+                                </div>
+                                <p class="style-desc">하루 1~2곳만 느긋하게 방문하며 현지 골목, 감성 카페, 쉼을 만끽하는 여행</p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 생성 실행 버튼 -->
+                    <button type="submit" id="submitBtn" class="generate-btn">
+                        <span class="btn-sparkle">✨</span>
+                        <span class="btn-text">AI 맞춤 여행 일정표 생성하기</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- 우측: 결과 출력 패널 -->
+            <section class="card result-card">
+                <div class="result-top-bar">
+                    <div class="card-title-box">
+                        <div class="title-icon">📋</div>
+                        <div>
+                            <h2>생성된 여행 계획표</h2>
+                            <p class="card-desc" id="resultStatusDesc">AI가 최적화한 맞춤 일정표가 여기에 표시됩니다.</p>
+                        </div>
+                    </div>
+
+                    <!-- 상단 툴바 액션 버튼 (결과가 있을 때 활성화) -->
+                    <div class="action-tools" id="actionButtons" style="display: none;">
+                        <button type="button" id="copyBtn" class="tool-btn" title="전체 일정 클립보드 복사">
+                            <span class="tool-icon">📋</span>
+                            <span class="tool-text">일정 복사</span>
+                        </button>
+                        <button type="button" id="downloadBtn" class="tool-btn tool-btn-primary" title="마크다운 문서 저장">
+                            <span class="tool-icon">💾</span>
+                            <span class="tool-text">.md 다운로드</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1. 비어있는 상태 (Empty State) -->
+                <div class="state-empty" id="emptyState">
+                    <div class="empty-graphic">
+                        <div class="airplane-track">✈️</div>
+                        <div class="globe-icon">🌍</div>
+                    </div>
+                    <h3>아직 생성된 일정이 없습니다</h3>
+                    <p>왼쪽에서 여행 조건을 입력하시거나<br>상단의 <strong>추천 코스</strong>를 클릭해 바로 일정을 생성해 보세요!</p>
+                </div>
+
+                <!-- 2. 로딩 상태 (Loading State) -->
+                <div class="state-loading" id="loadingState" style="display: none;">
+                    <div class="loading-animation">
+                        <div class="pulse-ring"></div>
+                        <div class="loading-airplane">✈️</div>
+                    </div>
+                    <h3>Gemini AI가 최고의 여행 일정을 설계 중입니다</h3>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill"></div>
+                    </div>
+                    <p class="loading-tip-msg" id="loadingTip">선택하신 여행지의 최적 이동 동선을 분석하고 있습니다...</p>
+                </div>
+
+                <!-- 3. 에러 알림창 -->
+                <div class="error-banner" id="errorAlert" style="display: none;">
+                    <div class="error-badge">⚠️ 오류 안내</div>
+                    <p id="errorMessage">오류 내용이 여기에 표시됩니다.</p>
+                </div>
+
+                <!-- 4. 결과 출력 컨테이너 -->
+                <div class="result-container" id="resultWrapper" style="display: none;">
+                    <div class="result-meta-chip" id="resultMeta">
+                        <!-- AI 모델 정보 & 소요 시간 -->
+                    </div>
+                    <article class="markdown-content" id="planOutput">
+                        <!-- 렌더링된 여행 계획표 HTML -->
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="app-footer">
+            <p>Designed with ❤️ for Travelers | Powered by <strong>Google Gemini API</strong> &amp; <strong>Flask</strong></p>
+        </footer>
+    </div>
+
+    <!-- 스크립트 연결 -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

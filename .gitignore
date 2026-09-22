@@ -1,0 +1,18 @@
+# 가상환경
+venv/
+ENV/
+env/
+
+# 환경변수 및 비밀 키 (절대 커밋 금지)
+.env
+
+# 파이썬 컴파일/캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 운영체제 및 에디터 임시 파일
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
