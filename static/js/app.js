@@ -2058,13 +2058,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 1:1 비교 카드 렌더링 헬퍼
+     * 1:1 비교 카드 렌더링 헬퍼 (예산 초과 분석 포함)
      */
     function renderSingleCompareCard(plan, badgeLetter, badgeClass, label) {
         const hl = extractPlanHighlights(plan);
         const isSaved = plan.isSaved || savedPlans.some(sp => sp.id === plan.id);
+
+        // 예산 초과(오버) 여부 정밀 감지
+        const userBudgetWon = parseTotalBudgetWon(budgetInput ? budgetInput.value : "");
+        const planWon = parseTotalBudgetWon(hl.totalCost || plan.budget || "");
+        const isOverBudget = planWon > (userBudgetWon * 1.05) || (plan.markdown && (plan.markdown.includes("예산 초과") || plan.markdown.includes("초과(오버)")));
+        const diffWon = Math.max(0, planWon - userBudgetWon);
+        const diffMan = Math.round(diffWon / 10000);
+
         return `
-            <div class="compare-card card-${badgeLetter.toLowerCase()}">
+            <div class="compare-card card-${badgeLetter.toLowerCase()} ${isOverBudget ? 'card-overbudget' : ''}">
                 <div class="compare-card-header">
                     <div>
                         <span class="compare-card-tag ${badgeClass}">${label} · ${plan.shortTitle}${isSaved ? ' (📌 저장됨)' : ''}</span>
@@ -2076,12 +2084,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <!-- 가격 및 예산 비교 영역 -->
-                <div class="compare-section section-price">
+                <div class="compare-section section-price ${isOverBudget ? 'section-price-over' : ''}">
                     <div class="compare-section-title">
                         <span>💰</span>
                         <span>예산 &amp; 경비 구조</span>
+                        ${isOverBudget ? `
+                            <span class="badge-budget-over">⚠️ 예산 약 ${diffMan > 0 ? diffMan + '만원 ' : ''}초과(오버)</span>
+                        ` : `
+                            <span class="badge-budget-safe">✅ 예산 내 적정</span>
+                        `}
                     </div>
-                    <div class="compare-price-highlight">${hl.totalCost}</div>
+                    <div class="compare-price-highlight">
+                        <span>${hl.totalCost}</span>
+                    </div>
+
+                    ${isOverBudget ? `
+                        <div class="compare-overbudget-alert">
+                            <span>🚨</span>
+                            <div>
+                                <strong>설정 예산 대비 초과 주의!</strong><br>
+                                원래 희망하신 예산보다 약 <strong>${diffMan > 0 ? diffMan + '만원' : '일부'}</strong> 높아 지출 부담이 있을 수 있습니다. 가성비 대체 계획이나 할인 팁을 확인해 보세요.
+                            </div>
+                        </div>
+                    ` : ''}
+
                     <ul class="compare-list">
                         <li class="compare-list-item">
                             <span class="compare-bullet">🏨</span>
@@ -2120,11 +2146,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 상세 항목별 비교 매트릭스 표 렌더링 헬퍼
+     * 상세 항목별 비교 매트릭스 표 렌더링 헬퍼 (예산 초과 분석 포함)
      */
     function renderCompareMatrixTable(planA, planB) {
         const hlA = extractPlanHighlights(planA);
         const hlB = extractPlanHighlights(planB);
+
+        const userBudgetWon = parseTotalBudgetWon(budgetInput ? budgetInput.value : "");
+        const planAWon = parseTotalBudgetWon(hlA.totalCost || planA.budget || "");
+        const planBWon = parseTotalBudgetWon(hlB.totalCost || planB.budget || "");
+
+        const isOverA = planAWon > (userBudgetWon * 1.05) || (planA.markdown && planA.markdown.includes("예산 초과"));
+        const isOverB = planBWon > (userBudgetWon * 1.05) || (planB.markdown && planB.markdown.includes("예산 초과"));
+
+        const diffManA = Math.round(Math.max(0, planAWon - userBudgetWon) / 10000);
+        const diffManB = Math.round(Math.max(0, planBWon - userBudgetWon) / 10000);
 
         return `
             <table class="compare-table">
@@ -2138,8 +2174,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 <tbody>
                     <tr>
                         <td class="td-item">💰 총 예상 경비</td>
-                        <td><strong style="color: #ea580c; font-size: 14px;">${hlA.totalCost}</strong></td>
-                        <td><strong style="color: #ea580c; font-size: 14px;">${hlB.totalCost}</strong></td>
+                        <td>
+                            <strong style="color: #ea580c; font-size: 14px;">${hlA.totalCost}</strong>
+                            ${isOverA ? `<div class="badge-budget-over" style="margin-top:4px;">⚠️ 예산 ${diffManA > 0 ? diffManA + '만 ' : ''}초과(오버)</div>` : `<div class="badge-budget-safe" style="margin-top:4px;">✅ 예산 범위 내</div>`}
+                        </td>
+                        <td>
+                            <strong style="color: #ea580c; font-size: 14px;">${hlB.totalCost}</strong>
+                            ${isOverB ? `<div class="badge-budget-over" style="margin-top:4px;">⚠️ 예산 ${diffManB > 0 ? diffManB + '만 ' : ''}초과(오버)</div>` : `<div class="badge-budget-safe" style="margin-top:4px;">✅ 예산 범위 내</div>`}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">⚠️ 예산 오버 여부 &amp; 분석</td>
+                        <td>
+                            ${isOverA ? `<span style="color:#dc2626; font-weight:700;">⚠️ 설정 예산 초과 발생! (약 ${diffManA}만원 초과)</span><br><small style="color:#64748b;">고급 숙소/특정 액티비티로 인한 추가 지출 필요</small>` : `<span style="color:#16a34a; font-weight:700;">✅ 안정적 (설정 예산 내 완벽 소화)</span>`}
+                        </td>
+                        <td>
+                            ${isOverB ? `<span style="color:#dc2626; font-weight:700;">⚠️ 설정 예산 초과 발생! (약 ${diffManB}만원 초과)</span><br><small style="color:#64748b;">고급 숙소/특정 액티비티로 인한 추가 지출 필요</small>` : `<span style="color:#16a34a; font-weight:700;">✅ 안정적 (설정 예산 내 완벽 소화)</span>`}
+                        </td>
                     </tr>
                     <tr>
                         <td class="td-item">🎨 여행 기조 및 스타일</td>
