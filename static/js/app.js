@@ -3502,9 +3502,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let output = `✈️ [${plan.dest} ${plan.dur} 맞춤 여행 일정표]\n`;
         if (shareUrl) {
-            output += `📱 [웹에서 인터랙티브 지도 & 전체 일정 보기]\n`;
+            output += `📱 [웹에서 친구가 짠 일정표 & 지도 바로보기]\n`;
             output += `👉 ${shareUrl}\n`;
-            output += `🔑 접속 비밀번호: 7777 (입력 시 바로 열립니다)\n`;
+            output += `✨ 링크를 누르면 친구가 작성한 일정표와 동선이 바로 열립니다!\n`;
         }
         output += `━━━━━━━━━━━━━━━━━━━━\n`;
         output += `📍 여행 장소: ${plan.dest}\n`;
@@ -3761,8 +3761,8 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     async function checkAndLoadSharedPlan() {
         const urlParams = new URLSearchParams(window.location.search);
-        const shareId = urlParams.get("share");
-        const token = urlParams.get("d");
+        const shareId = urlParams.get("share") || urlParams.get("s");
+        const token = urlParams.get("d") || urlParams.get("token");
 
         if (!shareId && !token) return;
 
@@ -3777,7 +3777,34 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let sharedPlan = null;
-            if (shareId) {
+
+            // 1. 고유 압축 토큰(d)이 있으면 서버리스 인스턴스에 구애받지 않고 즉시 무손실 디코딩
+            if (token) {
+                try {
+                    let resToken = await fetch(`/api/share/decode?d=${encodeURIComponent(token)}`);
+                    if (!resToken.ok) {
+                        resToken = await fetch(`/?action=decode&d=${encodeURIComponent(token)}`);
+                    }
+                    if (!resToken.ok) {
+                        resToken = await fetch("/", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ token })
+                        });
+                    }
+                    if (resToken.ok) {
+                        const dataToken = await resToken.json();
+                        if (dataToken.success && dataToken.plan) {
+                            sharedPlan = dataToken.plan;
+                        }
+                    }
+                } catch (eToken) {
+                    console.warn("압축 토큰 디코드 실패:", eToken);
+                }
+            }
+
+            // 2. 토큰 복원이 안 되었거나 shareId만 있는 경우 공유 ID API 조회
+            if (!sharedPlan && shareId) {
                 try {
                     let res = await fetch(`/api/share/${encodeURIComponent(shareId)}${token ? `?d=${encodeURIComponent(token)}` : ''}`);
                     if (!res.ok) {
@@ -3793,27 +3820,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 } catch (e) {
                     console.warn("공유 계획 API 호출 실패:", e);
-                }
-            }
-
-            if (!sharedPlan && token) {
-                try {
-                    let res2 = await fetch(`/api/share/decode?d=${encodeURIComponent(token)}`);
-                    if (!res2.ok) {
-                        res2 = await fetch("/", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ token })
-                        });
-                    }
-                    if (res2.ok) {
-                        const data2 = await res2.json();
-                        if (data2.success && data2.plan) {
-                            sharedPlan = data2.plan;
-                        }
-                    }
-                } catch (e) {
-                    console.warn("공유 계획 디코드 실패:", e);
                 }
             }
 

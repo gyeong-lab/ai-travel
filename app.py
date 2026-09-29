@@ -61,33 +61,47 @@ def decompress_plan(token: str) -> dict:
         return None
 
 def shorten_url_safely(long_url: str) -> str:
-    """긴 공유 링크를 TinyURL / da.gd 등의 무료 단축 링크 서비스로 초단축합니다."""
+    """긴 공유 링크를 da.gd / cleanuri / TinyURL 등의 무료 단축 링크 서비스로 초단축합니다."""
     import urllib.parse
     import urllib.request
+    import json
 
-    # 1. TinyURL 시도 (안정적이고 가장 널리 쓰이는 무료 단축 링크)
+    # 1. da.gd 시도 (초경량 오픈 단축기, 광고/트래킹 없음, 302 직접 리다이렉트, ~19자)
+    try:
+        api = f"https://da.gd/s?url={urllib.parse.quote(long_url)}"
+        req = urllib.request.Request(api, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            res = resp.read().decode("utf-8").strip()
+            if res.startswith("http"):
+                logger.info(f"[da.gd 단축 성공] {res}")
+                return res
+    except Exception as e:
+        logger.warning(f"[da.gd 단축 실패] {e}")
+
+    # 2. cleanuri 시도 (광고 없음, 깔끔한 단축 링크)
+    try:
+        data = urllib.parse.urlencode({"url": long_url}).encode("utf-8")
+        req = urllib.request.Request("https://cleanuri.com/api/v1/shorten", data=data, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            res_json = json.loads(resp.read().decode("utf-8"))
+            short_val = (res_json.get("result_url") or "").strip()
+            if short_val.startswith("http"):
+                logger.info(f"[cleanuri 단축 성공] {short_val}")
+                return short_val
+    except Exception as e:
+        logger.warning(f"[cleanuri 단축 실패] {e}")
+
+    # 3. TinyURL 시도 (3순위 대체 수단)
     try:
         api = f"https://tinyurl.com/api-create.php?url={urllib.parse.quote(long_url)}"
         req = urllib.request.Request(api, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=3) as resp:
+        with urllib.request.urlopen(req, timeout=4) as resp:
             res = resp.read().decode("utf-8").strip()
             if res.startswith("http"):
                 logger.info(f"[TinyURL 단축 성공] {res}")
                 return res
     except Exception as e:
         logger.warning(f"[TinyURL 단축 실패] {e}")
-
-    # 2. da.gd 시도 (초경량 오픈 단축기)
-    try:
-        api2 = f"https://da.gd/s?url={urllib.parse.quote(long_url)}"
-        req2 = urllib.request.Request(api2, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req2, timeout=3) as resp2:
-            res2 = resp2.read().decode("utf-8").strip()
-            if res2.startswith("http"):
-                logger.info(f"[da.gd 단축 성공] {res2}")
-                return res2
-    except Exception as e:
-        logger.warning(f"[da.gd 단축 실패] {e}")
 
     return long_url
 
@@ -480,10 +494,36 @@ def build_prompt(data: dict) -> str:
 @app.route("/api/index", methods=["GET", "POST"])
 @app.route("/api/index.py", methods=["GET", "POST"])
 def index():
-    """메인 페이지를 렌더링하거나, 로그아웃/비밀번호 검증/일정 생성을 처리합니다."""
-    # 0. 로그아웃 요청 처리 (?action=logout 또는 ?logout=true)
-    if request.args.get("action") == "logout" or request.args.get("logout") == "true":
+    """메인 페이지를 렌더링하거나, 로그아웃/비밀번호 검증/공유/일정 생성을 처리합니다."""
+    # 0. Vercel URL 재작성(__vercel_path__) 분기 처리
+    vercel_path = (request.args.get("__vercel_path__") or "").strip()
+    if vercel_path:
+        if "/share/decode" in vercel_path or "/share-plan-decode" in vercel_path:
+            return decode_shared_token()
+        if "/api/share" in vercel_path or "/share-plan" in vercel_path:
+            if request.method == "POST":
+                return create_share_link()
+            parts = [p for p in vercel_path.rstrip("/").split("/") if p]
+            share_id = parts[-1] if len(parts) >= 2 and parts[-1] not in ("share", "share-plan", "api") else None
+            return get_shared_plan(share_id)
+        if "/verify-password" in vercel_path:
+            return verify_password()
+        if "/logout" in vercel_path:
+            return logout()
+        if "/login" in vercel_path:
+            return login()
+        if vercel_path.startswith("/share/"):
+            parts = [p for p in vercel_path.rstrip("/").split("/") if p]
+            return redirect_share(parts[-1])
+
+    # 1. 쿼리 action 파라미터 분기 처리
+    action = request.args.get("action")
+    if action == "logout" or request.args.get("logout") == "true":
         return logout()
+    if action == "decode":
+        return decode_shared_token()
+    if action == "share":
+        return get_shared_plan(request.args.get("share"))
 
     if request.method == "POST":
         data = request.get_json(silent=True) or {}
@@ -496,7 +536,7 @@ def index():
             return create_share_link()
 
         # 압축 토큰 디코드 요청인 경우 즉시 decode_shared_token으로 분기
-        if "token" in data:
+        if "token" in data or "d" in data:
             return decode_shared_token()
 
         # AI 일정 생성 요청인 경우 인증 확인
@@ -505,14 +545,24 @@ def index():
         return generate_plan()
 
     # GET 요청: JSON 요청이면서 share 파라미터가 있는 경우 공유 계획 반환
-    if (request.args.get("action") == "share" or request.headers.get("Accept", "").startswith("application/json")) and request.args.get("share"):
+    if (request.headers.get("Accept", "").startswith("application/json")) and request.args.get("share"):
         return get_shared_plan(request.args.get("share"))
 
-    # GET 요청: 미인증 시 로그인 화면 (공유 링크 여부 파악)
+    # 중요: 공유 링크로 접속한 경우 (share, d, s, token 중 하나라도 존재 시)
+    # 친구가 7777 비밀번호 입력 없이 곧바로 여행 일정을 확인할 수 있도록 메인 화면을 바로 렌더링
+    is_shared = bool(
+        request.args.get("share") or 
+        request.args.get("s") or 
+        request.args.get("d") or 
+        request.args.get("token")
+    )
+    if is_shared:
+        return render_template("index.html")
 
+    # 미인증 일반 사용자는 로그인 화면으로 이동
     if not is_authenticated():
-        is_shared = bool(request.args.get("share") or request.args.get("d"))
-        return render_template("login.html", is_shared=is_shared)
+        return render_template("login.html")
+        
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -580,9 +630,12 @@ def create_share_link():
         logger.warning(f"[공유 파일 저장 실패] {e}")
 
     # 프로토콜 및 호스트 보정 (Vercel 배포 시 https 보장)
-    host_url = request.host_url.rstrip("/")
-    if "vercel.app" in host_url and host_url.startswith("http://"):
-        host_url = "https://" + host_url[7:]
+    forwarded_proto = request.headers.get("x-forwarded-proto", "http")
+    host = request.headers.get("x-forwarded-host") or request.host
+    if forwarded_proto == "https" or "vercel.app" in host:
+        host_url = f"https://{host}"
+    else:
+        host_url = request.host_url.rstrip("/")
 
     raw_share_url = f"{host_url}/?share={share_id}&d={token}"
     short_share_url = shorten_url_safely(raw_share_url)
@@ -601,29 +654,31 @@ def create_share_link():
 @app.route("/api/share/<share_id>", methods=["GET"])
 def get_shared_plan(share_id=None):
     """공유 ID 또는 압축 토큰을 통해 원본 여행 계획을 반환합니다."""
-    share_id = share_id or request.args.get("share") or request.args.get("share_id") or ""
+    share_id = share_id or request.args.get("share") or request.args.get("share_id") or request.args.get("s") or ""
 
     # 1. 인메모리 캐시 확인
-    if share_id in SHARED_PLANS_CACHE:
+    if share_id and share_id in SHARED_PLANS_CACHE:
         return jsonify({"success": True, "plan": SHARED_PLANS_CACHE[share_id]}), 200
 
     # 2. 파일 스토리지 확인
-    p_path = os.path.join(SHARED_PLANS_DIR, f"{share_id}.json")
-    if os.path.exists(p_path):
-        try:
-            with open(p_path, "r", encoding="utf-8") as f:
-                plan = json.load(f)
-                SHARED_PLANS_CACHE[share_id] = plan
-                return jsonify({"success": True, "plan": plan}), 200
-        except Exception:
-            pass
+    if share_id:
+        p_path = os.path.join(SHARED_PLANS_DIR, f"{share_id}.json")
+        if os.path.exists(p_path):
+            try:
+                with open(p_path, "r", encoding="utf-8") as f:
+                    plan = json.load(f)
+                    SHARED_PLANS_CACHE[share_id] = plan
+                    return jsonify({"success": True, "plan": plan}), 200
+            except Exception:
+                pass
 
     # 3. 쿼리 파라미터 d (압축 토큰)로 무손실 복원
-    token = request.args.get("d") or ""
+    token = request.args.get("d") or request.args.get("token") or ""
     if token:
         plan = decompress_plan(token)
         if plan:
-            SHARED_PLANS_CACHE[share_id] = plan
+            if share_id:
+                SHARED_PLANS_CACHE[share_id] = plan
             return jsonify({"success": True, "plan": plan}), 200
 
     return jsonify({"success": False, "error": "공유된 여행 계획을 찾을 수 없습니다."}), 404
@@ -632,7 +687,8 @@ def get_shared_plan(share_id=None):
 @app.route("/api/share/decode", methods=["GET", "POST"])
 def decode_shared_token():
     """압축 토큰을 디코딩하여 원본 계획으로 복원합니다."""
-    token = request.args.get("d") or (request.get_json(silent=True) or {}).get("token") or ""
+    data = request.get_json(silent=True) or {}
+    token = request.args.get("d") or request.args.get("token") or data.get("token") or data.get("d") or ""
     if not token:
         return jsonify({"success": False, "error": "토큰이 필요합니다."}), 400
     plan = decompress_plan(token)
