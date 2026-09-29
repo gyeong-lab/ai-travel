@@ -337,9 +337,16 @@ def build_prompt(data: dict) -> str:
     return prompt
 
 @app.route("/")
+@app.route("/api/index")
+@app.route("/api/index.py")
 def index():
     """메인 페이지를 렌더링합니다."""
     return render_template("index.html")
+
+@app.route("/debug-env")
+def debug_env():
+    info = {k: str(v) for k, v in request.environ.items() if isinstance(v, (str, int, bool))}
+    return jsonify(info)
 
 @app.route("/favicon.ico")
 def favicon():
