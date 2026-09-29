@@ -336,11 +336,13 @@ def build_prompt(data: dict) -> str:
 """
     return prompt
 
-@app.route("/")
-@app.route("/api/index")
-@app.route("/api/index.py")
+@app.route("/", methods=["GET", "POST"])
+@app.route("/api/index", methods=["GET", "POST"])
+@app.route("/api/index.py", methods=["GET", "POST"])
 def index():
-    """메인 페이지를 렌더링합니다."""
+    """메인 페이지를 렌더링하거나, POST 요청 시 generate_plan으로 위임합니다."""
+    if request.method == "POST":
+        return generate_plan()
     return render_template("index.html")
 
 @app.route("/debug-env")

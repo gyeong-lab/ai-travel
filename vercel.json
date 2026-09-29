@@ -6,7 +6,7 @@
   },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!static/|manifest.json|sw.js|favicon.ico).*)",
       "destination": "/api/index"
     }
   ]
