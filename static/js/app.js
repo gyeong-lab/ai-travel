@@ -693,4 +693,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 14. 페이지 첫 진입 시 기본 선택 지역(제주) 및 카테고리(전체) 교차 필터링 1회 실행
     filterProducts();
+
+    /**
+     * 15. 이미지 로드 실패 또는 미등록 시 '관련 사진 없음' 대체 UI 적용 (글자 삐죽 방지)
+     */
+    function setupImageFallbacks() {
+        document.querySelectorAll(".card-img").forEach((img) => {
+            function handleImgError() {
+                const parent = img.closest(".card-img-wrap");
+                if (!parent) return;
+                img.style.display = "none";
+                if (!parent.querySelector(".img-fallback-placeholder")) {
+                    const fallback = document.createElement("div");
+                    fallback.className = "img-fallback-placeholder";
+                    fallback.innerHTML = `
+                        <span class="placeholder-icon">🖼️</span>
+                        <span class="placeholder-badge">관련 사진 준비 중</span>
+                    `;
+                    parent.appendChild(fallback);
+                }
+            }
+
+            img.addEventListener("error", handleImgError);
+            if (img.complete && img.naturalHeight === 0) {
+                handleImgError();
+            }
+        });
+    }
+
+    setupImageFallbacks();
 });

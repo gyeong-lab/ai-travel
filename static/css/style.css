@@ -863,7 +863,7 @@ button {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 10;
-    background-color: #e5e7eb;
+    background-color: #f1f5f9;
     overflow: hidden;
 }
 
@@ -877,6 +877,43 @@ button {
 
 .agoda-card:hover .card-img {
     transform: scale(1.05);
+}
+
+/* 사진이 없거나 로드 실패 시 깔끔한 대체 박스 (글자 삐죽 안 나오게 처리) */
+.img-fallback-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    color: #64748b;
+    gap: 6px;
+    padding: 12px;
+    text-align: center;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.img-fallback-placeholder .placeholder-icon {
+    font-size: 26px;
+    opacity: 0.75;
+}
+
+.img-fallback-placeholder .placeholder-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    border: 1px solid #cbd5e1;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* 리본 배지 (sample.png 3번째 카드) */
@@ -942,6 +979,8 @@ button {
     -webkit-box-orient: vertical;
     overflow: hidden;
     height: 39px;
+    text-overflow: ellipsis;
+    word-break: keep-all; /* 단어 단위 줄바꿈으로 글자가 삐죽 잘리거나 어색해지지 않게 방지 */
 }
 
 /* 평점 */
@@ -973,9 +1012,16 @@ button {
     font-weight: 600;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 4px;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 18px;
+}
+
+.card-badges-green span {
+    white-space: nowrap;
 }
 
 .badge-dot-sep {
