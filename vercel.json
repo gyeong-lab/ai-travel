@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/((?!static/|manifest.json|sw.js|favicon.ico).*)",
-      "destination": "/api/index"
+      "destination": "/api/index?__vercel_path__=/$1"
     }
   ]
 }

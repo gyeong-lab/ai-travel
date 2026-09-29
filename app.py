@@ -349,14 +349,21 @@ def build_prompt(data: dict) -> str:
 @app.route("/api/index", methods=["GET", "POST"])
 @app.route("/api/index.py", methods=["GET", "POST"])
 def index():
-    """메인 페이지를 렌더링하거나, 미인증 시 비밀번호 입력 화면을 제공합니다."""
-    if not is_authenticated():
-        if request.method == "POST":
-            return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다."}), 401
-        return render_template("login.html")
-
+    """메인 페이지를 렌더링하거나, 비밀번호 검증/일정 생성을 처리합니다."""
     if request.method == "POST":
+        data = request.get_json(silent=True) or {}
+        # 비밀번호 검증 요청인 경우 즉시 verify_password로 분기
+        if "password" in data or "password" in request.form:
+            return verify_password()
+
+        # AI 일정 생성 요청인 경우 인증 확인
+        if not is_authenticated():
+            return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다."}), 401
         return generate_plan()
+
+    # GET 요청: 미인증 시 로그인 화면
+    if not is_authenticated():
+        return render_template("login.html")
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -365,35 +372,31 @@ def login():
     if is_authenticated():
         return redirect("/")
 
-    error = None
     if request.method == "POST":
-        input_pw = str(request.form.get("password", "")).strip()
-        site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
-        if input_pw == site_pw:
-            session.permanent = True
-            session["authenticated"] = True
-            logger.info("[인증 성공] Form 로그인 완료")
-            return redirect("/")
-        else:
-            error = "비밀번호가 올바르지 않습니다. 다시 입력해주세요."
+        return verify_password()
 
-    return render_template("login.html", error=error)
+    return render_template("login.html")
 
 @app.route("/api/verify-password", methods=["POST"])
+@app.route("/verify-password", methods=["POST"])
 def verify_password():
-    """AJAX 요청을 통한 비밀번호 검증 및 세션 발급 API"""
+    """비밀번호 검증 및 세션 발급 API (JSON 및 Form 모두 지원)"""
     data = request.get_json(silent=True) or {}
-    input_pw = str(data.get("password", "")).strip()
+    input_pw = str(data.get("password") or request.form.get("password") or "").strip()
     site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
 
     if input_pw == site_pw:
         session.permanent = True
         session["authenticated"] = True
-        logger.info("[인증 성공] AJAX 비밀번호 인증 성공")
-        return jsonify({"success": True, "message": "인증되었습니다."}), 200
+        logger.info("[인증 성공] 비밀번호 일치 (7777)")
+        if request.is_json:
+            return jsonify({"success": True, "message": "인증되었습니다."}), 200
+        return redirect("/")
     else:
-        logger.warning("[인증 실패] 잘못된 비밀번호 입력")
-        return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다. 다시 입력해주세요."}), 401
+        logger.warning("[인증 실패] 비밀번호 불일치")
+        if request.is_json:
+            return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다. 다시 입력해주세요."}), 401
+        return render_template("login.html", error="비밀번호가 올바르지 않습니다. 다시 입력해주세요.")
 
 @app.route("/logout")
 def logout():
