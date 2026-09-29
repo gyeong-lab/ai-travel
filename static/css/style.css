@@ -2210,6 +2210,265 @@ button {
     color: #9ca3af;
 }
 
+/* 11-1. 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 */
+.plan-map-section {
+    margin: 24px 0;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.map-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.map-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.map-badge {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    color: #5b21b6;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid #c4b5fd;
+}
+
+.map-kakao-tag {
+    background: #fee500;
+    color: #191919;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.map-section-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.map-section-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.map-day-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.btn-map-filter {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-map-filter:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+.btn-map-filter.active {
+    background: #4f46e5;
+    border-color: #4338ca;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+}
+
+.map-container-box {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    position: relative;
+    background-color: #f1f5f9;
+}
+
+.interactive-map-canvas {
+    width: 100%;
+    height: 390px;
+    z-index: 1;
+}
+
+.map-places-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.map-place-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 11px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.map-place-chip:hover {
+    background: #eef2ff;
+    border-color: #818cf8;
+    color: #3730a3;
+    transform: translateY(-1px);
+}
+
+.chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* 커스텀 마커 핀 스타일 */
+.map-pin-custom {
+    background: none;
+    border: none;
+}
+
+.pin-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 13px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.pin-badge:hover {
+    transform: rotate(-45deg) scale(1.15);
+}
+
+.pin-number {
+    transform: rotate(45deg);
+    display: block;
+    line-height: 1;
+}
+
+.pin-day-1 { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+.pin-day-2 { background: linear-gradient(135deg, #059669, #047857); }
+.pin-day-3 { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+.pin-day-4 { background: linear-gradient(135deg, #ea580c, #c2410c); }
+
+/* 카카오맵 연동 팝업 카드 */
+.kakao-map-popup {
+    padding: 4px;
+    min-width: 230px;
+}
+
+.popup-day-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 10px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.popup-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+}
+
+.popup-desc {
+    font-size: 11px;
+    color: #64748b;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.btn-kakao-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: #fee500;
+    color: #191919;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+}
+
+.btn-kakao-nav:hover {
+    background-color: #fada0a;
+}
+
+.btn-kakao-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background-color: #f1f5f9;
+    color: #334155;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    transition: background-color 0.15s ease;
+}
+
+.btn-kakao-search:hover {
+    background-color: #e2e8f0;
+}
+
 /* 12. 반응형 미디어 쿼리 */
 @media (max-width: 1200px) {
     .product-grid {

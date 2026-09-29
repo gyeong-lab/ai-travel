@@ -1147,6 +1147,365 @@ document.addEventListener("DOMContentLoaded", () => {
         errorAlert.style.display = "none";
     }
 
+    // ==========================================
+    // 🗺️ 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 모듈
+    // ==========================================
+    const DEST_COORDS = {
+        "제주": { lat: 33.3617, lng: 126.5292, zoom: 10 },
+        "오사카": { lat: 34.6937, lng: 135.5023, zoom: 12 },
+        "도쿄": { lat: 35.6762, lng: 139.6503, zoom: 12 },
+        "후쿠오카": { lat: 33.5904, lng: 130.4017, zoom: 12 },
+        "방콕": { lat: 13.7563, lng: 100.5018, zoom: 12 },
+        "다낭": { lat: 16.0544, lng: 108.2022, zoom: 12 },
+        "타이베이": { lat: 25.0330, lng: 121.5654, zoom: 12 },
+        "파리": { lat: 48.8566, lng: 2.3522, zoom: 12 },
+        "뉴욕": { lat: 40.7128, lng: -74.0060, zoom: 12 },
+        "바르셀로나": { lat: 41.3851, lng: 2.1734, zoom: 12 },
+        "서울": { lat: 37.5665, lng: 126.9780, zoom: 12 },
+        "부산": { lat: 35.1796, lng: 129.0756, zoom: 12 },
+        "강릉": { lat: 37.7519, lng: 128.8761, zoom: 12 },
+        "경주": { lat: 35.8562, lng: 129.2247, zoom: 12 }
+    };
+
+    const SPOT_COORDS = {
+        "제주공항": { lat: 33.5113, lng: 126.4930 },
+        "애월": { lat: 33.4628, lng: 126.3117 },
+        "한담해변": { lat: 33.4621, lng: 126.3093 },
+        "한담해안산책로": { lat: 33.4618, lng: 126.3105 },
+        "협재": { lat: 33.3941, lng: 126.2397 },
+        "협재해수욕장": { lat: 33.3941, lng: 126.2397 },
+        "금능해수욕장": { lat: 33.3905, lng: 126.2345 },
+        "한림공원": { lat: 33.3892, lng: 126.2394 },
+        "오설록": { lat: 33.3059, lng: 126.2894 },
+        "오설록 티뮤지엄": { lat: 33.3059, lng: 126.2894 },
+        "산방산": { lat: 33.2415, lng: 126.3130 },
+        "용머리해안": { lat: 33.2325, lng: 126.3146 },
+        "중문": { lat: 33.2483, lng: 126.4132 },
+        "중문관광단지": { lat: 33.2483, lng: 126.4132 },
+        "천제연폭포": { lat: 33.2525, lng: 126.4184 },
+        "주상절리": { lat: 33.2376, lng: 126.4250 },
+        "대포주상절리": { lat: 33.2376, lng: 126.4250 },
+        "서귀포": { lat: 33.2541, lng: 126.5601 },
+        "올레시장": { lat: 33.2504, lng: 126.5638 },
+        "서귀포 매일올레시장": { lat: 33.2504, lng: 126.5638 },
+        "천지연폭포": { lat: 33.2448, lng: 126.5596 },
+        "정방폭포": { lat: 33.2449, lng: 126.5718 },
+        "이중섭거리": { lat: 33.2488, lng: 126.5645 },
+        "쇠소깍": { lat: 33.2524, lng: 126.6231 },
+        "사려니숲길": { lat: 33.4077, lng: 126.6430 },
+        "비자림": { lat: 33.4913, lng: 126.8114 },
+        "성산일출봉": { lat: 33.4586, lng: 126.9427 },
+        "섭지코지": { lat: 33.4243, lng: 126.9311 },
+        "함덕": { lat: 33.5434, lng: 126.6692 },
+        "함덕해수욕장": { lat: 33.5434, lng: 126.6692 },
+        "동문시장": { lat: 33.5126, lng: 126.5283 },
+        "용두암": { lat: 33.5163, lng: 126.5123 },
+        "카멜리아힐": { lat: 33.2897, lng: 126.3697 },
+        // 오사카 스팟
+        "도톤보리": { lat: 34.6687, lng: 135.5013 },
+        "난바": { lat: 34.6660, lng: 135.5003 },
+        "신사이바시": { lat: 34.6751, lng: 135.5005 },
+        "유니버설 스튜디오": { lat: 34.6654, lng: 135.4323 },
+        "오사카성": { lat: 34.6873, lng: 135.5262 },
+        "우메다 스카이빌딩": { lat: 34.7053, lng: 135.4900 },
+        "하루카스300": { lat: 34.6459, lng: 135.5140 },
+        // 도쿄 스팟
+        "신주쿠": { lat: 35.6938, lng: 139.7034 },
+        "시부야": { lat: 35.6580, lng: 139.7016 },
+        "시부야 스카이": { lat: 35.6585, lng: 139.7022 },
+        "아사쿠사": { lat: 35.7148, lng: 139.7967 },
+        "센소지": { lat: 35.7148, lng: 139.7967 },
+        "도쿄타워": { lat: 35.6586, lng: 139.7454 },
+        "긴자": { lat: 35.6719, lng: 139.7649 },
+        // 후쿠오카 스팟
+        "하카타": { lat: 33.5902, lng: 130.4207 },
+        "텐진": { lat: 33.5916, lng: 130.3989 },
+        "후쿠오카 타워": { lat: 33.5933, lng: 130.3515 },
+        "모모치 해변": { lat: 33.5954, lng: 130.3519 },
+        "다자이후": { lat: 33.5215, lng: 130.5349 },
+        // 방콕 스팟
+        "카오산로드": { lat: 13.7589, lng: 100.4974 },
+        "왓아룬": { lat: 13.7437, lng: 100.4889 },
+        "아이콘시암": { lat: 13.7267, lng: 100.5108 },
+        // 다낭 스팟
+        "미케비치": { lat: 16.0601, lng: 108.2464 },
+        "바나힐": { lat: 15.9989, lng: 107.9866 },
+        "호이안": { lat: 15.8801, lng: 108.3380 },
+        // 국내 주요 도시 스팟
+        "경복궁": { lat: 37.5796, lng: 126.9770 },
+        "명동": { lat: 37.5636, lng: 126.9827 },
+        "해운대": { lat: 35.1587, lng: 129.1604 },
+        "광안리": { lat: 35.1532, lng: 129.1189 }
+    };
+
+    let leafletMap = null;
+    let mapMarkerLayerGroup = null;
+    let mapPolylineLayerGroup = null;
+    let currentMapDayFilter = "all";
+
+    function extractPlacesFromPlan(markdown, destination) {
+        if (!markdown) return [];
+        const places = [];
+
+        let center = { lat: 33.3617, lng: 126.5292 }; // 기본 제주
+        for (const [key, coords] of Object.entries(DEST_COORDS)) {
+            if (destination.includes(key)) {
+                center = coords;
+                break;
+            }
+        }
+
+        const daySections = markdown.split(/(?=####\s*■\s*\d+일차|####\s*■\s*Day\s*\d+|###\s*■\s*\d+일차)/gi);
+        let dayIndex = 1;
+
+        daySections.forEach((sec) => {
+            const dayMatch = sec.match(/(?:■\s*)?(\d+)일차|(?:Day\s*)(\d+)/i);
+            const currentDay = dayMatch ? parseInt(dayMatch[1] || dayMatch[2], 10) : dayIndex;
+
+            const lines = sec.split('\n');
+            let orderInDay = 1;
+
+            lines.forEach((line) => {
+                const timeMatch = line.match(/[-*]\s*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소)[^:]*:\s*([^\r\n]+)/);
+                if (timeMatch) {
+                    const rawContent = timeMatch[1].trim();
+                    const cleanCandidate = rawContent.replace(/[\*\(\)\[\]]/g, " ").trim();
+                    const tokens = cleanCandidate.split(/[,→>·\-\/\s]+/).filter(s => s.length >= 2 && !s.includes("원") && !s.includes("확인") && !s.includes("소요") && !s.includes("이동"));
+
+                    let placeName = tokens[0] || rawContent.slice(0, 14);
+                    // 더 긴 매치 탐색
+                    for (const sKey of Object.keys(SPOT_COORDS)) {
+                        if (rawContent.includes(sKey)) {
+                            placeName = sKey;
+                            break;
+                        }
+                    }
+
+                    if (placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
+                        let spotCoord = SPOT_COORDS[placeName];
+                        if (!spotCoord) {
+                            for (const [sKey, sVal] of Object.entries(SPOT_COORDS)) {
+                                if (rawContent.includes(sKey)) {
+                                    spotCoord = sVal;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!spotCoord) {
+                            const angle = ((currentDay * 80 + orderInDay * 55) % 360) * (Math.PI / 180);
+                            const radius = 0.035 + (orderInDay * 0.02);
+                            spotCoord = {
+                                lat: center.lat + Math.sin(angle) * radius,
+                                lng: center.lng + Math.cos(angle) * (radius * 1.3)
+                            };
+                        }
+
+                        places.push({
+                            day: currentDay,
+                            order: orderInDay,
+                            name: placeName,
+                            desc: rawContent,
+                            lat: spotCoord.lat,
+                            lng: spotCoord.lng
+                        });
+                        orderInDay++;
+                    }
+                }
+            });
+
+            dayIndex++;
+        });
+
+        if (places.length === 0) {
+            places.push(
+                { day: 1, order: 1, name: `${destination} 도착 및 시작`, desc: "공항 도착 및 첫날 일정 시작", lat: center.lat + 0.03, lng: center.lng - 0.02 },
+                { day: 1, order: 2, name: `${destination} 대표 감성 명소`, desc: "첫날 오후 시그니처 랜드마크", lat: center.lat - 0.02, lng: center.lng - 0.04 },
+                { day: 2, order: 1, name: `${destination} 자연 & 힐링 코스`, desc: "둘째날 메인 힐링 투어", lat: center.lat - 0.05, lng: center.lng + 0.03 },
+                { day: 2, order: 2, name: `${destination} 로컬 찐맛집 탐방`, desc: "둘째날 저녁 미식 및 야경 명소", lat: center.lat + 0.01, lng: center.lng + 0.04 }
+            );
+        }
+
+        return places;
+    }
+
+    function drawMapLayers(places, filterDay, destName) {
+        if (!leafletMap || !mapMarkerLayerGroup || !mapPolylineLayerGroup) return;
+
+        mapMarkerLayerGroup.clearLayers();
+        mapPolylineLayerGroup.clearLayers();
+
+        const filtered = filterDay === "all" ? places : places.filter(p => String(p.day) === String(filterDay));
+        if (filtered.length === 0) return;
+
+        const dayColorMap = {
+            1: "#2563eb",
+            2: "#059669",
+            3: "#7c3aed",
+            4: "#ea580c"
+        };
+
+        const bounds = [];
+        const isDomestic = !["오사카", "도쿄", "후쿠오카", "방콕", "다낭", "타이베이", "파리", "뉴욕", "바르셀로나"].some(c => destName.includes(c));
+
+        filtered.forEach((p) => {
+            bounds.push([p.lat, p.lng]);
+            const dayColorClass = `pin-day-${Math.min(4, p.day)}`;
+            const pinColor = dayColorMap[p.day] || "#6366f1";
+
+            const customIcon = L.divIcon({
+                className: "map-pin-custom",
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -30],
+                html: `
+                    <div class="pin-badge ${dayColorClass}" title="${p.name}">
+                        <span class="pin-number">${p.order}</span>
+                    </div>
+                `
+            });
+
+            const kakaoNavUrl = `https://map.kakao.com/link/to/${encodeURIComponent(p.name)},${p.lat},${p.lng}`;
+            const kakaoSearchUrl = `https://map.kakao.com/link/search/${encodeURIComponent(p.name)}`;
+            const googleNavUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+
+            const popupContent = `
+                <div class="kakao-map-popup">
+                    <span class="popup-day-tag" style="background-color: ${pinColor};">${p.day}일차 #${p.order}</span>
+                    <h4 class="popup-title">${p.name}</h4>
+                    <p class="popup-desc">${p.desc || ''}</p>
+                    <div class="popup-actions">
+                        <a href="${isDomestic ? kakaoNavUrl : googleNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-nav">
+                            <span>${isDomestic ? '🚗 카카오맵 길찾기' : '🌐 구글맵 길찾기'}</span>
+                        </a>
+                        <a href="${isDomestic ? kakaoSearchUrl : googleNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
+                            <span>${isDomestic ? '📍 카카오맵에서 상세 검색' : '📍 지도에서 위치 보기'}</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            const marker = L.marker([p.lat, p.lng], { icon: customIcon }).bindPopup(popupContent);
+            mapMarkerLayerGroup.addLayer(marker);
+        });
+
+        const groupedByDay = {};
+        filtered.forEach(p => {
+            if (!groupedByDay[p.day]) groupedByDay[p.day] = [];
+            groupedByDay[p.day].push([p.lat, p.lng]);
+        });
+
+        Object.entries(groupedByDay).forEach(([day, latlngs]) => {
+            if (latlngs.length >= 2) {
+                const color = dayColorMap[day] || "#6366f1";
+                const polyline = L.polyline(latlngs, {
+                    color: color,
+                    weight: 4,
+                    opacity: 0.8,
+                    dashArray: "6, 8",
+                    lineJoin: "round"
+                });
+                mapPolylineLayerGroup.addLayer(polyline);
+            }
+        });
+
+        if (bounds.length > 0) {
+            leafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+        }
+    }
+
+    function renderPlanMapForPlan(plan) {
+        const mapSection = document.getElementById("planMapSection");
+        const mapCanvas = document.getElementById("planInteractiveMap");
+        if (!mapSection || !mapCanvas || !window.L) return;
+
+        const places = extractPlacesFromPlan(plan.markdown, plan.dest);
+        if (places.length === 0) {
+            mapSection.style.display = "none";
+            return;
+        }
+        mapSection.style.display = "block";
+
+        if (!leafletMap) {
+            leafletMap = L.map("planInteractiveMap", {
+                scrollWheelZoom: false
+            });
+
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+            }).addTo(leafletMap);
+
+            mapMarkerLayerGroup = L.layerGroup().addTo(leafletMap);
+            mapPolylineLayerGroup = L.layerGroup().addTo(leafletMap);
+        }
+
+        mapMarkerLayerGroup.clearLayers();
+        mapPolylineLayerGroup.clearLayers();
+
+        const days = Array.from(new Set(places.map(p => p.day))).sort((a, b) => a - b);
+        const mapDayFilters = document.getElementById("mapDayFilters");
+        if (mapDayFilters) {
+            let filterHtml = `<button type="button" class="btn-map-filter ${currentMapDayFilter === 'all' ? 'active' : ''}" data-day="all">📍 전체 동선</button>`;
+            days.forEach(d => {
+                filterHtml += `<button type="button" class="btn-map-filter ${String(currentMapDayFilter) === String(d) ? 'active' : ''}" data-day="${d}">${d}일차</button>`;
+            });
+            mapDayFilters.innerHTML = filterHtml;
+
+            mapDayFilters.querySelectorAll(".btn-map-filter").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    mapDayFilters.querySelectorAll(".btn-map-filter").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentMapDayFilter = btn.dataset.day;
+                    drawMapLayers(places, currentMapDayFilter, plan.dest);
+                });
+            });
+        }
+
+        drawMapLayers(places, currentMapDayFilter, plan.dest);
+
+        const summaryEl = document.getElementById("mapPlacesSummary");
+        if (summaryEl) {
+            const dayColorMap = {
+                1: "#2563eb",
+                2: "#059669",
+                3: "#7c3aed",
+                4: "#ea580c"
+            };
+
+            let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 카카오맵 바로가기:</span>`;
+            places.forEach((p, idx) => {
+                const color = dayColorMap[p.day] || "#6366f1";
+                chipsHtml += `
+                    <button type="button" class="map-place-chip" data-idx="${idx}">
+                        <span class="chip-dot" style="background-color: ${color};"></span>
+                        <span>[Day ${p.day}] ${p.name}</span>
+                    </button>
+                `;
+            });
+            summaryEl.innerHTML = chipsHtml;
+
+            summaryEl.querySelectorAll(".map-place-chip").forEach(chip => {
+                chip.addEventListener("click", () => {
+                    const idx = parseInt(chip.dataset.idx, 10);
+                    const targetPlace = places[idx];
+                    if (targetPlace && leafletMap) {
+                        leafletMap.setView([targetPlace.lat, targetPlace.lng], 14, { animate: true });
+                        mapMarkerLayerGroup.eachLayer(layer => {
+                            if (layer.getLatLng && Math.abs(layer.getLatLng().lat - targetPlace.lat) < 0.0001 && Math.abs(layer.getLatLng().lng - targetPlace.lng) < 0.0001) {
+                                layer.openPopup();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        setTimeout(() => {
+            if (leafletMap) leafletMap.invalidateSize();
+        }, 250);
+    }
+
     /**
      * AI 플랜에서 가격 & 활동 핵심 지표 추출 (정규식 기반 마크다운 테이블 파싱 및 폴백)
      */
@@ -1275,6 +1634,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (planOutput) {
             planOutput.textContent = plan.markdown;
         }
+
+        // 3-1. 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 렌더링
+        renderPlanMapForPlan(plan);
 
         if (planCompareDashboard) planCompareDashboard.style.display = "none";
         if (planDetailView) planDetailView.style.display = "block";
