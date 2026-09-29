@@ -2860,7 +2860,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
      function setupItemRowActions(li) {
          if (!li || li.querySelector(".plan-item-actions")) return;
+         if (li.querySelector(":scope > ul, :scope > ol")) return;
+
          li.classList.add("plan-item-row");
+
+         // 1) 기존 내용물 전체를 하나의 content 래퍼로 안전하게 묶어 글자가 우측으로 밀리는 현상 원천 방지
+         const contentWrap = document.createElement("span");
+         contentWrap.className = "plan-item-content";
+         while (li.firstChild) {
+             contentWrap.appendChild(li.firstChild);
+         }
+         li.appendChild(contentWrap);
 
          const actionsWrap = document.createElement("span");
          actionsWrap.className = "plan-item-actions";
@@ -2876,7 +2886,7 @@ document.addEventListener("DOMContentLoaded", () => {
              const newName = prompt("추가할 장소나 계획 내용을 입력하세요:", "");
              if (newName && newName.trim()) {
                  const newLi = document.createElement("li");
-                 newLi.innerHTML = `📍 **추가 방문지**: <strong>${newName.trim()}</strong> (사용자 추가)`;
+                 newLi.innerHTML = `📍 <strong>추가 방문지</strong>: ${newName.trim()} (사용자 추가)`;
                  li.parentNode.insertBefore(newLi, li.nextSibling);
                  setupItemRowActions(newLi);
 
@@ -2895,8 +2905,8 @@ document.addEventListener("DOMContentLoaded", () => {
          btnDel.textContent = "🗑️ 삭제";
          btnDel.onclick = (e) => {
              e.stopPropagation();
-             if (confirm(`"${li.textContent.slice(0, 30)}..." 일정을 삭제하시겠습니까?`)) {
-                 const removedText = li.textContent;
+             const removedText = contentWrap.textContent || li.textContent;
+             if (confirm(`"${removedText.slice(0, 30)}..." 일정을 삭제하시겠습니까?`)) {
                  li.remove();
 
                  // 마크다운에서 해당 장소명 지우고 지도 갱신

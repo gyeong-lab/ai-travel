@@ -2249,6 +2249,7 @@ button {
     overflow-x: hidden;
     word-break: keep-all;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .markdown-article h1,
@@ -2259,6 +2260,7 @@ button {
     margin-top: 24px;
     margin-bottom: 12px;
     font-weight: 800;
+    text-align: left;
 }
 
 .markdown-article h1 { font-size: 21px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
@@ -2278,6 +2280,7 @@ button {
     max-width: 100%;
     box-sizing: border-box;
     word-break: keep-all;
+    text-align: left;
 }
 
 /* 🌟 일자별 메인 헤더 카드 (Day 1, Day 2, Day 3...) */
@@ -2301,6 +2304,7 @@ button {
     box-sizing: border-box;
     word-break: keep-all;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .day-header-1 {
@@ -2344,6 +2348,7 @@ button {
     box-sizing: border-box;
     word-break: keep-all;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .markdown-article blockquote strong {
@@ -2369,6 +2374,7 @@ button {
     box-sizing: border-box;
     word-break: keep-all;
     overflow-wrap: break-word;
+    text-align: left;
 }
 
 .markdown-article h4.time-morning {
@@ -2407,18 +2413,29 @@ button {
     overflow-wrap: break-word;
     max-width: 100%;
     box-sizing: border-box;
+    text-align: left;
 }
 
 /* 타임라인 스타일 리스트 */
 .markdown-article ul,
 .markdown-article ol {
-    margin-left: 4px;
-    padding-left: 16px;
+    margin-left: 0;
+    padding-left: 18px;
     border-left: 2px dashed #cbd5e1;
     margin-bottom: 18px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    text-align: left;
+}
+
+.markdown-article ul ul,
+.markdown-article ol ol,
+.markdown-article ul ol {
+    border-left: none;
+    padding-left: 16px;
+    margin-top: 4px;
+    margin-bottom: 6px;
 }
 
 .markdown-article li {
@@ -2432,6 +2449,7 @@ button {
     overflow-wrap: break-word;
     max-width: 100%;
     box-sizing: border-box;
+    text-align: left;
 }
 
 .markdown-article li::before {
@@ -3225,21 +3243,30 @@ button {
 /* 📝 계획 항목별 사용자 추가 / 삭제 인터랙션 UI */
 .plan-item-row {
     position: relative;
-    padding: 6px 8px;
+    padding: 6px 10px;
     border-radius: 6px;
     transition: background-color 0.15s ease;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    text-align: left;
 }
 
 .plan-item-row:hover {
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
+}
+
+.plan-item-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.6;
 }
 
 .plan-item-actions {
@@ -3249,6 +3276,7 @@ button {
     margin-left: auto;
     flex-shrink: 0;
     opacity: 0.85;
+    margin-top: 2px;
 }
 
 .btn-item-action {
@@ -4209,9 +4237,14 @@ button {
     .plan-item-row {
         flex-direction: column !important;
         align-items: flex-start !important;
-        gap: 4px !important;
+        gap: 6px !important;
         width: 100% !important;
         box-sizing: border-box !important;
+        text-align: left !important;
+    }
+    .plan-item-content {
+        width: 100% !important;
+        text-align: left !important;
     }
     .plan-item-actions {
         margin-left: 0 !important;
