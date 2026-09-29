@@ -1267,6 +1267,30 @@ document.addEventListener("DOMContentLoaded", () => {
         "카오산로드": { lat: 13.7589, lng: 100.4974 },
         "왓아룬": { lat: 13.7437, lng: 100.4889 },
         "아이콘시암": { lat: 13.7267, lng: 100.5108 },
+        // 주요 공항 스팟 (모든 여행지 1일차 공항 출발 지원)
+        "제주공항": { lat: 33.5113, lng: 126.4930 },
+        "제주국제공항": { lat: 33.5113, lng: 126.4930 },
+        "간사이공항": { lat: 34.4320, lng: 135.2304 },
+        "간사이국제공항": { lat: 34.4320, lng: 135.2304 },
+        "하네다공항": { lat: 35.5494, lng: 139.7798 },
+        "나리타공항": { lat: 35.7720, lng: 140.3929 },
+        "후쿠오카공항": { lat: 33.5859, lng: 130.4507 },
+        "수완나품공항": { lat: 13.6900, lng: 100.7501 },
+        "수완나품국제공항": { lat: 13.6900, lng: 100.7501 },
+        "다낭공항": { lat: 16.0538, lng: 108.1994 },
+        "다낭국제공항": { lat: 16.0538, lng: 108.1994 },
+        "타오위안공항": { lat: 25.0797, lng: 121.2342 },
+        "타오위안국제공항": { lat: 25.0797, lng: 121.2342 },
+        "샤를드골공항": { lat: 49.0097, lng: 2.5479 },
+        "샤를드골국제공항": { lat: 49.0097, lng: 2.5479 },
+        "JFK공항": { lat: 40.6413, lng: -73.7781 },
+        "존F케네디국제공항": { lat: 40.6413, lng: -73.7781 },
+        "엘프랏공항": { lat: 41.2974, lng: 2.0833 },
+        "바르셀로나공항": { lat: 41.2974, lng: 2.0833 },
+        "인천공항": { lat: 37.4602, lng: 126.4407 },
+        "김포공항": { lat: 37.5587, lng: 126.7945 },
+        "김해공항": { lat: 35.1795, lng: 128.9382 },
+        "김해국제공항": { lat: 35.1795, lng: 128.9382 },
         // 다낭 스팟
         "미케비치": { lat: 16.0601, lng: 108.2464 },
         "바나힐": { lat: 15.9989, lng: 107.9866 },
@@ -1323,7 +1347,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
-                    if (placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
+                    // 렌터카, 렌트카, 셔틀버스 등 이동수단/대여 관련 키워드는 장소 마커에서 제외
+                    const isRentalCarKeyword = /(렌터카|렌트카|렌트|rent|car|대여|인수|반납|셔틀버스|차량\s*인수)/i.test(placeName) || /(렌터카|렌트카|렌트|rent\s*car|차량\s*인수)/i.test(rawContent);
+
+                    if (!isRentalCarKeyword && placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
                         let spotCoord = SPOT_COORDS[placeName];
                         if (!spotCoord) {
                             for (const [sKey, sVal] of Object.entries(SPOT_COORDS)) {
@@ -1359,9 +1386,59 @@ document.addEventListener("DOMContentLoaded", () => {
             dayIndex++;
         });
 
+        // 🌟 모든 여행지의 1일차 첫 출발지는 항상 해당 여행지 '공항'으로 보장
+        const airportMap = {
+            "제주": { name: "제주국제공항", lat: 33.5113, lng: 126.4930 },
+            "오사카": { name: "간사이국제공항", lat: 34.4320, lng: 135.2304 },
+            "도쿄": { name: "하네다국제공항", lat: 35.5494, lng: 139.7798 },
+            "후쿠오카": { name: "후쿠오카공항", lat: 33.5859, lng: 130.4507 },
+            "방콕": { name: "수완나품국제공항", lat: 13.6900, lng: 100.7501 },
+            "다낭": { name: "다낭국제공항", lat: 16.0538, lng: 108.1994 },
+            "타이베이": { name: "타오위안국제공항", lat: 25.0797, lng: 121.2342 },
+            "파리": { name: "샤를드골국제공항", lat: 49.0097, lng: 2.5479 },
+            "뉴욕": { lat: 40.6413, lng: -73.7781, name: "존F케네디국제공항" },
+            "바르셀로나": { name: "엘프랏국제공항", lat: 41.2974, lng: 2.0833 },
+            "부산": { name: "김해국제공항", lat: 35.1795, lng: 128.9382 },
+            "서울": { name: "김포국제공항", lat: 37.5587, lng: 126.7945 },
+            "강릉": { name: "강릉역 KTX (출발지)", lat: 37.7645, lng: 128.8996 },
+            "경주": { name: "신경주역 KTX (출발지)", lat: 35.7981, lng: 129.1396 }
+        };
+
+        let targetAirport = null;
+        for (const [k, ap] of Object.entries(airportMap)) {
+            if (destination.includes(k)) {
+                targetAirport = ap;
+                break;
+            }
+        }
+        if (!targetAirport) {
+            targetAirport = { name: `${destination} 공항/역 (출발)`, lat: center.lat + 0.02, lng: center.lng - 0.02 };
+        }
+
+        // 1일차 장소 목록 중 공항이 이미 있는지 확인
+        const hasDay1Airport = places.some(p => p.day === 1 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("역")));
+        if (!hasDay1Airport) {
+            // 맨 앞에 1일차 출발지(공항) 삽입
+            places.unshift({
+                day: 1,
+                order: 1,
+                name: targetAirport.name,
+                desc: "공항 도착 및 렌터카 픽업 / 여정 시작",
+                lat: targetAirport.lat,
+                lng: targetAirport.lng
+            });
+        }
+
+        // 각 Day별 order 번호 1부터 순차 재정렬
+        const dayCounts = {};
+        places.forEach(p => {
+            dayCounts[p.day] = (dayCounts[p.day] || 0) + 1;
+            p.order = dayCounts[p.day];
+        });
+
         if (places.length === 0) {
             places.push(
-                { day: 1, order: 1, name: `${destination} 도착 및 시작`, desc: "공항 도착 및 첫날 일정 시작", lat: center.lat + 0.03, lng: center.lng - 0.02 },
+                { day: 1, order: 1, name: targetAirport.name, desc: "공항 도착 및 첫날 일정 시작", lat: targetAirport.lat, lng: targetAirport.lng },
                 { day: 1, order: 2, name: `${destination} 대표 감성 명소`, desc: "첫날 오후 시그니처 랜드마크", lat: center.lat - 0.02, lng: center.lng - 0.04 },
                 { day: 2, order: 1, name: `${destination} 자연 & 힐링 코스`, desc: "둘째날 메인 힐링 투어", lat: center.lat - 0.05, lng: center.lng + 0.03 },
                 { day: 2, order: 2, name: `${destination} 로컬 찐맛집 탐방`, desc: "둘째날 저녁 미식 및 야경 명소", lat: center.lat + 0.01, lng: center.lng + 0.04 }
@@ -1490,7 +1567,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (mapDayFilters) {
             let filterHtml = `<button type="button" class="btn-map-filter ${currentMapDayFilter === 'all' ? 'active' : ''}" data-day="all">📍 전체 동선</button>`;
             days.forEach(d => {
-                filterHtml += `<button type="button" class="btn-map-filter ${String(currentMapDayFilter) === String(d) ? 'active' : ''}" data-day="${d}">${d}일차</button>`;
+                const color = dayColorMap[d] || "#6366f1";
+                const isAct = String(currentMapDayFilter) === String(d);
+                filterHtml += `
+                    <button type="button" class="btn-map-filter filter-day-${Math.min(4, d)} ${isAct ? 'active' : ''}" data-day="${d}">
+                        <span class="chip-dot" style="background-color: ${color};"></span>
+                        <span>${d}일차 코스</span>
+                    </button>
+                `;
             });
             mapDayFilters.innerHTML = filterHtml;
 
@@ -1518,8 +1602,9 @@ document.addEventListener("DOMContentLoaded", () => {
             let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 카카오맵 바로가기:</span>`;
             places.forEach((p, idx) => {
                 const color = dayColorMap[p.day] || "#6366f1";
+                const dayClass = `chip-day-${Math.min(4, p.day)}`;
                 chipsHtml += `
-                    <button type="button" class="map-place-chip" data-idx="${idx}">
+                    <button type="button" class="map-place-chip ${dayClass}" data-idx="${idx}">
                         <span class="chip-dot" style="background-color: ${color};"></span>
                         <span>[Day ${p.day}] ${p.name}</span>
                     </button>

@@ -2488,6 +2488,9 @@ button {
     color: #475569;
     cursor: pointer;
     transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-map-filter:hover {
@@ -2502,6 +2505,11 @@ button {
     color: #ffffff;
     box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
 }
+
+.btn-map-filter.filter-day-1.active { background: #2563eb; border-color: #1d4ed8; }
+.btn-map-filter.filter-day-2.active { background: #059669; border-color: #047857; }
+.btn-map-filter.filter-day-3.active { background: #7c3aed; border-color: #6d28d9; }
+.btn-map-filter.filter-day-4.active { background: #ea580c; border-color: #c2410c; }
 
 .map-container-box {
     border-radius: 12px;
@@ -2532,7 +2540,7 @@ button {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #f8fafc;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 6px 11px;
@@ -2541,14 +2549,21 @@ button {
     color: #334155;
     cursor: pointer;
     transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .map-place-chip:hover {
-    background: #eef2ff;
-    border-color: #818cf8;
-    color: #3730a3;
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #0f172a;
     transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
+
+.map-place-chip.chip-day-1 { border-left: 3px solid #2563eb; }
+.map-place-chip.chip-day-2 { border-left: 3px solid #059669; }
+.map-place-chip.chip-day-3 { border-left: 3px solid #7c3aed; }
+.map-place-chip.chip-day-4 { border-left: 3px solid #ea580c; }
 
 .chip-dot {
     width: 8px;
