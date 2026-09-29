@@ -1,798 +1,1306 @@
 /* ==========================================================================
-   AI Travel Planner - Premium Modern UI System
+   agoda AI Travel Planner - UI Clone & Modern Styling
+   Based on sample.png (Agoda Activities & Tours Search Platform)
    ========================================================================== */
 
+/* 1. 디자인 시스템 & 전역 변수 */
 :root {
-    --primary: #3b82f6;
-    --primary-dark: #1d4ed8;
-    --primary-gradient: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-    --accent: #06b6d4;
-    --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --text-heading: #0f172a;
-    --text-body: #334155;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --border-focus: #3b82f6;
-    --ring: rgba(59, 130, 246, 0.2);
-    --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-    --shadow-card: 0 10px 30px -4px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
-    --shadow-elevated: 0 20px 35px -8px rgba(37, 99, 235, 0.18);
-    --radius-sm: 8px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
+    --agoda-blue: #2a68e8;
+    --agoda-blue-hover: #1e52bf;
+    --agoda-blue-light: #f0f6ff;
+    --agoda-blue-border: #bfdbfe;
+    --agoda-red: #e12d2d;
+    --agoda-green: #00875a;
+    --agoda-gold: #ff9800;
+    --text-primary: #222222;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --bg-page: #f8f9fb;
+    --bg-card: #ffffff;
+    --border-color: #e5e7eb;
+    --border-subtle: #f0f2f5;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+    --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* 2. 전역 리셋 & 기본 설정 */
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg);
-    color: var(--text-body);
-    line-height: 1.6;
-    position: relative;
-    overflow-x: hidden;
-    min-height: 100vh;
-    padding: 32px 20px 48px;
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 배경 글로우 효과 */
-.bg-glow-top {
-    position: absolute;
-    top: -150px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 900px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(6, 182, 212, 0.06) 50%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
-.bg-glow-bottom {
-    position: absolute;
-    bottom: 0;
-    right: -100px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+button, input, select, textarea {
+    font-family: inherit;
+    border: none;
+    outline: none;
 }
 
-.app-container {
-    position: relative;
-    z-index: 1;
-    max-width: 1360px;
+button {
+    cursor: pointer;
+    background: none;
+}
+
+/* 3. 아고다 상단 GNB (Global Navigation Bar) */
+.agoda-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.nav-container {
+    max-width: 1440px;
     margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* ==========================================================================
-   Hero Header
-   ========================================================================== */
-.hero-header {
-    text-align: center;
-    margin-bottom: 36px;
-    padding: 10px 0;
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
 }
 
-.badge-pill {
-    display: inline-flex;
+/* 아고다 5도트 로고 */
+.agoda-logo {
+    display: flex;
     align-items: center;
     gap: 8px;
-    background: #ffffff;
-    border: 1px solid #dbeafe;
-    padding: 6px 16px;
-    border-radius: 9999px;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: #1e40af;
-    box-shadow: var(--shadow-soft);
-    margin-bottom: 16px;
+    text-decoration: none;
 }
 
-.badge-dot {
+.logo-dots {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-    animation: pulseDot 2s infinite;
+    display: inline-block;
 }
 
-@keyframes pulseDot {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.8; }
-}
+.dot-red { background-color: #e12d2d; }
+.dot-orange { background-color: #ff9800; }
+.dot-green { background-color: #00a651; }
+.dot-blue { background-color: #0073e6; }
+.dot-lightblue { background-color: #00c0f3; }
 
-.hero-title {
-    font-size: 2.3rem;
+.logo-brand {
+    font-size: 24px;
     font-weight: 800;
-    color: var(--text-heading);
-    line-height: 1.3;
-    letter-spacing: -0.8px;
-    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    color: #2a2a2a;
 }
 
-.gradient-text {
-    background: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.logo-sub {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--agoda-blue);
+    background: var(--agoda-blue-light);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--agoda-blue-border);
 }
 
-.hero-subtitle {
-    font-size: 1.05rem;
+/* 상단 네비게이션 링크 */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-item {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    padding: 8px 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s ease;
+}
+
+.nav-item:hover {
+    color: var(--agoda-blue);
+}
+
+.nav-item.active {
+    color: var(--agoda-blue);
+    font-weight: 700;
+}
+
+.nav-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: -13px;
+    left: 10px;
+    right: 10px;
+    height: 3px;
+    background-color: var(--agoda-blue);
+    border-radius: 3px 3px 0 0;
+}
+
+.badge-discount {
+    background-color: var(--agoda-red);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.badge-new {
+    background-color: var(--agoda-red);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.dropdown-arrow {
+    font-size: 11px;
     color: var(--text-muted);
-    max-width: 640px;
-    margin: 0 auto 20px;
-    word-break: keep-all;
 }
 
-/* 프리셋 칩 목록 */
-.preset-wrapper {
+/* 네비게이션 우측 버튼들 */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-outline-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--agoda-blue);
+    border: 1px solid var(--agoda-blue);
+    padding: 7px 16px;
+    border-radius: var(--radius-full);
+    transition: all 0.15s ease;
+}
+
+.btn-outline-pill:hover {
+    background-color: var(--agoda-blue-light);
+}
+
+.nav-locale {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.nav-locale:hover {
+    background-color: #f1f3f5;
+}
+
+.flag-icon {
+    font-size: 16px;
+}
+
+.currency-code {
+    font-size: 14px;
+}
+
+.btn-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--agoda-blue);
+    padding: 6px 10px;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+.btn-primary-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--agoda-blue);
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    transition: background 0.15s ease;
+}
+
+.btn-primary-pill:hover {
+    background-color: var(--agoda-blue-hover);
+}
+
+.hamburger-btn {
+    font-size: 18px;
+    color: #555;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+.hamburger-btn:hover {
+    background-color: #f1f3f5;
+}
+
+/* 4. 아고다 중앙 검색창 영역 */
+.search-section {
+    background-color: #ffffff;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-bar-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-bar-pill {
+    display: flex;
+    align-items: center;
+    background-color: #f1f4f8;
+    border: 1px solid #dfe3e8;
+    border-radius: var(--radius-full);
+    padding: 4px 8px 4px 18px;
+    transition: all 0.2s ease;
+}
+
+.search-bar-pill:focus-within {
+    background-color: #ffffff;
+    border-color: var(--agoda-blue);
+    box-shadow: 0 0 0 3px rgba(42, 104, 232, 0.15);
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.search-icon {
+    font-size: 16px;
+    color: #666;
+}
+
+.search-input-group input {
+    width: 100%;
+    background: transparent;
+    font-size: 15px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.search-input-group input::placeholder {
+    color: #8c939d;
+}
+
+.btn-search-trigger {
+    background-color: var(--agoda-blue);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 22px;
+    border-radius: var(--radius-full);
+    transition: background 0.15s ease;
+}
+
+.btn-search-trigger:hover {
+    background-color: var(--agoda-blue-hover);
+}
+
+/* 5. 아고다 가로 카테고리 캐러셀 */
+.category-carousel-section {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.category-carousel {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px 24px 8px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.category-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    min-width: 72px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.cat-item:hover {
+    background-color: #f7f9fb;
+}
+
+.cat-item.active {
+    color: var(--agoda-blue);
+}
+
+.cat-item.active .cat-label {
+    color: var(--agoda-blue);
+    font-weight: 700;
+}
+
+.cat-icon {
+    font-size: 22px;
+    position: relative;
+}
+
+.icon-with-check {
+    position: relative;
+}
+
+.cat-check-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    background-color: var(--agoda-blue);
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 800;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 14px;
 }
 
-.preset-label {
-    font-size: 0.86rem;
-    font-weight: 600;
-    color: #475569;
+.icon-with-count {
+    position: relative;
 }
 
-.preset-chips {
+.cat-number-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background-color: var(--agoda-blue);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
 }
 
-.preset-chip {
-    background: #ffffff;
-    border: 1.5px solid var(--border);
-    padding: 7px 14px;
-    border-radius: 9999px;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: #1e293b;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--shadow-soft);
+.cat-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #4b5563;
+    white-space: nowrap;
 }
 
-.preset-chip:hover {
-    border-color: var(--primary);
-    background: #eff6ff;
-    color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
-
-/* ==========================================================================
-   2-Column Layout
-   ========================================================================== */
-.main-layout {
+/* 6. 메인 2단 분할 레이아웃 */
+.main-container {
+    max-width: 1440px;
+    margin: 24px auto 60px auto;
+    padding: 0 24px;
     display: grid;
-    grid-template-columns: 480px 1fr;
-    gap: 28px;
+    grid-template-columns: 290px 1fr;
+    gap: 24px;
     align-items: start;
 }
 
-@media (max-width: 1100px) {
-    .main-layout {
-        grid-template-columns: 1fr;
-    }
+/* 7. 좌측 사이드바 필터 & AI 조건 패널 */
+.sidebar-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.card {
-    background: var(--surface);
+.filter-box {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: var(--shadow-card);
-    padding: 30px;
-    transition: box-shadow 0.3s ease;
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
 }
 
-.card:hover {
-    box-shadow: 0 14px 35px -6px rgba(15, 23, 42, 0.08);
-}
-
-.card-title-box {
+.filter-box-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 22px;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
 
-.title-icon {
-    font-size: 1.8rem;
-    background: #eff6ff;
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
+.filter-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.link-blue {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--agoda-blue);
+}
+
+.link-blue:hover {
+    text-decoration: underline;
+}
+
+.selected-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--agoda-blue-light);
+    color: var(--agoda-blue);
+    border: 1px solid var(--agoda-blue);
+    border-radius: var(--radius-full);
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.chip-remove {
+    font-size: 11px;
+    color: var(--agoda-blue);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    cursor: pointer;
 }
 
-.card-title-box h2 {
-    font-size: 1.35rem;
+/* 라디오 버튼 그룹 */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom {
+    border-color: var(--agoda-blue);
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: var(--agoda-blue);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+/* 요금 슬라이더 */
+.price-range-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
     font-weight: 700;
-    color: var(--text-heading);
-    letter-spacing: -0.3px;
+    color: #1f2937;
+    margin-bottom: 8px;
 }
 
-.card-desc {
-    font-size: 0.86rem;
+.slider-container {
+    width: 100%;
+}
+
+.agoda-slider {
+    width: 100%;
+    accent-color: var(--agoda-blue);
+    height: 5px;
+    cursor: pointer;
+}
+
+/* AI 조건 설정 폼 패널 */
+.ai-planner-box {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    border: 1px solid var(--agoda-blue-border);
+}
+
+.ai-box-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--agoda-blue-light);
+    color: var(--agoda-blue);
+    border: 1px solid var(--agoda-blue-border);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.filter-desc {
+    font-size: 12px;
     color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.4;
+}
+
+.mb-8 {
+    margin-bottom: 8px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b5563;
+    margin-bottom: 4px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--agoda-blue);
+    box-shadow: 0 0 0 2px rgba(42, 104, 232, 0.15);
+}
+
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.label-heading {
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b5563;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* 여행 기조 모드 A/B 카드 */
+.mode-select-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mode-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: all 0.15s ease;
+    display: block;
+}
+
+.mode-card input {
+    display: none;
+}
+
+.mode-card.active {
+    border-color: var(--agoda-blue);
+    background-color: var(--agoda-blue-light);
+}
+
+.mode-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-bottom: 3px;
+}
+
+.tag-a {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.tag-b {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.mode-card strong {
+    display: block;
+    font-size: 13px;
+    color: #1f2937;
+}
+
+.mode-card p {
+    font-size: 11px;
+    color: #6b7280;
     margin-top: 2px;
 }
 
-/* ==========================================================================
-   Form Components
-   ========================================================================== */
-.input-field {
-    margin-bottom: 18px;
-}
-
-.grid-2col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-@media (max-width: 480px) {
-    .grid-2col {
-        grid-template-columns: 1fr;
-    }
-}
-
-.input-field label {
+/* AI 생성 메인 버튼 */
+.btn-generate-ai {
+    width: 100%;
+    margin-top: 14px;
+    background: linear-gradient(135deg, #2a68e8 0%, #1e52bf 100%);
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 7px;
-}
-
-.label-icon {
-    font-size: 1rem;
-}
-
-.req {
-    color: #ef4444;
-    font-weight: 700;
-}
-
-.input-inner input {
-    width: 100%;
-    padding: 12px 15px;
-    background: #fdfdfd;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 0.94rem;
-    color: var(--text-heading);
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(42, 104, 232, 0.3);
     transition: all 0.2s ease;
-    font-family: inherit;
 }
 
-.input-inner input:focus {
-    outline: none;
-    border-color: var(--border-focus);
-    background: #ffffff;
-    box-shadow: 0 0 0 3.5px var(--ring);
+.btn-generate-ai:hover {
+    background: linear-gradient(135deg, #1e52bf 0%, #173fa0 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(42, 104, 232, 0.4);
 }
 
-.input-inner input::placeholder {
-    color: #94a3b8;
-    font-size: 0.88rem;
+/* 8. 우측 메인 영역: 추천 상품 카드 그리드 (Agoda Style) */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
 }
 
-/* 스타일 모드 카드 */
-.style-mode-field {
-    margin-top: 24px;
-}
-
-.section-label {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 10px;
-}
-
-.style-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
     gap: 12px;
 }
 
-@media (max-width: 520px) {
-    .style-cards {
-        grid-template-columns: 1fr;
-    }
-}
-
-.style-card {
-    position: relative;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    cursor: pointer;
-    background: #ffffff;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    flex-direction: column;
-}
-
-.style-card input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.card-check {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #e2e8f0;
-    color: #ffffff;
-    font-size: 0.75rem;
+.section-title {
+    font-size: 20px;
     font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    color: #111827;
 }
 
-.style-card:hover {
-    border-color: #93c5fd;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.1);
+.section-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
 }
 
-.style-card.active {
-    border-color: #2563eb;
-    background: #f0f7ff;
-    box-shadow: 0 0 0 1px #2563eb, 0 6px 16px rgba(37, 99, 235, 0.12);
-}
-
-.style-card.active .card-check {
-    background: #2563eb;
-}
-
-.style-card-header {
-    margin-bottom: 8px;
-    padding-right: 28px;
-}
-
-.tag {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 9999px;
-    margin-bottom: 6px;
-}
-
-.tag-blue {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.tag-green {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.style-card h3 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    line-height: 1.35;
-}
-
-.style-desc {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    line-height: 1.45;
-    word-break: keep-all;
-    margin-top: auto;
-}
-
-/* 생성 버튼 */
-.generate-btn {
-    width: 100%;
-    margin-top: 24px;
-    padding: 16px 20px;
-    background: var(--primary-gradient);
-    color: #ffffff;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: var(--shadow-elevated);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.generate-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 24px 40px -6px rgba(37, 99, 235, 0.28);
-    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
-}
-
-.generate-btn:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.btn-sparkle {
-    font-size: 1.2rem;
-}
-
-.btn-arrow {
-    transition: transform 0.2s ease;
-}
-
-.generate-btn:hover:not(:disabled) .btn-arrow {
-    transform: translateX(4px);
-}
-
-/* ==========================================================================
-   Result Panel
-   ========================================================================== */
-.result-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    border-bottom: 1.5px solid var(--border);
-    padding-bottom: 18px;
-    margin-bottom: 22px;
-}
-
-.action-tools {
+.quick-preset-chips {
     display: flex;
     gap: 8px;
 }
 
-.tool-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 15px;
-    font-size: 0.86rem;
+.preset-btn {
+    font-size: 13px;
     font-weight: 600;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
     background: #ffffff;
-    color: #1e293b;
-    cursor: pointer;
-    transition: all 0.18s ease;
+    color: #4b5563;
+    transition: all 0.15s ease;
 }
 
-.tool-btn:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    transform: translateY(-1px);
+.preset-btn:hover {
+    border-color: var(--agoda-blue);
+    color: var(--agoda-blue);
 }
 
-.tool-btn-primary {
-    background: #0ea5e9;
-    border-color: #0ea5e9;
+.preset-btn.active {
+    background-color: var(--agoda-blue);
     color: #ffffff;
+    border-color: var(--agoda-blue);
 }
 
-.tool-btn-primary:hover {
-    background: #0284c7;
-    border-color: #0284c7;
+/* 4열 상품 그리드 */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 }
 
-/* 비어있는 상태 (Empty State) */
-.state-empty {
-    text-align: center;
-    padding: 85px 20px;
-    color: var(--text-muted);
-}
-
-.empty-graphic {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 20px;
+.agoda-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
-.globe-icon {
-    font-size: 4rem;
-    opacity: 0.8;
+.agoda-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: #cbd5e1;
 }
 
-.airplane-track {
+.card-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background-color: #e5e7eb;
+    overflow: hidden;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.agoda-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+/* 리본 배지 (sample.png 3번째 카드) */
+.ribbon-banner {
     position: absolute;
-    font-size: 2rem;
-    top: 0;
-    right: 0;
-    animation: floatAirplane 3s ease-in-out infinite;
-}
-
-@keyframes floatAirplane {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-10px, -12px) rotate(-10deg); }
-}
-
-.state-empty h3 {
-    font-size: 1.25rem;
+    top: 10px;
+    left: 10px;
+    background-color: var(--agoda-blue);
+    color: #ffffff;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--text-heading);
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* 위시리스트 하트 버튼 */
+.card-wishlist {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    font-size: 16px;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.card-wishlist:hover {
+    color: var(--agoda-red);
+    transform: scale(1.1);
+}
+
+.card-wishlist.active {
+    color: var(--agoda-red);
+    content: "❤️";
+}
+
+.card-body {
+    padding: 12px 14px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.4;
     margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 39px;
 }
 
-.state-empty p {
-    font-size: 0.94rem;
-    line-height: 1.6;
+/* 평점 */
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    margin-bottom: 6px;
 }
 
-/* 로딩 애니메이션 상태 */
+.star-icon {
+    color: var(--agoda-gold);
+}
+
+.rating-score {
+    font-weight: 800;
+    color: #111827;
+}
+
+.review-count {
+    color: #6b7280;
+}
+
+/* 초록색 혜택 태그 (예약 즉시 확정 / 무료 취소) */
+.card-badges-green {
+    font-size: 11px;
+    color: var(--agoda-green);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.badge-dot-sep {
+    color: #cbd5e1;
+}
+
+/* 요금 영역 */
+.card-price-area {
+    margin-top: auto;
+    text-align: right;
+}
+
+.price-original {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.discount-percent {
+    color: var(--agoda-red);
+    font-weight: 700;
+}
+
+.price-current {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--agoda-red);
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.price-current .currency {
+    font-size: 14px;
+}
+
+/* 9. AI 결과 영역 & 로딩 */
+.result-section {
+    width: 100%;
+}
+
+/* 로딩 상태 (레이더 애니메이션) */
 .state-loading {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 40px 24px;
     text-align: center;
-    padding: 85px 20px;
+    box-shadow: var(--shadow-sm);
 }
 
-.loading-animation {
+.radar-box {
     position: relative;
-    width: 76px;
-    height: 76px;
-    margin: 0 auto 24px;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 16px auto;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.pulse-ring {
+.radar-circle {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 3px solid rgba(59, 130, 246, 0.25);
-    border-top-color: #2563eb;
-    animation: spinRing 1.2s linear infinite;
+    border: 2px solid var(--agoda-blue);
+    animation: pulseRing 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
-@keyframes spinRing {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes pulseRing {
+    0% { transform: scale(0.5); opacity: 0.8; }
+    80%, 100% { transform: scale(1.6); opacity: 0; }
 }
 
-.loading-airplane {
-    font-size: 2.2rem;
-    animation: airplaneBob 2s ease-in-out infinite;
+.radar-plane {
+    font-size: 28px;
+    animation: planeHover 1.5s ease-in-out infinite alternate;
 }
 
-@keyframes airplaneBob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-}
-
-.state-loading h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin-bottom: 16px;
+@keyframes planeHover {
+    from { transform: translateY(-4px) rotate(-5deg); }
+    to { transform: translateY(4px) rotate(5deg); }
 }
 
 .progress-bar-wrap {
-    max-width: 320px;
+    width: 280px;
     height: 6px;
-    background: #e2e8f0;
-    border-radius: 9999px;
-    margin: 0 auto 16px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    margin: 16px auto;
     overflow: hidden;
 }
 
 .progress-bar-fill {
-    height: 100%;
     width: 40%;
-    background: var(--primary-gradient);
-    border-radius: 9999px;
-    animation: progressLoop 2s ease-in-out infinite;
+    height: 100%;
+    background-color: var(--agoda-blue);
+    border-radius: 3px;
+    animation: progressMoving 1.5s infinite ease-in-out;
 }
 
-@keyframes progressLoop {
-    0% { transform: translateX(-100%); width: 30%; }
-    50% { width: 60%; }
-    100% { transform: translateX(350%); width: 40%; }
+@keyframes progressMoving {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
 }
 
 .loading-tip-msg {
-    font-size: 0.92rem;
-    color: var(--primary);
-    font-weight: 500;
+    font-size: 13px;
+    color: #6b7280;
 }
 
-/* 에러 배너 */
-.error-banner {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: var(--radius-sm);
-    padding: 16px 20px;
+/* 결과 카드 */
+.plan-card-result {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+}
+
+.result-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
     margin-bottom: 20px;
-    color: #991b1b;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.error-badge {
-    font-size: 0.88rem;
+.badge-tag-blue {
+    background-color: var(--agoda-blue-light);
+    color: var(--agoda-blue);
+    font-size: 11px;
     font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
     margin-bottom: 4px;
 }
 
-.error-banner p {
-    font-size: 0.9rem;
+#resultHeaderTitle {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
 }
 
-/* 결과 메타 칩 */
-.result-meta-chip {
+.result-meta-text {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.result-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action-outline {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 9999px;
-    padding: 5px 14px;
-    font-size: 0.8rem;
+    gap: 6px;
+    font-size: 13px;
     font-weight: 600;
-    color: #475569;
-    margin-bottom: 24px;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    transition: all 0.15s ease;
 }
 
-/* ==========================================================================
-   Markdown Typography & Styling (결과 문서 영역)
-   ========================================================================== */
-.markdown-content {
-    font-size: 0.98rem;
-    color: #1e293b;
-    line-height: 1.8;
-    word-break: keep-all;
+.btn-action-outline:hover {
+    border-color: var(--agoda-blue);
+    color: var(--agoda-blue);
 }
 
-.markdown-content h1 {
-    font-size: 1.65rem;
-    font-weight: 800;
-    color: #0f172a;
-    padding-bottom: 14px;
-    border-bottom: 2px solid #e2e8f0;
-    margin-bottom: 24px;
-    letter-spacing: -0.4px;
-}
-
-.markdown-content h2,
-.markdown-content h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-top: 32px;
-    margin-bottom: 14px;
-    display: flex;
+.btn-action-primary {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
-    background: #f8fafc;
-    border-left: 4px solid var(--primary);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: var(--agoda-blue);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    transition: background 0.15s ease;
 }
 
-.markdown-content h4 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #334155;
-    margin-top: 20px;
-    margin-bottom: 8px;
+.btn-action-primary:hover {
+    background-color: var(--agoda-blue-hover);
 }
 
-.markdown-content p {
-    margin-bottom: 14px;
+/* 마크다운 렌더링 스타일링 (아고다 모던 문서 스타일) */
+.markdown-article {
+    color: #1f2937;
+    font-size: 15px;
+    line-height: 1.7;
 }
 
-.markdown-content ul,
-.markdown-content ol {
-    margin-bottom: 18px;
-    padding-left: 22px;
+.markdown-article h1,
+.markdown-article h2,
+.markdown-article h3,
+.markdown-article h4 {
+    color: #111827;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: 800;
 }
 
-.markdown-content li {
-    margin-bottom: 8px;
+.markdown-article h1 { font-size: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
+.markdown-article h2 { font-size: 18px; color: var(--agoda-blue); }
+.markdown-article h3 { font-size: 16px; background-color: #f8fafc; padding: 6px 12px; border-left: 4px solid var(--agoda-blue); border-radius: 4px; }
+
+.markdown-article p {
+    margin-bottom: 12px;
 }
 
-.markdown-content strong {
-    color: #0f172a;
-    font-weight: 700;
+.markdown-article ul,
+.markdown-article ol {
+    margin-left: 20px;
+    margin-bottom: 16px;
 }
 
-/* 마크다운 표 스타일 (예산표 등) */
-.markdown-content table {
+.markdown-article li {
+    margin-bottom: 6px;
+}
+
+.markdown-article table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin: 24px 0;
-    font-size: 0.92rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+    border-radius: 8px;
     overflow: hidden;
 }
 
-.markdown-content th,
-.markdown-content td {
-    padding: 12px 16px;
+.markdown-article th,
+.markdown-article td {
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
     text-align: left;
-    border-bottom: 1px solid var(--border);
 }
 
-.markdown-content th {
-    background: #f1f5f9;
+.markdown-article th {
+    background-color: #f1f5f9;
     font-weight: 700;
-    color: #1e293b;
-    border-bottom: 2px solid #cbd5e1;
+    color: #374151;
 }
 
-.markdown-content tr:last-child td {
-    border-bottom: none;
+.markdown-article tr:nth-child(even) {
+    background-color: #f9fafb;
 }
 
-.markdown-content tr:nth-child(even) td {
-    background: #fafafa;
+.markdown-article blockquote {
+    border-left: 4px solid var(--agoda-blue);
+    background-color: var(--agoda-blue-light);
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 14px 0;
+    font-size: 14px;
+    color: #1e3a8a;
 }
 
-/* 블록 인용구 */
-.markdown-content blockquote {
-    border-left: 4px solid #38bdf8;
-    background: #f0f9ff;
-    padding: 12px 18px;
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    color: #0369a1;
-    margin: 18px 0;
-    font-size: 0.94rem;
+/* 10. 우측 하단 아고다 스타일 플로팅 장바구니/플래너 버튼 (FAB) */
+.floating-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 99;
 }
 
-.markdown-content hr {
-    border: none;
-    height: 1px;
-    background: var(--border);
-    margin: 32px 0;
+.fab-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--agoda-blue);
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(42, 104, 232, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.2s ease, background 0.15s ease;
 }
 
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-.app-footer {
+.fab-circle:hover {
+    transform: scale(1.08);
+    background-color: var(--agoda-blue-hover);
+}
+
+.fab-icon {
+    font-size: 24px;
+}
+
+.fab-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: var(--agoda-red);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+}
+
+/* 11. 푸터 */
+.agoda-footer {
+    background-color: #ffffff;
+    border-top: 1px solid var(--border-color);
+    padding: 30px 24px;
     text-align: center;
-    margin-top: 48px;
-    padding: 24px 0;
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    border-top: 1px solid rgba(226, 232, 240, 0.7);
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.footer-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.copyright {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+/* 12. 반응형 미디어 쿼리 */
+@media (max-width: 1200px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .nav-links {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-row-2 {
+        grid-template-columns: 1fr;
+    }
 }
