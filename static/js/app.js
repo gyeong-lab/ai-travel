@@ -1307,6 +1307,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let mapPolylineLayerGroup = null;
     let currentMapDayFilter = "all";
 
+    const DAY_COLOR_MAP = {
+        1: "#2563eb",
+        2: "#059669",
+        3: "#7c3aed",
+        4: "#ea580c"
+    };
+
     function extractPlacesFromPlan(markdown, destination) {
         if (!markdown) return [];
         const places = [];
@@ -1457,20 +1464,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const filtered = filterDay === "all" ? places : places.filter(p => String(p.day) === String(filterDay));
         if (filtered.length === 0) return;
 
-        const dayColorMap = {
-            1: "#2563eb",
-            2: "#059669",
-            3: "#7c3aed",
-            4: "#ea580c"
-        };
-
         const bounds = [];
         const isDomestic = !["오사카", "도쿄", "후쿠오카", "방콕", "다낭", "타이베이", "파리", "뉴욕", "바르셀로나"].some(c => destName.includes(c));
 
         filtered.forEach((p) => {
             bounds.push([p.lat, p.lng]);
             const dayColorClass = `pin-day-${Math.min(4, p.day)}`;
-            const pinColor = dayColorMap[p.day] || "#6366f1";
+            const pinColor = DAY_COLOR_MAP[p.day] || "#6366f1";
 
             const customIcon = L.divIcon({
                 className: "map-pin-custom",
@@ -1516,7 +1516,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         Object.entries(groupedByDay).forEach(([day, latlngs]) => {
             if (latlngs.length >= 2) {
-                const color = dayColorMap[day] || "#6366f1";
+                const color = DAY_COLOR_MAP[day] || "#6366f1";
                 const polyline = L.polyline(latlngs, {
                     color: color,
                     weight: 4,
@@ -1595,7 +1595,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (mapDayFilters) {
             let filterHtml = `<button type="button" class="btn-map-filter ${currentMapDayFilter === 'all' ? 'active' : ''}" data-day="all">📍 전체 동선</button>`;
             days.forEach(d => {
-                const color = dayColorMap[d] || "#6366f1";
+                const color = DAY_COLOR_MAP[d] || "#6366f1";
                 const isAct = String(currentMapDayFilter) === String(d);
                 filterHtml += `
                     <button type="button" class="btn-map-filter filter-day-${Math.min(4, d)} ${isAct ? 'active' : ''}" data-day="${d}">
@@ -1620,16 +1620,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const summaryEl = document.getElementById("mapPlacesSummary");
         if (summaryEl) {
-            const dayColorMap = {
-                1: "#2563eb",
-                2: "#059669",
-                3: "#7c3aed",
-                4: "#ea580c"
-            };
-
             let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 카카오맵 바로가기:</span>`;
             places.forEach((p, idx) => {
-                const color = dayColorMap[p.day] || "#6366f1";
+                const color = DAY_COLOR_MAP[p.day] || "#6366f1";
                 const dayClass = `chip-day-${Math.min(4, p.day)}`;
                 chipsHtml += `
                     <button type="button" class="map-place-chip ${dayClass}" data-idx="${idx}">
