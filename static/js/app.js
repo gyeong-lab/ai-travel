@@ -52,9 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPlanMarkdown = "";
     let loadingInterval = null;
 
-    // 프리셋 데이터
+    // 10대 인기 여행지 프리셋 데이터
     const presets = {
         jeju: {
+            keyword: "제주",
+            shortName: "제주도",
             destination: "제주도 서귀포 & 애월",
             duration: "2박 3일",
             budget: "2인 총 120만원",
@@ -65,34 +67,112 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: "B"
         },
         osaka: {
+            keyword: "오사카",
+            shortName: "오사카",
             destination: "일본 오사카 & 교토",
             duration: "3박 4일",
             budget: "1인당 100만원",
-            interests: "도톤보리 미식 투어, 교토 청수사/아라시야마, 우메다 스카이빌딩, 쇼핑",
+            interests: "도톤보리 미식 투어, USJ 닌텐도 월드, 교토 청수사/아라시야마, 쇼핑",
             companions: "친구와 둘이서",
             transportation: "대중교통 (지하철, 라피트)",
             accommodation: "난바역 근처 가성비 비즈니스 호텔",
             mode: "A"
         },
+        tokyo: {
+            keyword: "도쿄",
+            shortName: "도쿄",
+            destination: "일본 도쿄 (시부야 & 긴자)",
+            duration: "3박 4일",
+            budget: "1인당 120만원",
+            interests: "시부야 스카이 전망대, 긴자 쇼핑, 신주쿠 야경, 감성 카페 투어",
+            companions: "친구와 둘이서",
+            transportation: "도쿄 메트로 72시간 패스",
+            accommodation: "시부야/신주쿠 역세권 모던 호텔",
+            mode: "A"
+        },
+        fukuoka: {
+            keyword: "후쿠오카",
+            shortName: "후쿠오카",
+            destination: "일본 후쿠오카 & 유후인",
+            duration: "2박 3일",
+            budget: "1인당 85만원",
+            interests: "하카타 돈코츠 라멘, 유후인 료칸 온천욕, 긴린코 호수, 나카스 포장마차",
+            companions: "부모님과 함께",
+            transportation: "유후인노모리 관광열차 & 버스",
+            accommodation: "유후인 전통 온천 료칸 (가이세키 석식)",
+            mode: "B"
+        },
+        bangkok: {
+            keyword: "방콕",
+            shortName: "방콕",
+            destination: "태국 방콕 & 파타야",
+            duration: "4박 5일",
+            budget: "1인당 90만원",
+            interests: "쩟페어 야시장 먹거리, 차오프라야 크루즈 디너, 왓아룬 사원 뷰 루프탑, 1일 1스파",
+            companions: "친구 2명",
+            transportation: "대중교통 (BTS/MRT) 및 그랩(Grab)",
+            accommodation: "차오프라야 강변 가성비 5성급 호텔",
+            mode: "A"
+        },
+        danang: {
+            keyword: "다낭",
+            shortName: "다낭",
+            destination: "베트남 다낭 & 호이안",
+            duration: "3박 5일",
+            budget: "1인당 80만원",
+            interests: "미케비치 힐링, 바나힐 골든브릿지, 호이안 올드타운 야경 & 소원배, 마사지",
+            companions: "가족 (아이 동반)",
+            transportation: "전용 렌터카 & 그랩(Grab)",
+            accommodation: "미케비치 오션뷰 풀빌라 리조트",
+            mode: "B"
+        },
+        taipei: {
+            keyword: "타이베이",
+            shortName: "타이베이",
+            destination: "대만 타이베이",
+            duration: "3박 4일",
+            budget: "1인당 75만원",
+            interests: "예스진지 투어, 딘타이펑 딤섬 & 우육면, 지우펀 홍등 거리, 스린 야시장",
+            companions: "친구와 함께",
+            transportation: "타이베이 MRT & 예스진지 일일 투어버스",
+            accommodation: "시먼딩역 중심 3성급 호텔",
+            mode: "A"
+        },
         paris: {
+            keyword: "파리",
+            shortName: "파리",
             destination: "프랑스 파리",
             duration: "5박 6일",
             budget: "1인당 300만원",
-            interests: "루브르 & 오르세 미술관, 에펠탑 야경, 세느강 바토무슈, 몽마르트르",
+            interests: "루브르 & 오르세 미술관, 에펠탑 야경, 세느강 바토무슈, 몽마르트르 골목",
             companions: "혼자 떠나는 여행",
             transportation: "대중교통 (파리 메트로) 및 도보",
             accommodation: "시내 중심 3성급 부티크 호텔",
             mode: "B"
         },
-        bangkok: {
-            destination: "태국 방콕",
-            duration: "4박 5일",
-            budget: "1인당 90만원",
-            interests: "쩟페어 야시장 먹거리, 차오프라야 크루즈 디너, 왓아룬 사원 뷰 루프탑",
-            companions: "친구 2명",
-            transportation: "대중교통 (BTS/MRT) 및 그랩(Grab)",
-            accommodation: "차오프라야 강변 가성비 4성급 호텔",
+        newyork: {
+            keyword: "뉴욕",
+            shortName: "뉴욕",
+            destination: "미국 뉴욕 맨해튼",
+            duration: "6박 8일",
+            budget: "1인당 400만원",
+            interests: "타임스퀘어 브로드웨이 뮤지컬, 센트럴파크, 탑오브더락 전망대, 소호 쇼핑",
+            companions: "연인과 함께",
+            transportation: "뉴욕 지하철 (MTA)",
+            accommodation: "맨해튼 미드타운 4성급 호텔",
             mode: "A"
+        },
+        barcelona: {
+            keyword: "바르셀로나",
+            shortName: "바르셀로나",
+            destination: "스페인 바르셀로나",
+            duration: "5박 7일",
+            budget: "1인당 280만원",
+            interests: "사그라다 파밀리아 대성당, 구엘 공원 가우디 투어, 보케리아 시장 타파스, 바르셀로네타 해변",
+            companions: "친구와 둘이서",
+            transportation: "바르셀로나 메트로 및 도보",
+            accommodation: "람블라스 거리 근처 감성 호텔",
+            mode: "B"
         }
     };
 
@@ -280,14 +360,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 accommodationInput.value = data.accommodation;
                 setMode(data.mode);
 
-                topSearchInput.value = data.destination.split(" ")[0];
+                topSearchInput.value = data.shortName;
                 if (chipDestination) {
-                    chipDestination.querySelector(".chip-text").textContent = data.destination.split(" ")[0];
+                    chipDestination.querySelector(".chip-text").textContent = data.shortName;
                     chipDestination.style.display = "inline-flex";
                 }
 
-                // 카드 필터링
-                const cityKey = data.destination.split(" ")[0];
+                // 카드 필터링 (키워드 매칭)
+                const cityKey = data.keyword;
                 productCards.forEach((card) => {
                     const cardDest = card.dataset.dest || "";
                     if (cardDest.includes(cityKey)) {

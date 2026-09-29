@@ -732,7 +732,9 @@ button {
 
 .quick-preset-chips {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    margin-top: 4px;
 }
 
 .preset-btn {
