@@ -29,13 +29,11 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "ai-travel-secret-key-7777-v1")
 app.permanent_session_lifetime = timedelta(days=30)
 
-# 공유 계획 인메모리 및 파일 캐시 스토리지
+# 공유 계획 인메모리 및 파일 캐시 스토리지 (/tmp는 Vercel serverless에서 쓰기 가능)
 SHARED_PLANS_CACHE = {}
-SHARED_PLANS_DIR = os.path.join(ROOT_DIR, "data", "shared_plans")
-os.makedirs(SHARED_PLANS_DIR, exist_ok=True)
-TMP_SHARED_PLANS_DIR = "/tmp/shared_plans"
+SHARED_PLANS_DIR = "/tmp/shared_plans"
 try:
-    os.makedirs(TMP_SHARED_PLANS_DIR, exist_ok=True)
+    os.makedirs(SHARED_PLANS_DIR, exist_ok=True)
 except Exception:
     pass
 
@@ -523,6 +521,7 @@ def verify_password():
         is_shared = bool(request.args.get("share") or request.args.get("d"))
         return render_template("login.html", error="비밀번호가 올바르지 않습니다. 다시 입력해주세요.", is_shared=is_shared)
 
+@app.route("/share-plan", methods=["POST"])
 @app.route("/api/share", methods=["POST"])
 def create_share_link():
     """현재 계획을 공유 가능한 고유 링크와 압축 토큰으로 생성합니다."""
@@ -538,13 +537,12 @@ def create_share_link():
     SHARED_PLANS_CACHE[share_id] = plan
 
     # 2. 로컬 /tmp 파일 저장
-    for s_dir in [SHARED_PLANS_DIR, TMP_SHARED_PLANS_DIR]:
-        try:
-            p_path = os.path.join(s_dir, f"{share_id}.json")
-            with open(p_path, "w", encoding="utf-8") as f:
-                json.dump(plan, f, ensure_ascii=False)
-        except Exception:
-            pass
+    try:
+        p_path = os.path.join(SHARED_PLANS_DIR, f"{share_id}.json")
+        with open(p_path, "w", encoding="utf-8") as f:
+            json.dump(plan, f, ensure_ascii=False)
+    except Exception as e:
+        logger.warning(f"[공유 파일 저장 실패] {e}")
 
     # 프로토콜 및 호스트 보정 (Vercel 배포 시 https 보장)
     host_url = request.host_url.rstrip("/")
@@ -560,6 +558,7 @@ def create_share_link():
         "share_url": share_url
     }), 200
 
+@app.route("/share-plan/<share_id>", methods=["GET"])
 @app.route("/api/share/<share_id>", methods=["GET"])
 def get_shared_plan(share_id):
     """공유 ID 또는 압축 토큰을 통해 원본 여행 계획을 반환합니다."""
@@ -568,16 +567,15 @@ def get_shared_plan(share_id):
         return jsonify({"success": True, "plan": SHARED_PLANS_CACHE[share_id]}), 200
 
     # 2. 파일 스토리지 확인
-    for s_dir in [SHARED_PLANS_DIR, TMP_SHARED_PLANS_DIR]:
-        p_path = os.path.join(s_dir, f"{share_id}.json")
-        if os.path.exists(p_path):
-            try:
-                with open(p_path, "r", encoding="utf-8") as f:
-                    plan = json.load(f)
-                    SHARED_PLANS_CACHE[share_id] = plan
-                    return jsonify({"success": True, "plan": plan}), 200
-            except Exception:
-                pass
+    p_path = os.path.join(SHARED_PLANS_DIR, f"{share_id}.json")
+    if os.path.exists(p_path):
+        try:
+            with open(p_path, "r", encoding="utf-8") as f:
+                plan = json.load(f)
+                SHARED_PLANS_CACHE[share_id] = plan
+                return jsonify({"success": True, "plan": plan}), 200
+        except Exception:
+            pass
 
     # 3. 쿼리 파라미터 d (압축 토큰)로 무손실 복원
     token = request.args.get("d") or ""
@@ -589,6 +587,7 @@ def get_shared_plan(share_id):
 
     return jsonify({"success": False, "error": "공유된 여행 계획을 찾을 수 없습니다."}), 404
 
+@app.route("/share-plan-decode", methods=["GET", "POST"])
 @app.route("/api/share/decode", methods=["GET", "POST"])
 def decode_shared_token():
     """압축 토큰을 디코딩하여 원본 계획으로 복원합니다."""
