@@ -2954,20 +2954,33 @@ button {
 
 @media (max-width: 992px) {
     .main-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 20px !important;
+    }
+    .main-content {
+        display: contents !important;
+    }
+    .products-section {
+        order: 1 !important;
+        width: 100% !important;
+    }
+    .sidebar-filters {
+        order: 2 !important;
+        width: 100% !important;
+    }
+    .result-section,
+    .plan-card-result,
+    #resultWrapper {
+        order: 3 !important;
+        width: 100% !important;
     }
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     .nav-links {
         display: none;
-    }
-    .sidebar-filters {
-        order: 1;
-    }
-    .content-column {
-        order: 2;
     }
 }
 
@@ -3120,6 +3133,8 @@ button {
 
     /* 메인 레이아웃 및 폼 요소 */
     .main-container {
+        display: flex !important;
+        flex-direction: column !important;
         width: 100% !important;
         max-width: 100% !important;
         min-width: 0 !important;
@@ -3128,12 +3143,33 @@ button {
         padding: 0 10px !important;
         gap: 14px !important;
     }
-    .main-content,
+    .main-content {
+        display: contents !important;
+    }
     .products-section {
+        order: 1 !important;
         width: 100% !important;
         max-width: 100% !important;
         min-width: 0 !important;
         box-sizing: border-box !important;
+    }
+    .sidebar-filters {
+        order: 2 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .result-section,
+    .plan-card-result,
+    #resultWrapper {
+        order: 3 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 12px 8px !important;
+        scroll-margin-top: 65px !important;
     }
     .section-header {
         display: flex !important;
@@ -3186,37 +3222,234 @@ button {
         padding: 4px 8px;
     }
 
-    /* 플랜 비교 탭 및 대시보드 */
+    /* 플랜 비교 탭 및 대시보드 모바일 최적화 */
     .plan-tabs-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 14px !important;
+        border-bottom: 1px solid #e2e8f0 !important;
     }
-    .plan-tabs-list {
-        overflow-x: auto;
-        width: 100%;
-        padding-bottom: 4px;
-        -webkit-overflow-scrolling: touch;
+    .plan-tabs-scroll {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 2px 2px 6px 2px !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
     }
-    .btn-compare-mode {
-        width: 100%;
-        justify-content: center;
+    .plan-tabs-scroll::-webkit-scrollbar {
+        display: none !important;
+    }
+    .plan-tab-btn {
+        flex: 0 0 auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 6px 12px !important;
+        font-size: 11.5px !important;
+        border-radius: 9999px !important;
+        white-space: nowrap !important;
+    }
+    .plan-tab-budget {
+        font-size: 10.5px !important;
+        padding: 2px 6px !important;
+        border-radius: 9999px !important;
+    }
+    .btn-compare-pill {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        font-size: 12px !important;
+        padding: 8px 14px !important;
+        border-radius: 9999px !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+    }
+    .compare-dash-header {
+        padding: 12px 14px !important;
+        margin-bottom: 14px !important;
+        border-radius: 12px !important;
+        gap: 10px !important;
+    }
+    .compare-dash-title {
+        font-size: 16px !important;
+    }
+    .compare-dash-subtitle {
+        font-size: 12px !important;
     }
     .compare-selectors {
-        flex-direction: column;
-        width: 100%;
-        gap: 8px;
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
     }
-    .compare-select-wrap {
-        width: 100%;
+    .selector-group {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        gap: 6px !important;
+    }
+    .selector-group label {
+        flex-shrink: 0 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
     }
     .compare-select {
-        width: 100%;
+        flex: 1 1 auto !important;
+        width: 100% !important;
+        max-width: none !important;
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+    }
+    .vs-badge {
+        align-self: center !important;
+        font-size: 10px !important;
+        padding: 1px 6px !important;
     }
     .compare-summary-banner {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+    .compare-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
+    }
+    .compare-card {
+        padding: 12px !important;
+        gap: 10px !important;
+        border-radius: 12px !important;
+    }
+    .compare-card-title {
+        font-size: 14.5px !important;
+    }
+    .compare-section {
+        padding: 10px 12px !important;
+    }
+
+    /* 상세 비교표 카드 모바일 가독성 최적화 */
+    .compare-table-card {
+        padding: 8px 6px !important;
+        margin-bottom: 14px !important;
+        border-radius: 10px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .compare-table-title {
+        font-size: 13.5px !important;
+        font-weight: 800 !important;
+        margin-bottom: 8px !important;
+        padding: 0 2px !important;
+    }
+    .compare-table-responsive {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        background-color: #ffffff !important;
+        box-sizing: border-box !important;
+    }
+    .compare-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 10px !important;
+    }
+    .compare-table th,
+    .compare-table td {
+        padding: 6px 4px !important;
+        border: 1px solid #e2e8f0 !important;
+        vertical-align: top !important;
+        line-height: 1.3 !important;
+        box-sizing: border-box !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+    }
+    .compare-table th {
+        font-size: 10.5px !important;
+        font-weight: 800 !important;
+        background-color: #f1f5f9 !important;
+        text-align: center !important;
+    }
+    .compare-table th.th-item,
+    .compare-table td.td-item {
+        width: 25% !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        background-color: #f8fafc !important;
+        color: #334155 !important;
+        white-space: normal !important;
+        word-break: keep-all !important;
+        text-align: left !important;
+    }
+    .compare-table th.th-plan-a,
+    .compare-table td:nth-child(2) {
+        width: 37.5% !important;
+        word-break: break-word !important;
+        font-size: 10px !important;
+    }
+    .compare-table th.th-plan-b,
+    .compare-table td:nth-child(3) {
+        width: 37.5% !important;
+        word-break: break-word !important;
+        font-size: 10px !important;
+    }
+    .compare-table td strong {
+        font-size: 11px !important;
+        display: block !important;
+    }
+    .compare-table td small {
+        font-size: 9px !important;
+        line-height: 1.2 !important;
+        color: #64748b !important;
+        display: block !important;
+    }
+    .compare-table td ul {
+        margin: 0 !important;
+        padding-left: 10px !important;
+    }
+    .compare-table td li {
+        font-size: 9.5px !important;
+        line-height: 1.25 !important;
+        margin-bottom: 2px !important;
+        word-break: break-word !important;
+    }
+    .compare-table .badge-budget-over,
+    .compare-table .badge-budget-safe {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+        display: inline-block !important;
+        border-radius: 4px !important;
+        line-height: 1.15 !important;
+        margin-top: 2px !important;
+    }
+    .compare-footer-actions {
+        margin-top: 12px !important;
+    }
+    .btn-action-outline {
+        width: 100% !important;
+        text-align: center !important;
+        font-size: 12px !important;
+        padding: 8px 12px !important;
     }
 
     /* 지도 영역 모바일 핏 */
