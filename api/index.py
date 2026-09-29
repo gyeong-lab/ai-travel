@@ -19,31 +19,25 @@ class VercelWSGIWrapper:
 
     def __call__(self, environ, start_response):
         query_string = environ.get("QUERY_STRING", "")
-        if "test-env" in query_string or "test-env" in environ.get("PATH_INFO", ""):
-            import json
-            data = {k: str(v) for k, v in environ.items() if not k.startswith("wsgi.input")}
-            body = json.dumps(data, indent=2).encode("utf-8")
-            start_response("200 OK", [("Content-Type", "application/json"), ("Content-Length", str(len(body)))])
-            return [body]
         extracted_path = None
-
 
         # 1. vercel.json rewrite에서 전달된 __vercel_path__ 추출
         if "__vercel_path__=" in query_string:
             params = parse_qs(query_string, keep_blank_values=True)
             if "__vercel_path__" in params and params["__vercel_path__"]:
-                extracted_path = params["__vercel_path__"][0]
+                raw_p = params["__vercel_path__"][0]
+                if raw_p and not raw_p.startswith(":"):
+                    extracted_path = raw_p
                 del params["__vercel_path__"]
                 environ["QUERY_STRING"] = urlencode(params, doseq=True)
 
-        # 2. Vercel 원본 요청 헤더 확인 (x-vercel-original-path, REQUEST_URI 등 실제 사용자 요청 경로 우선)
+        # 2. Vercel 원본 요청 헤더 확인
         header_path = (
             environ.get("HTTP_X_VERCEL_ORIGINAL_PATH")
             or environ.get("REQUEST_URI")
             or environ.get("RAW_URI")
             or environ.get("HTTP_X_FORWARDED_URI")
             or environ.get("HTTP_X_ORIGINAL_URI")
-            or environ.get("HTTP_X_MATCHED_PATH")
         )
 
         target_path = extracted_path or header_path or environ.get("PATH_INFO", "")
@@ -55,6 +49,7 @@ class VercelWSGIWrapper:
         # api/index 내부 호출이거나 빈 경로일 경우 메인 루트('/')로 설정
         if not target_path or target_path in ("/api/index", "/api/index.py", "/api", "/api/", "/index.py", "/index"):
             target_path = "/"
+
 
         # 연속 슬래시 정규화 및 시작 슬래시 보장
         while target_path.startswith("//"):

@@ -469,12 +469,25 @@ def index():
         if "password" in data or "password" in request.form:
             return verify_password()
 
+        # 공유 링크 생성 요청인 경우 즉시 create_share_link로 분기
+        if "plan" in data and isinstance(data["plan"], dict):
+            return create_share_link()
+
+        # 압축 토큰 디코드 요청인 경우 즉시 decode_shared_token으로 분기
+        if "token" in data:
+            return decode_shared_token()
+
         # AI 일정 생성 요청인 경우 인증 확인
         if not is_authenticated():
             return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다."}), 401
         return generate_plan()
 
+    # GET 요청: JSON 요청이면서 share 파라미터가 있는 경우 공유 계획 반환
+    if (request.args.get("action") == "share" or request.headers.get("Accept", "").startswith("application/json")) and request.args.get("share"):
+        return get_shared_plan(request.args.get("share"))
+
     # GET 요청: 미인증 시 로그인 화면 (공유 링크 여부 파악)
+
     if not is_authenticated():
         is_shared = bool(request.args.get("share") or request.args.get("d"))
         return render_template("login.html", is_shared=is_shared)
@@ -558,10 +571,14 @@ def create_share_link():
         "share_url": share_url
     }), 200
 
+@app.route("/share-plan", methods=["GET"])
+@app.route("/api/share", methods=["GET"])
 @app.route("/share-plan/<share_id>", methods=["GET"])
 @app.route("/api/share/<share_id>", methods=["GET"])
-def get_shared_plan(share_id):
+def get_shared_plan(share_id=None):
     """공유 ID 또는 압축 토큰을 통해 원본 여행 계획을 반환합니다."""
+    share_id = share_id or request.args.get("share") or request.args.get("share_id") or ""
+
     # 1. 인메모리 캐시 확인
     if share_id in SHARED_PLANS_CACHE:
         return jsonify({"success": True, "plan": SHARED_PLANS_CACHE[share_id]}), 200

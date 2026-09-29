@@ -3420,11 +3420,18 @@ document.addEventListener("DOMContentLoaded", () => {
     async function createShareUrl(plan) {
         if (!plan) return window.location.href;
         try {
-            const res = await fetch("/api/share", {
+            let res = await fetch("/api/share", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ plan })
             });
+            if (!res.ok) {
+                res = await fetch("/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ plan })
+                });
+            }
             if (res.ok) {
                 const data = await res.json();
                 if (data.success && data.share_url) {
@@ -3434,6 +3441,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (e) {
             console.warn("서버 공유 링크 생성 실패:", e);
         }
+
 
         const host = window.location.origin;
         return `${host}/?share=${encodeURIComponent(plan.id || "plan")}`;
@@ -3622,7 +3630,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let sharedPlan = null;
             if (shareId) {
                 try {
-                    const res = await fetch(`/api/share/${encodeURIComponent(shareId)}${token ? `?d=${encodeURIComponent(token)}` : ''}`);
+                    let res = await fetch(`/api/share/${encodeURIComponent(shareId)}${token ? `?d=${encodeURIComponent(token)}` : ''}`);
+                    if (!res.ok) {
+                        res = await fetch(`/?action=share&share=${encodeURIComponent(shareId)}${token ? `&d=${encodeURIComponent(token)}` : ''}`, {
+                            headers: { "Accept": "application/json" }
+                        });
+                    }
                     if (res.ok) {
                         const data = await res.json();
                         if (data.success && data.plan) {
@@ -3636,7 +3649,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!sharedPlan && token) {
                 try {
-                    const res2 = await fetch(`/api/share/decode?d=${encodeURIComponent(token)}`);
+                    let res2 = await fetch(`/api/share/decode?d=${encodeURIComponent(token)}`);
+                    if (!res2.ok) {
+                        res2 = await fetch("/", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ token })
+                        });
+                    }
                     if (res2.ok) {
                         const data2 = await res2.json();
                         if (data2.success && data2.plan) {
