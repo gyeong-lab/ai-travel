@@ -1756,17 +1756,66 @@
 
             <!-- 2. AI 여행 계획표 결과 영역 -->
             <section class="result-section" id="resultSection">
-                <!-- 로딩 상태 -->
+                <!-- 로딩 상태 (감성 맞춤 여행 플래너) -->
                 <div class="state-loading" id="loadingState" style="display: none;">
-                    <div class="radar-box">
-                        <div class="radar-circle"></div>
-                        <div class="radar-plane">✈️</div>
+                    <div class="loading-card-inner">
+                        <!-- 상단 일러스트 & 감성 궤도 애니메이션 -->
+                        <div class="loading-hero-scene">
+                            <div class="loading-orbit-rings">
+                                <div class="orbit-ring-outer"></div>
+                                <div class="orbit-ring-inner"></div>
+                            </div>
+                            <div class="radar-box loading-radar-box">
+                                <div class="radar-circle radar-pulse-1"></div>
+                                <div class="radar-circle radar-pulse-2"></div>
+                                <div class="radar-plane-icon" id="loadingMainEmoji">✈️</div>
+                            </div>
+                            <!-- 주변 둥둥 떠다니는 감성 버블 -->
+                            <div class="bubble-tag bubble-food">🍽️ 찐맛집 탐색</div>
+                            <div class="bubble-tag bubble-weather">🌤️ 날씨 코디</div>
+                            <div class="bubble-tag bubble-hotel">🏨 감성 숙소</div>
+                            <div class="bubble-tag bubble-fest">🎉 시즌 축제</div>
+                        </div>
+
+                        <!-- 실시간 진행 뱃지 -->
+                        <div class="loading-badge-pill" id="loadingBadgePill">
+                            <span class="loading-pulse-dot"></span>
+                            <span id="loadingStepBadge">AI 여행 플래너가 맞춤 여행을 준비 중이에요</span>
+                        </div>
+
+                        <!-- 친근한 타이틀 -->
+                        <h3 class="loading-title" id="loadingTitle">여행자님만을 위한 특별한 여행 일정을 그리고 있어요 ✨</h3>
+                        
+                        <!-- 슬릭한 그라데이션 프로그레스 바 -->
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill"></div>
+                        </div>
+
+                        <!-- 친근하고 따뜻한 회전 멘트 -->
+                        <div class="loading-tip-container">
+                            <p class="loading-tip-msg" id="loadingTip">여행 기간의 기온과 일교차를 체크해서 딱 맞는 옷차림을 준비 중이에요 🧣</p>
+                        </div>
+
+                        <!-- 실시간 진행 단계 칩 4종 -->
+                        <div class="loading-steps-row">
+                            <span class="loading-step-chip active" id="stepChip1">
+                                <span class="step-status-icon">🌤️</span>
+                                <span class="step-text">날씨 &amp; 축제</span>
+                            </span>
+                            <span class="loading-step-chip" id="stepChip2">
+                                <span class="step-status-icon">🍽️</span>
+                                <span class="step-text">로컬 맛집 탐색</span>
+                            </span>
+                            <span class="loading-step-chip" id="stepChip3">
+                                <span class="step-status-icon">🚗</span>
+                                <span class="step-text">최적 동선 설계</span>
+                            </span>
+                            <span class="loading-step-chip" id="stepChip4">
+                                <span class="step-status-icon">🏨</span>
+                                <span class="step-text">숙소 &amp; 할인 꿀팁</span>
+                            </span>
+                        </div>
                     </div>
-                    <h3>Gemini AI가 최적의 맞춤 여행 일정을 설계 중입니다</h3>
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill"></div>
-                    </div>
-                    <p class="loading-tip-msg" id="loadingTip">선택하신 여행지의 최적 이동 동선과 추천 스팟을 분석하고 있습니다...</p>
                 </div>
 
                 <!-- 에러 알림 -->

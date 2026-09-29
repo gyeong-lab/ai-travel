@@ -250,12 +250,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const loadingTips = [
-        "선택하신 여행지의 최적 이동 동선과 교통편 정보를 분석하고 있습니다...",
-        "할인 가능한 방법(얼리버드, 투어패스, 모바일 쿠폰)을 탐색 중입니다...",
-        "예약 필수 명소 및 캐치테이블·테이블링 예약 꿀팁을 정리하고 있습니다...",
-        "코스별 통합 예상 경비와 세부 일정표를 계산하고 있습니다..."
+    const friendlyLoadingSteps = [
+        {
+            emoji: "🌤️",
+            badge: "여행 기후 & 날씨 분석 중",
+            msg: "여행 기간의 기온과 일교차를 체크해서 딱 어울리는 옷차림과 준비물을 챙겨드릴게요 🧣",
+            step: 1
+        },
+        {
+            emoji: "🎉",
+            badge: "시즌 대표 축제 & 이벤트 탐색 중",
+            msg: "여행자님이 가시는 날짜에만 열리는 핫한 지역 축제와 시즌 명소를 찾고 있어요 🎊",
+            step: 1
+        },
+        {
+            emoji: "🍽️",
+            badge: "AI 여행사가 맞춤 맛집 고민 중",
+            msg: "AI 여행사가 여행자님의 입맛과 취향에 꼭 맞는 찐 로컬 맛집과 디저트를 고민 중입니다 😋",
+            step: 2
+        },
+        {
+            emoji: "☕",
+            badge: "감성 디저트 & 시그니처 카페 매칭 중",
+            msg: "일정 중간에 달콤하게 쉬어갈 현지 인기 감성 카페와 특산 디저트를 고르고 있어요 🍰",
+            step: 2
+        },
+        {
+            emoji: "🚗",
+            badge: "스마트 최적 동선 설계 중",
+            msg: "출발부터 도착까지 길 위에서 버리는 시간 없도록 10~15분 거리 밀착 동선을 다듬고 있어요 🗺️",
+            step: 3
+        },
+        {
+            emoji: "🏨",
+            badge: "평점 4.6+ 검증 숙소 매칭 중",
+            msg: "동선과 완벽히 이어지는 구글 지도 평점 4.6점 이상의 감성 숙소 3곳을 엄선하고 있어요 🛌",
+            step: 4
+        },
+        {
+            emoji: "🏷️",
+            badge: "사전 예매 할인 & 예약 팁 정리 중",
+            msg: "캐치테이블·테이블링 예약 팁과 현장 대기 없는 모바일 할인 패스를 꼼꼼히 챙겨드려요 🎫",
+            step: 4
+        },
+        {
+            emoji: "✨",
+            badge: "맞춤 여행 계획서 완성 중",
+            msg: "거의 다 준비되었어요! 여행자님만의 완벽하고 설레는 맞춤 일정이 곧 완성됩니다 ✈️",
+            step: 4
+        }
     ];
+
+    const loadingTips = friendlyLoadingSteps.map(s => s.msg);
 
     /**
      * 1. 여행 기조 & 스타일 초이스 및 직접 입력 처리
@@ -1412,17 +1458,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    function updateLoadingStep(stepObj) {
+        if (!stepObj) return;
+
+        const mainEmojiEl = document.getElementById("loadingMainEmoji");
+        const badgeEl = document.getElementById("loadingStepBadge");
+        const tipEl = document.getElementById("loadingTip");
+
+        if (mainEmojiEl) {
+            mainEmojiEl.textContent = stepObj.emoji;
+            mainEmojiEl.style.transform = "scale(1.25)";
+            setTimeout(() => {
+                if (mainEmojiEl) mainEmojiEl.style.transform = "scale(1)";
+            }, 300);
+        }
+
+        if (badgeEl) {
+            badgeEl.textContent = stepObj.badge;
+        }
+
+        if (tipEl) {
+            tipEl.classList.add("fade-out");
+            setTimeout(() => {
+                tipEl.textContent = stepObj.msg;
+                tipEl.classList.remove("fade-out");
+                tipEl.classList.add("fade-in");
+                setTimeout(() => {
+                    tipEl.classList.remove("fade-in");
+                }, 300);
+            }, 250);
+        }
+
+        // 진행 단계 칩 활성화 상태 동기화
+        for (let i = 1; i <= 4; i++) {
+            const chip = document.getElementById(`stepChip${i}`);
+            if (chip) {
+                if (i === stepObj.step) {
+                    chip.classList.add("active");
+                } else {
+                    chip.classList.remove("active");
+                }
+            }
+        }
+    }
+
     function showLoading() {
         loadingState.style.display = "block";
         resultWrapper.style.display = "none";
         loadingState.scrollIntoView({ behavior: "smooth", block: "start" });
 
-        let tipIndex = 0;
-        loadingTip.textContent = loadingTips[0];
+        const loadingTitleEl = document.getElementById("loadingTitle");
+        if (loadingTitleEl) {
+            loadingTitleEl.textContent = "여행자님만을 위한 특별한 여행 일정을 그리고 있어요 ✨";
+        }
+
+        let stepIndex = 0;
+        updateLoadingStep(friendlyLoadingSteps[0]);
+
+        if (loadingInterval) {
+            clearInterval(loadingInterval);
+        }
         loadingInterval = setInterval(() => {
-            tipIndex = (tipIndex + 1) % loadingTips.length;
-            loadingTip.textContent = loadingTips[tipIndex];
-        }, 2200);
+            stepIndex = (stepIndex + 1) % friendlyLoadingSteps.length;
+            updateLoadingStep(friendlyLoadingSteps[stepIndex]);
+        }, 2100);
     }
 
     function hideLoading() {
@@ -3659,8 +3758,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             showLoading();
+            const badgeEl = document.getElementById("loadingStepBadge");
+            const loadingTitleEl = document.getElementById("loadingTitle");
+            if (badgeEl) badgeEl.textContent = "공유 여행 계획 동기화 중";
+            if (loadingTitleEl) loadingTitleEl.textContent = "친구가 보낸 소중한 여행 계획을 불러오고 있어요 📬";
             if (loadingTip) {
-                loadingTip.textContent = "친구가 공유한 맞춤 여행 계획을 불러오는 중입니다...";
+                loadingTip.textContent = "친구가 설계한 일정표와 추천 동선을 안전하게 가져오는 중입니다...";
             }
 
             let sharedPlan = null;
