@@ -2842,24 +2842,34 @@ document.addEventListener("DOMContentLoaded", () => {
         const pwaCloseBtn = document.getElementById("pwaCloseBtn");
         const pwaHeaderBtn = document.getElementById("pwaHeaderBtn");
 
+        const mobileBottomInstallBar = document.getElementById("mobileBottomInstallBar");
+        const mobileBottomInstallBtn = document.getElementById("mobileBottomInstallBtn");
+        const mobileBottomCloseBtn = document.getElementById("mobileBottomCloseBtn");
+
         const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
         if (isStandalone) {
             console.log("PWA 이미 설치된 독립 실행형(Standalone) 모드입니다.");
             return;
         }
 
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
         const isBannerDismissed = sessionStorage.getItem("pwa_banner_dismissed") === "true";
+        const isMobileBottomDismissed = sessionStorage.getItem("pwa_mobile_bottom_dismissed") === "true";
 
         function showInstallUi() {
             if (pwaHeaderBtn) pwaHeaderBtn.style.display = "inline-flex";
             if (pwaInstallBanner && !isBannerDismissed) {
                 pwaInstallBanner.style.display = "block";
             }
+            if (mobileBottomInstallBar && isMobile && !isMobileBottomDismissed) {
+                mobileBottomInstallBar.style.display = "block";
+            }
         }
 
         function hideInstallUi() {
             if (pwaInstallBanner) pwaInstallBanner.style.display = "none";
             if (pwaHeaderBtn) pwaHeaderBtn.style.display = "none";
+            if (mobileBottomInstallBar) mobileBottomInstallBar.style.display = "none";
         }
 
         // Chrome, Edge, Android PWA 설치 이벤트 감지
@@ -2901,6 +2911,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (pwaInstallBtn) pwaInstallBtn.addEventListener("click", handleInstallClick);
         if (pwaHeaderBtn) pwaHeaderBtn.addEventListener("click", handleInstallClick);
+        if (mobileBottomInstallBtn) mobileBottomInstallBtn.addEventListener("click", handleInstallClick);
 
         if (pwaCloseBtn) {
             pwaCloseBtn.addEventListener("click", () => {
@@ -2909,15 +2920,19 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // 로드 0.8초 후 설치 UI 노출 시도 (헤더 버튼은 항상 대기)
+        if (mobileBottomCloseBtn) {
+            mobileBottomCloseBtn.addEventListener("click", () => {
+                if (mobileBottomInstallBar) mobileBottomInstallBar.style.display = "none";
+                sessionStorage.setItem("pwa_mobile_bottom_dismissed", "true");
+            });
+        }
+
+        // 로드 0.6초 후 설치 UI 노출 시도
         setTimeout(() => {
             if (!isStandalone) {
-                if (pwaHeaderBtn) pwaHeaderBtn.style.display = "inline-flex";
-                if (pwaInstallBanner && !isBannerDismissed) {
-                    pwaInstallBanner.style.display = "block";
-                }
+                showInstallUi();
             }
-        }, 800);
+        }, 600);
     }
 
     initPwaInstall();

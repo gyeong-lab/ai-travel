@@ -43,15 +43,16 @@
 
             <!-- 우측: 동작하는 기능 버튼 및 AI 엔진 상태 -->
             <div class="nav-right">
-                <button type="button" id="pwaHeaderBtn" class="btn-pwa-header" style="display: none;" title="홈 화면에 앱 설치하기">
-                    <span>📲</span> 앱 설치
+                <button type="button" id="pwaHeaderBtn" class="btn-pwa-header" title="홈 화면에 앱 설치하기">
+                    <span class="pwa-header-icon">📲</span>
+                    <span class="pwa-header-text">앱 설치</span>
                 </button>
                 <div class="engine-badge" title="Google Gemini API 연동 완료">
                     <span class="status-dot"></span>
-                    <span>Gemini 2.5 Flash</span>
+                    <span class="engine-name">Gemini 2.5 Flash</span>
                 </div>
                 <button type="button" id="headerResetBtn" class="btn-outline-pill">
-                    <span>🔄</span> 폼 초기화
+                    <span>🔄</span> <span class="reset-btn-text">초기화</span>
                 </button>
             </div>
         </div>
@@ -1753,16 +1754,16 @@
                             </div>
                             <div class="result-actions">
                                 <button type="button" id="btnSaveCurrentPlan" class="btn-action-save" title="이 여행 계획을 영구 저장하여 다른 계획과 언제든 1:1 비교">
-                                    <span class="action-icon">📌</span> 이 계획 저장하기
+                                    <span class="action-icon">📌</span> <span class="btn-lbl">계획 저장</span>
                                 </button>
                                 <button type="button" id="copyChatBtn" class="btn-action-chat" title="카톡 및 채팅방에 깔끔하게 공유할 수 있는 포맷으로 복사">
-                                    <span class="action-icon">💬</span> 카톡/채팅용 복사
+                                    <span class="action-icon">💬</span> <span class="btn-lbl">카톡 복사</span>
                                 </button>
                                 <button type="button" id="copyBtn" class="btn-action-outline" title="전체 일정표 마크다운 복사">
-                                    <span class="action-icon">📋</span> 전체 복사
+                                    <span class="action-icon">📋</span> <span class="btn-lbl">전체 복사</span>
                                 </button>
                                 <button type="button" id="downloadBtn" class="btn-action-primary" title=".md 파일 다운로드">
-                                    <span class="action-icon">💾</span> .md 저장
+                                    <span class="action-icon">💾</span> <span class="btn-lbl">.md 저장</span>
                                 </button>
                             </div>
                         </div>
@@ -1832,6 +1833,25 @@
             <p class="copyright">모든 콘텐츠 및 디자인은 포트폴리오 및 연구 목적으로 제작되었습니다.</p>
         </div>
     </footer>
+
+    <!-- [모바일 전용 하단 고정 앱 설치 바] -->
+    <aside id="mobileBottomInstallBar" class="mobile-bottom-bar" style="display: none;" aria-label="모바일 앱 설치 안내">
+        <div class="mobile-bar-inner">
+            <div class="mobile-bar-left">
+                <img src="/static/icons/icon-192.png" alt="앱 아이콘" class="mobile-bar-icon">
+                <div class="mobile-bar-text">
+                    <strong class="mobile-bar-title">AI 여행플래너 앱</strong>
+                    <span class="mobile-bar-desc">홈 화면에서 더 빠르고 편리하게</span>
+                </div>
+            </div>
+            <div class="mobile-bar-actions">
+                <button type="button" id="mobileBottomInstallBtn" class="btn-mobile-install">
+                    <span>📲 앱 설치</span>
+                </button>
+                <button type="button" id="mobileBottomCloseBtn" class="btn-mobile-close" title="닫기" aria-label="닫기">✕</button>
+            </div>
+        </div>
+    </aside>
 
     <!-- 스크립트 연결 -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

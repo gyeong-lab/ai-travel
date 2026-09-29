@@ -3130,15 +3130,44 @@ button {
     }
     .result-actions {
         width: 100%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
     }
     .result-actions button {
-        width: 100%;
+        width: 100% !important;
+        min-width: 0 !important;
         justify-content: center;
-        padding: 8px 10px;
+        padding: 8px 4px !important;
+        font-size: 11.5px !important;
+        white-space: nowrap !important;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .result-actions button .btn-lbl,
+    .result-actions button span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 상단 인기 도시 칩 모바일 가로 스크롤 */
+    .quick-preset-chips {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        scrollbar-width: none;
+    }
+    .quick-preset-chips::-webkit-scrollbar {
+        display: none;
+    }
+    .preset-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
         font-size: 12px;
+        padding: 5px 12px;
     }
 
     /* 마크다운 본문 모바일 가독성 */
@@ -3177,28 +3206,43 @@ button {
         white-space: nowrap;
     }
 
-    /* 푸터 */
+    /* 푸터 (모바일 하단 설치바 가림 방지 여백) */
     .agoda-footer {
-        padding: 24px 16px;
+        padding: 24px 16px calc(76px + env(safe-area-inset-bottom, 0px));
         font-size: 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-right {
+        gap: 6px;
+    }
+    /* 모바일 헤더 공간 확보를 위해 배지 숨기고 설치 및 초기화 버튼 노출 극대화 */
+    .engine-badge {
+        display: none !important;
+    }
+    .btn-pwa-header {
+        display: inline-flex !important;
+        font-size: 11.5px !important;
+        padding: 5px 9px !important;
+        white-space: nowrap !important;
+    }
+    .btn-outline-pill {
+        font-size: 11.5px !important;
+        padding: 5px 9px !important;
+        white-space: nowrap !important;
     }
 }
 
 @media (max-width: 480px) {
     .nav-container {
-        padding: 0 12px;
+        padding: 0 10px;
     }
     .logo-brand {
-        font-size: 17px;
+        font-size: 16px;
     }
     .logo-sub {
         display: none;
-    }
-    .engine-badge span:last-child {
-        display: none;
-    }
-    .engine-badge::after {
-        content: "Gemini";
     }
     .product-grid {
         grid-template-columns: 1fr;
@@ -3207,7 +3251,12 @@ button {
         height: 160px;
     }
     .result-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 5px !important;
+    }
+    .result-actions button {
+        padding: 7px 3px !important;
+        font-size: 11px !important;
     }
     .pwa-banner-content {
         padding: 12px 14px;
@@ -3371,4 +3420,135 @@ button {
         justify-content: center;
     }
 }
+
+/* ==========================================
+   모바일 전용 하단 고정 PWA 설치 바
+   ========================================== */
+.mobile-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(15, 23, 42, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+    z-index: 9999;
+    padding: 10px 16px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+    animation: mobileBarSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes mobileBarSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.mobile-bar-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mobile-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1;
+}
+
+.mobile-bar-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    flex-shrink: 0;
+}
+
+.mobile-bar-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.mobile-bar-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+}
+
+.mobile-bar-desc {
+    font-size: 11px;
+    color: #cbd5e1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.mobile-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn-mobile-install {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(79, 70, 229, 0.45);
+    white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-mobile-install:active {
+    transform: scale(0.96);
+    opacity: 0.9;
+}
+
+.btn-mobile-close {
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #cbd5e1;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-mobile-close:active {
+    background: rgba(255, 255, 255, 0.25);
+}
+
 
