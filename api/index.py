@@ -2,7 +2,9 @@ import os
 import sys
 
 # Vercel Serverless 실행 환경에서 프로젝트 루트 경로를 sys.path에 등록
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from app import app as flask_app
 import logging
@@ -24,35 +26,39 @@ class VercelWSGIWrapper:
             params = parse_qs(query_string, keep_blank_values=True)
             if "__vercel_path__" in params and params["__vercel_path__"]:
                 extracted_path = params["__vercel_path__"][0]
-                # QUERY_STRING에서 내부 전송 파라미터 정리
                 del params["__vercel_path__"]
                 environ["QUERY_STRING"] = urlencode(params, doseq=True)
 
-        # 2. Vercel 원본 요청 헤더 폴백 확인
+        # 2. Vercel 원본 요청 헤더 확인 (x-matched-path, x-vercel-original-path 등)
         header_path = (
-            environ.get("HTTP_X_VERCEL_ORIGINAL_PATH")
+            environ.get("HTTP_X_MATCHED_PATH")
+            or environ.get("HTTP_X_VERCEL_ORIGINAL_PATH")
             or environ.get("HTTP_X_FORWARDED_URI")
+            or environ.get("HTTP_X_ORIGINAL_URI")
+            or environ.get("REQUEST_URI")
+            or environ.get("RAW_URI")
         )
-        if header_path:
-            header_path = header_path.split("?")[0]
 
-        target_path = extracted_path or header_path
+        target_path = extracted_path or header_path or environ.get("PATH_INFO", "")
 
-        if target_path:
-            clean_path = target_path.split("?")[0]
-            # 연속 슬래시 정규화 (예: //generate -> /generate)
-            while clean_path.startswith("//"):
-                clean_path = clean_path[1:]
-            if not clean_path.startswith("/"):
-                clean_path = "/" + clean_path
-            environ["PATH_INFO"] = clean_path
-        else:
-            current_path = environ.get("PATH_INFO", "")
-            if current_path in ("/api/index", "/api/index.py", "/api", "/api/"):
-                environ["PATH_INFO"] = "/"
+        # 쿼리 파라미터 분리
+        if target_path and "?" in target_path:
+            target_path = target_path.split("?")[0]
 
+        # api/index 내부 호출이거나 빈 경로일 경우 메인 루트('/')로 설정
+        if not target_path or target_path in ("/api/index", "/api/index.py", "/api", "/api/", "/index.py", "/index"):
+            target_path = "/"
+
+        # 연속 슬래시 정규화 및 시작 슬래시 보장
+        while target_path.startswith("//"):
+            target_path = target_path[1:]
+        if not target_path.startswith("/"):
+            target_path = "/" + target_path
+
+        environ["PATH_INFO"] = target_path
         environ["SCRIPT_NAME"] = ""
         return self.wsgi_app(environ, start_response)
 
 flask_app.wsgi_app = VercelWSGIWrapper(flask_app.wsgi_app)
 app = flask_app
+
