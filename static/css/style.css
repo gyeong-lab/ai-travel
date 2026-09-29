@@ -607,6 +607,12 @@ button {
     box-shadow: 0 0 0 2px rgba(42, 104, 232, 0.15);
 }
 
+.form-group input.input-synced {
+    border-color: var(--agoda-blue) !important;
+    background-color: var(--agoda-blue-light) !important;
+    box-shadow: 0 0 0 3px rgba(42, 104, 232, 0.25) !important;
+}
+
 .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;

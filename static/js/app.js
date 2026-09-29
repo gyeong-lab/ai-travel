@@ -329,14 +329,65 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", resetAll);
 
     /**
-     * 6. 예산 슬라이더 연동
+     * 6. 예산 슬라이더와 AI 맞춤 조건 폼 양방향 실시간 연동
      */
-    if (priceRange && priceMax) {
-        priceRange.addEventListener("input", (e) => {
-            const val = parseInt(e.target.value, 10);
-            const formatted = val.toLocaleString("ko-KR");
-            priceMax.textContent = `₩ ${formatted}`;
-            budgetInput.value = `총 ${formatted}원`;
+    function formatKoreanBudget(val) {
+        const man = Math.floor(val / 10000);
+        const rest = val % 10000;
+        if (rest === 0) {
+            return `${man}만원`;
+        }
+        return `${man}만 ${rest.toLocaleString("ko-KR")}원`;
+    }
+
+    function syncBudgetFromSlider() {
+        if (!priceRange || !budgetInput) return;
+        const val = parseInt(priceRange.value, 10);
+        const formattedWon = val.toLocaleString("ko-KR");
+        const koreanText = formatKoreanBudget(val);
+
+        if (priceMax) {
+            priceMax.textContent = `₩ ${formattedWon} (${koreanText})`;
+        }
+
+        // 기존에 "2인", "1인당" 등 수식어가 붙어있으면 자연스럽게 보존하여 연동
+        const currentText = budgetInput.value.trim();
+        if (currentText.includes("2인")) {
+            budgetInput.value = `2인 총 ${koreanText}`;
+        } else if (currentText.includes("1인당") || currentText.includes("1인")) {
+            budgetInput.value = `1인당 ${koreanText}`;
+        } else {
+            budgetInput.value = `총 ${koreanText}`;
+        }
+
+        // 시각적 강조 애니메이션 (파란색 테두리 하이라이트)
+        budgetInput.classList.add("input-synced");
+        clearTimeout(budgetInput._syncTimer);
+        budgetInput._syncTimer = setTimeout(() => {
+            budgetInput.classList.remove("input-synced");
+        }, 500);
+    }
+
+    function syncSliderFromText(budgetText) {
+        if (!priceRange || !priceMax || !budgetText) return;
+        const matchMan = budgetText.match(/(\d+)\s*만/);
+        if (matchMan) {
+            const parsedVal = parseInt(matchMan[1], 10) * 10000;
+            const minVal = parseInt(priceRange.min, 10);
+            const maxVal = parseInt(priceRange.max, 10);
+            const clamped = Math.max(minVal, Math.min(maxVal, parsedVal));
+            priceRange.value = clamped;
+            priceMax.textContent = `₩ ${clamped.toLocaleString("ko-KR")} (${formatKoreanBudget(clamped)})`;
+        }
+    }
+
+    if (priceRange) {
+        priceRange.addEventListener("input", syncBudgetFromSlider);
+    }
+
+    if (budgetInput) {
+        budgetInput.addEventListener("input", () => {
+            syncSliderFromText(budgetInput.value);
         });
     }
 
@@ -354,6 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 destinationInput.value = data.destination;
                 durationInput.value = data.duration;
                 budgetInput.value = data.budget;
+                syncSliderFromText(data.budget);
                 interestsInput.value = data.interests;
                 companionsInput.value = data.companions;
                 transportationInput.value = data.transportation;
@@ -397,7 +449,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (dest) destinationInput.value = dest;
             if (dur) durationInput.value = dur;
-            if (budget) budgetInput.value = budget;
+            if (budget) {
+                budgetInput.value = budget;
+                syncSliderFromText(budget);
+            }
             if (transport) transportationInput.value = transport;
             if (theme) interestsInput.value = theme;
 
