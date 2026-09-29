@@ -2984,57 +2984,110 @@ button {
     .nav-container {
         width: 100% !important;
         max-width: 100% !important;
-        padding: 0 16px !important;
-        height: 56px !important;
+        padding: 0 10px !important;
+        height: 52px !important;
         box-sizing: border-box !important;
     }
+    .nav-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+    }
+    .brand-logo {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
     .logo-brand {
-        font-size: 18px !important;
+        font-size: 15px !important;
     }
     .logo-icon-wrap {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 17px !important;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 14px !important;
+    }
+    .logo-sub {
+        display: none !important;
+    }
+    .nav-right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        flex-shrink: 0 !important;
     }
     .engine-badge {
         display: inline-flex !important;
         align-items: center !important;
-        gap: 4px !important;
-        padding: 4px 8px !important;
-        font-size: 11px !important;
+        gap: 3px !important;
+        padding: 3px 6px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
         border-radius: 9999px !important;
         background-color: #f0fdf4 !important;
         border: 1px solid #bbf7d0 !important;
         color: #166534 !important;
         white-space: nowrap !important;
     }
+    .engine-badge .status-dot {
+        width: 5px !important;
+        height: 5px !important;
+    }
+    .btn-pwa-header {
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 3px 6px !important;
+        font-size: 10px !important;
+        white-space: nowrap !important;
+    }
     .btn-outline-pill {
-        padding: 5px 10px !important;
-        font-size: 12px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 3px 6px !important;
+        font-size: 10px !important;
         white-space: nowrap !important;
     }
 
     /* 검색창 & 카테고리 캐러셀 터치 최적화 */
     .search-section {
-        padding: 12px 16px !important;
+        padding: 10px 12px !important;
     }
     .search-bar-wrapper {
         width: 100% !important;
         max-width: 100% !important;
+        min-width: 0 !important;
     }
     .search-bar-pill {
-        padding: 3px 6px 3px 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 3px 4px 3px 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    .search-input-group {
+        display: flex !important;
+        align-items: center !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        gap: 6px !important;
+    }
+    .search-input-group input {
+        width: 100% !important;
+        min-width: 0 !important;
+        font-size: 12.5px !important;
     }
     .btn-search-trigger {
-        padding: 7px 16px !important;
-        font-size: 13px !important;
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+        flex-shrink: 0 !important;
     }
     .category-carousel {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
-        padding: 12px 16px 12px 16px !important;
-        gap: 14px !important;
+        padding: 10px 12px 10px 12px !important;
+        gap: 10px !important;
         overflow-x: auto !important;
         flex-wrap: nowrap !important;
         -webkit-overflow-scrolling: touch !important;
@@ -3042,7 +3095,7 @@ button {
     .cat-item {
         flex: 0 0 auto !important;
         min-width: max-content !important;
-        padding: 8px 16px !important;
+        padding: 6px 14px !important;
         border-radius: 12px !important;
         background-color: #ffffff !important;
         border: 1px solid #e2e8f0 !important;
@@ -3050,17 +3103,17 @@ button {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        gap: 5px !important;
+        gap: 4px !important;
     }
     .cat-item.active {
         background-color: #eff6ff !important;
         border-color: #3b82f6 !important;
     }
     .cat-icon {
-        font-size: 20px !important;
+        font-size: 18px !important;
     }
     .cat-label {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
         font-weight: 600 !important;
         white-space: nowrap !important;
     }
@@ -3069,10 +3122,33 @@ button {
     .main-container {
         width: 100% !important;
         max-width: 100% !important;
+        min-width: 0 !important;
         box-sizing: border-box !important;
-        margin: 14px auto 40px auto !important;
-        padding: 0 14px !important;
-        gap: 16px !important;
+        margin: 12px auto 40px auto !important;
+        padding: 0 10px !important;
+        gap: 14px !important;
+    }
+    .main-content,
+    .products-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .section-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .quick-preset-chips {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     .form-row-2 {
         grid-template-columns: 1fr;
@@ -3324,52 +3400,126 @@ button {
 
 @media (max-width: 480px) {
     .nav-container {
-        padding: 0 10px !important;
-        height: 52px !important;
+        padding: 0 8px !important;
+        height: 50px !important;
     }
     .nav-left {
-        gap: 6px !important;
+        gap: 5px !important;
+    }
+    .brand-logo {
+        gap: 5px !important;
     }
     .logo-brand {
-        font-size: 15.5px !important;
+        font-size: 14.5px !important;
     }
     .logo-icon-wrap {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 14px !important;
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 13px !important;
     }
     .logo-sub {
-        display: none !important;
+        display: inline-block !important;
+        font-size: 9.5px !important;
+        padding: 1px 4px !important;
+        background: #eff6ff !important;
+        color: #2563eb !important;
+        border-radius: 4px !important;
+        font-weight: 700 !important;
     }
     .nav-right {
-        gap: 4px !important;
+        gap: 3px !important;
     }
     .engine-badge {
-        padding: 3px 6px !important;
-        font-size: 10px !important;
+        padding: 2.5px 5px !important;
+        font-size: 9.5px !important;
+        gap: 3px !important;
     }
     .engine-badge .engine-name {
-        font-size: 10px !important;
+        font-size: 9.5px !important;
+    }
+    .engine-badge .status-dot {
+        width: 5px !important;
+        height: 5px !important;
     }
     .btn-pwa-header {
-        padding: 3.5px 6px !important;
-        font-size: 10px !important;
+        padding: 3px 5px !important;
+        font-size: 9.5px !important;
     }
     .btn-outline-pill {
-        padding: 3.5px 6px !important;
-        font-size: 10px !important;
+        padding: 3px 5px !important;
+        font-size: 9.5px !important;
     }
     .cat-item {
-        padding: 7px 14px !important;
+        padding: 6px 12px !important;
     }
     .cat-label {
-        font-size: 11.5px !important;
+        font-size: 11px !important;
+    }
+
+    /* 추천 코스 카드 그리드: 2열 컴팩트 배치로 이미지와 하단 텍스트/가격이 한눈에 보이도록 최적화 */
+    .section-header {
+        margin-bottom: 8px !important;
+    }
+    .section-title {
+        font-size: 15.5px !important;
+        margin-bottom: 3px !important;
+    }
+    .section-subtitle {
+        font-size: 11px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.35 !important;
+    }
+    .quick-preset-chips {
+        gap: 5px !important;
+        padding-bottom: 4px !important;
+    }
+    .preset-btn {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
     }
     .product-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .agoda-card {
+        border-radius: 10px !important;
     }
     .card-img-wrap {
-        height: 160px;
+        height: 95px !important;
+        aspect-ratio: auto !important;
+    }
+    .card-body {
+        padding: 6px 8px 10px 8px !important;
+    }
+    .card-title {
+        font-size: 11.5px !important;
+        height: auto !important;
+        max-height: 32px !important;
+        line-height: 1.35 !important;
+        -webkit-line-clamp: 2 !important;
+        margin-bottom: 3px !important;
+    }
+    .card-badges-green {
+        font-size: 9px !important;
+        margin-bottom: 3px !important;
+        min-height: 12px !important;
+        gap: 2px !important;
+    }
+    .card-price-area {
+        font-size: 9.5px !important;
+        margin-top: 2px !important;
+        gap: 2px !important;
+    }
+    .card-price-area::before {
+        font-size: 9px !important;
+        content: "예상 " !important;
+    }
+    .price-current {
+        font-size: 12.5px !important;
+        font-weight: 800 !important;
+    }
+    .price-current .currency {
+        font-size: 9.5px !important;
     }
     .result-actions {
         grid-template-columns: 1fr 1fr !important;
@@ -3381,6 +3531,34 @@ button {
     }
     .pwa-banner-content {
         padding: 12px 14px;
+    }
+
+    /* 모바일 하단 설치바도 컴팩트하게 정돈하여 카드 가림 및 버튼 잘림 방지 */
+    .mobile-bottom-bar {
+        padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+    .mobile-bar-inner {
+        gap: 6px !important;
+    }
+    .mobile-bar-icon {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    .mobile-bar-title {
+        font-size: 11.5px !important;
+    }
+    .mobile-bar-desc {
+        font-size: 9.5px !important;
+    }
+    .btn-mobile-install {
+        padding: 5px 9px !important;
+        font-size: 10.5px !important;
+        border-radius: 12px !important;
+    }
+    .btn-mobile-close {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
     }
 }
 

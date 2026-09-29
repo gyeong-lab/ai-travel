@@ -2896,11 +2896,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function showInstallUi() {
             if (pwaHeaderBtn) pwaHeaderBtn.style.display = "inline-flex";
-            if (pwaInstallBanner && !isBannerDismissed) {
-                pwaInstallBanner.style.display = "block";
-            }
-            if (mobileBottomInstallBar && isMobile && !isMobileBottomDismissed) {
-                mobileBottomInstallBar.style.display = "block";
+            if (isMobile) {
+                if (pwaInstallBanner) pwaInstallBanner.style.display = "none";
+                if (mobileBottomInstallBar && !isMobileBottomDismissed) {
+                    mobileBottomInstallBar.style.display = "block";
+                }
+            } else {
+                if (pwaInstallBanner && !isBannerDismissed) {
+                    pwaInstallBanner.style.display = "block";
+                }
             }
         }
 
