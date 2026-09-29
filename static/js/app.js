@@ -1673,26 +1673,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 🗺️ 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 모듈
+    // 🗺️ 스마트 인터랙티브 여행 동선 지도 & 카카오맵/구글맵 연동 모듈
     // ==========================================
     const DEST_COORDS = {
+        // 국내 5개 도시
         "제주": { lat: 33.3617, lng: 126.5292, zoom: 10 },
-        "오사카": { lat: 34.6937, lng: 135.5023, zoom: 12 },
-        "도쿄": { lat: 35.6762, lng: 139.6503, zoom: 12 },
-        "후쿠오카": { lat: 33.5904, lng: 130.4017, zoom: 12 },
-        "방콕": { lat: 13.7563, lng: 100.5018, zoom: 12 },
-        "다낭": { lat: 16.0544, lng: 108.2022, zoom: 12 },
-        "타이베이": { lat: 25.0330, lng: 121.5654, zoom: 12 },
-        "파리": { lat: 48.8566, lng: 2.3522, zoom: 12 },
-        "뉴욕": { lat: 40.7128, lng: -74.0060, zoom: 12 },
-        "바르셀로나": { lat: 41.3851, lng: 2.1734, zoom: 12 },
-        "서울": { lat: 37.5665, lng: 126.9780, zoom: 12 },
         "부산": { lat: 35.1796, lng: 129.0756, zoom: 12 },
         "강릉": { lat: 37.7519, lng: 128.8761, zoom: 12 },
-        "경주": { lat: 35.8562, lng: 129.2247, zoom: 12 }
+        "속초": { lat: 38.2070, lng: 128.5918, zoom: 12 },
+        "경주": { lat: 35.8562, lng: 129.2247, zoom: 12 },
+        "여수": { lat: 34.7604, lng: 127.6622, zoom: 12 },
+        "서울": { lat: 37.5665, lng: 126.9780, zoom: 12 },
+        // 해외 - 아시아 8개 도시
+        "오사카": { lat: 34.6937, lng: 135.5023, zoom: 12 },
+        "교토": { lat: 35.0116, lng: 135.7681, zoom: 12 },
+        "도쿄": { lat: 35.6762, lng: 139.6503, zoom: 12 },
+        "후쿠오카": { lat: 33.5904, lng: 130.4017, zoom: 12 },
+        "유후인": { lat: 33.2644, lng: 131.3556, zoom: 13 },
+        "삿포로": { lat: 43.0618, lng: 141.3545, zoom: 12 },
+        "오타루": { lat: 43.1907, lng: 140.9947, zoom: 13 },
+        "비에이": { lat: 43.5900, lng: 142.4633, zoom: 12 },
+        "방콕": { lat: 13.7563, lng: 100.5018, zoom: 12 },
+        "파타야": { lat: 12.9276, lng: 100.8771, zoom: 12 },
+        "다낭": { lat: 16.0544, lng: 108.2022, zoom: 12 },
+        "호이안": { lat: 15.8801, lng: 108.3380, zoom: 13 },
+        "타이베이": { lat: 25.0330, lng: 121.5654, zoom: 12 },
+        "싱가포르": { lat: 1.3521, lng: 103.8198, zoom: 12 },
+        "발리": { lat: -8.4095, lng: 115.1889, zoom: 11 },
+        "우붓": { lat: -8.5069, lng: 115.2625, zoom: 13 },
+        // 해외 - 미주/유럽 7개 도시
+        "괌": { lat: 13.4443, lng: 144.7937, zoom: 12 },
+        "투몬": { lat: 13.5147, lng: 144.8058, zoom: 13 },
+        "파리": { lat: 48.8566, lng: 2.3522, zoom: 12 },
+        "런던": { lat: 51.5074, lng: -0.1278, zoom: 12 },
+        "로마": { lat: 41.9028, lng: 12.4964, zoom: 12 },
+        "바르셀로나": { lat: 41.3851, lng: 2.1734, zoom: 12 },
+        "뉴욕": { lat: 40.7128, lng: -74.0060, zoom: 12 },
+        "맨해튼": { lat: 40.7831, lng: -73.9712, zoom: 12 }
     };
 
     const SPOT_COORDS = {
+        // 제주 스팟
         "제주공항": { lat: 33.5113, lng: 126.4930 },
         "애월": { lat: 33.4628, lng: 126.3117 },
         "한담해변": { lat: 33.4621, lng: 126.3093 },
@@ -1721,11 +1742,107 @@ document.addEventListener("DOMContentLoaded", () => {
         "비자림": { lat: 33.4913, lng: 126.8114 },
         "성산일출봉": { lat: 33.4586, lng: 126.9427 },
         "섭지코지": { lat: 33.4243, lng: 126.9311 },
+        "우도": { lat: 33.5042, lng: 126.9541 },
         "함덕": { lat: 33.5434, lng: 126.6692 },
         "함덕해수욕장": { lat: 33.5434, lng: 126.6692 },
         "동문시장": { lat: 33.5126, lng: 126.5283 },
         "용두암": { lat: 33.5163, lng: 126.5123 },
         "카멜리아힐": { lat: 33.2897, lng: 126.3697 },
+
+        // 괌 스팟 (🌟 괌 주요 관광지 및 비치 완벽 매핑)
+        "괌공항": { lat: 13.4834, lng: 144.7959 },
+        "앤토니오 B. 원 팻 국제공항": { lat: 13.4834, lng: 144.7959 },
+        "투몬비치": { lat: 13.5147, lng: 144.8058 },
+        "사랑의 절벽": { lat: 13.5332, lng: 144.8028 },
+        "이파오 비치": { lat: 13.5050, lng: 144.7925 },
+        "아가냐 대성당": { lat: 13.4735, lng: 144.7523 },
+        "스페인 광장": { lat: 13.4731, lng: 144.7519 },
+        "괌 프리미엄 아울렛": { lat: 13.4988, lng: 144.7766 },
+        "GPO": { lat: 13.4988, lng: 144.7766 },
+        "마이크로네시아몰": { lat: 13.5228, lng: 144.8184 },
+        "T갤러리아": { lat: 13.5169, lng: 144.8080 },
+        "탈로포포 폭포": { lat: 13.3242, lng: 144.7554 },
+        "메리조 부두": { lat: 13.2676, lng: 144.6713 },
+        "우마탁 마을": { lat: 13.2982, lng: 144.6623 },
+        "세티만 전망대": { lat: 13.3197, lng: 144.6601 },
+        "이나라한 자연수영장": { lat: 13.2778, lng: 144.7508 },
+
+        // 여수 스팟
+        "여수엑스포역": { lat: 34.7528, lng: 127.7486 },
+        "돌산대교": { lat: 34.7298, lng: 127.7348 },
+        "오동도": { lat: 34.7454, lng: 127.7667 },
+        "여수 해상케이블카": { lat: 34.7431, lng: 127.7552 },
+        "낭만포차": { lat: 34.7397, lng: 127.7423 },
+        "하멜등대": { lat: 34.7408, lng: 127.7441 },
+        "향일암": { lat: 34.5933, lng: 127.8086 },
+
+        // 싱가포르 스팟
+        "창이공항": { lat: 1.3644, lng: 103.9915 },
+        "마리나베이샌즈": { lat: 1.2838, lng: 103.8591 },
+        "가든스바이더베이": { lat: 1.2815, lng: 103.8636 },
+        "센토사": { lat: 1.2494, lng: 103.8303 },
+        "유니버설스튜디오 싱가포르": { lat: 1.2540, lng: 103.8238 },
+        "머라이언파크": { lat: 1.2868, lng: 103.8545 },
+        "클락키": { lat: 1.2887, lng: 103.8465 },
+
+        // 발리 스팟
+        "응우라라이공항": { lat: -8.7481, lng: 115.1672 },
+        "우붓 왕궁": { lat: -8.5069, lng: 115.2625 },
+        "뜨갈랄랑": { lat: -8.4334, lng: 115.2798 },
+        "몽키포레스트": { lat: -8.5190, lng: 115.2587 },
+        "울루와투 사원": { lat: -8.8291, lng: 115.0849 },
+        "짱구 비치": { lat: -8.6542, lng: 115.1309 },
+        "스미냑": { lat: -8.6913, lng: 115.1682 },
+
+        // 삿포로 & 오타루 스팟
+        "신치토세공항": { lat: 42.7752, lng: 141.6923 },
+        "스스키노": { lat: 43.0552, lng: 141.3533 },
+        "오도리공원": { lat: 43.0598, lng: 141.3563 },
+        "삿포로 맥주박물관": { lat: 43.0716, lng: 141.3688 },
+        "오타루 운하": { lat: 43.1993, lng: 141.0021 },
+        "오르골당": { lat: 43.1907, lng: 141.0076 },
+        "청의 호수": { lat: 43.4934, lng: 142.6143 },
+        "흰수염 폭포": { lat: 43.4754, lng: 142.6415 },
+
+        // 런던 스팟
+        "히드로공항": { lat: 51.4700, lng: -0.4543 },
+        "빅벤": { lat: 51.5007, lng: -0.1246 },
+        "런던아이": { lat: 51.5033, lng: -0.1195 },
+        "타워브릿지": { lat: 51.5055, lng: -0.0754 },
+        "대영박물관": { lat: 51.5194, lng: -0.1270 },
+        "버킹엄궁전": { lat: 51.5014, lng: -0.1419 },
+
+        // 로마 스팟
+        "피우미치노공항": { lat: 41.8003, lng: 12.2389 },
+        "콜로세움": { lat: 41.8902, lng: 12.4922 },
+        "트레비분수": { lat: 41.9009, lng: 12.4833 },
+        "바티칸": { lat: 41.9029, lng: 12.4534 },
+        "판테온": { lat: 41.8986, lng: 12.4769 },
+        "스페인광장": { lat: 41.9057, lng: 12.4823 },
+
+        // 파리 스팟
+        "에펠탑": { lat: 48.8584, lng: 2.2945 },
+        "루브르박물관": { lat: 48.8606, lng: 2.3376 },
+        "개선문": { lat: 48.8738, lng: 2.2950 },
+        "샹젤리제": { lat: 48.8698, lng: 2.3075 },
+        "오르세미술관": { lat: 48.8599, lng: 2.3265 },
+        "몽마르뜨": { lat: 48.8867, lng: 2.3431 },
+
+        // 뉴욕 스팟
+        "타임스퀘어": { lat: 40.7580, lng: -73.9855 },
+        "센트럴파크": { lat: 40.7851, lng: -73.9683 },
+        "엠파이어스테이트빌딩": { lat: 40.7484, lng: -73.9857 },
+        "탑오브더락": { lat: 40.7590, lng: -73.9794 },
+        "자유의여신상": { lat: 40.6892, lng: -74.0445 },
+        "브루클린브릿지": { lat: 40.7061, lng: -73.9969 },
+
+        // 바르셀로나 스팟
+        "사그라다파밀리아": { lat: 41.4036, lng: 2.1744 },
+        "구엘공원": { lat: 41.4145, lng: 2.1527 },
+        "카사바트요": { lat: 41.3916, lng: 2.1648 },
+        "람블라스": { lat: 41.3813, lng: 2.1730 },
+        "보케리아시장": { lat: 41.3817, lng: 2.1715 },
+
         // 오사카 스팟
         "도톤보리": { lat: 34.6687, lng: 135.5013 },
         "난바": { lat: 34.6660, lng: 135.5003 },
@@ -1734,6 +1851,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "오사카성": { lat: 34.6873, lng: 135.5262 },
         "우메다 스카이빌딩": { lat: 34.7053, lng: 135.4900 },
         "하루카스300": { lat: 34.6459, lng: 135.5140 },
+
         // 도쿄 스팟
         "신주쿠": { lat: 35.6938, lng: 139.7034 },
         "시부야": { lat: 35.6580, lng: 139.7016 },
@@ -1742,16 +1860,19 @@ document.addEventListener("DOMContentLoaded", () => {
         "센소지": { lat: 35.7148, lng: 139.7967 },
         "도쿄타워": { lat: 35.6586, lng: 139.7454 },
         "긴자": { lat: 35.6719, lng: 139.7649 },
+
         // 후쿠오카 스팟
         "하카타": { lat: 33.5902, lng: 130.4207 },
         "텐진": { lat: 33.5916, lng: 130.3989 },
         "후쿠오카 타워": { lat: 33.5933, lng: 130.3515 },
         "모모치 해변": { lat: 33.5954, lng: 130.3519 },
         "다자이후": { lat: 33.5215, lng: 130.5349 },
+
         // 방콕 스팟
         "카오산로드": { lat: 13.7589, lng: 100.4974 },
         "왓아룬": { lat: 13.7437, lng: 100.4889 },
         "아이콘시암": { lat: 13.7267, lng: 100.5108 },
+
         // 주요 공항 스팟 (모든 여행지 1일차 공항 출발 지원)
         "제주공항": { lat: 33.5113, lng: 126.4930 },
         "제주국제공항": { lat: 33.5113, lng: 126.4930 },
@@ -1776,10 +1897,12 @@ document.addEventListener("DOMContentLoaded", () => {
         "김포공항": { lat: 37.5587, lng: 126.7945 },
         "김해공항": { lat: 35.1795, lng: 128.9382 },
         "김해국제공항": { lat: 35.1795, lng: 128.9382 },
+
         // 다낭 스팟
         "미케비치": { lat: 16.0601, lng: 108.2464 },
         "바나힐": { lat: 15.9989, lng: 107.9866 },
         "호이안": { lat: 15.8801, lng: 108.3380 },
+
         // 국내 주요 도시 스팟
         "경복궁": { lat: 37.5796, lng: 126.9770 },
         "명동": { lat: 37.5636, lng: 126.9827 },
@@ -1881,19 +2004,27 @@ document.addEventListener("DOMContentLoaded", () => {
         // 🌟 모든 여행지의 1일차 첫 출발지는 항상 해당 여행지 '공항'으로 보장
         const airportMap = {
             "제주": { name: "제주국제공항", lat: 33.5113, lng: 126.4930 },
+            "부산": { name: "김해국제공항", lat: 35.1795, lng: 128.9382 },
+            "강릉": { name: "강릉역 KTX (출발지)", lat: 37.7645, lng: 128.8996 },
+            "속초": { name: "속초 고속버스터미널 (출발지)", lat: 38.1905, lng: 128.5986 },
+            "경주": { name: "신경주역 KTX (출발지)", lat: 35.7981, lng: 129.1396 },
+            "여수": { name: "여수엑스포역 KTX (출발지)", lat: 34.7528, lng: 127.7486 },
+            "서울": { name: "김포국제공항", lat: 37.5587, lng: 126.7945 },
             "오사카": { name: "간사이국제공항", lat: 34.4320, lng: 135.2304 },
             "도쿄": { name: "하네다국제공항", lat: 35.5494, lng: 139.7798 },
             "후쿠오카": { name: "후쿠오카공항", lat: 33.5859, lng: 130.4507 },
+            "삿포로": { name: "신치토세국제공항", lat: 42.7752, lng: 141.6923 },
             "방콕": { name: "수완나품국제공항", lat: 13.6900, lng: 100.7501 },
             "다낭": { name: "다낭국제공항", lat: 16.0538, lng: 108.1994 },
             "타이베이": { name: "타오위안국제공항", lat: 25.0797, lng: 121.2342 },
+            "싱가포르": { name: "싱가포르 창이국제공항", lat: 1.3644, lng: 103.9915 },
+            "발리": { name: "발리 응우라라이국제공항", lat: -8.7481, lng: 115.1672 },
+            "괌": { name: "괌 앤토니오 B. 원팻 국제공항", lat: 13.4834, lng: 144.7959 },
             "파리": { name: "샤를드골국제공항", lat: 49.0097, lng: 2.5479 },
-            "뉴욕": { lat: 40.6413, lng: -73.7781, name: "존F케네디국제공항" },
-            "바르셀로나": { name: "엘프랏국제공항", lat: 41.2974, lng: 2.0833 },
-            "부산": { name: "김해국제공항", lat: 35.1795, lng: 128.9382 },
-            "서울": { name: "김포국제공항", lat: 37.5587, lng: 126.7945 },
-            "강릉": { name: "강릉역 KTX (출발지)", lat: 37.7645, lng: 128.8996 },
-            "경주": { name: "신경주역 KTX (출발지)", lat: 35.7981, lng: 129.1396 }
+            "런던": { name: "런던 히드로국제공항", lat: 51.4700, lng: -0.4543 },
+            "로마": { name: "로마 레오나르도 다빈치(피우미치노)공항", lat: 41.8003, lng: 12.2389 },
+            "바르셀로나": { name: "바르셀로나 엘프랏국제공항", lat: 41.2974, lng: 2.0833 },
+            "뉴욕": { lat: 40.6413, lng: -73.7781, name: "존F케네디(JFK)국제공항" }
         };
 
         let targetAirport = null;
@@ -1991,9 +2122,27 @@ document.addEventListener("DOMContentLoaded", () => {
         if (filtered.length === 0) return;
 
         const bounds = [];
-        const isDomestic = !["오사카", "도쿄", "후쿠오카", "방콕", "다낭", "타이베이", "파리", "뉴욕", "바르셀로나"].some(c => destName.includes(c));
+        // 국내 6개 도시 외에는 모두 해외 지역으로 판별하여 구글 지도로 최적화
+        const DOMESTIC_CITIES = ["제주", "부산", "강릉", "속초", "경주", "여수", "서울"];
+        const isDomestic = DOMESTIC_CITIES.some(c => destName.includes(c));
         const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        // 지도 상단 안내 배지 및 설명글도 국내/해외에 맞춰 동적 전환
+        const mapNavEngineBadge = document.getElementById("mapNavEngineBadge");
+        if (mapNavEngineBadge) {
+            if (isDomestic) {
+                mapNavEngineBadge.className = "map-kakao-tag";
+                mapNavEngineBadge.textContent = "💛 카카오맵 원클릭 길찾기";
+            } else {
+                mapNavEngineBadge.className = "map-google-tag";
+                mapNavEngineBadge.textContent = "🌐 구글 지도(Google Maps) 글로벌 길찾기";
+            }
+        }
+        const mapSectionLinkService = document.getElementById("mapSectionLinkService");
+        if (mapSectionLinkService) {
+            mapSectionLinkService.textContent = isDomestic ? "카카오맵 길찾기" : "구글 지도(Google Maps) 길찾기";
+        }
 
         filtered.forEach((p) => {
             bounds.push([p.lat, p.lng]);
@@ -2012,29 +2161,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 `
             });
 
-            // 카카오맵 웹 URL (PC 및 앱 미설치 시 기본 경로)
+            // 카카오맵 웹 URL (국내 전용)
             const encodedName = encodeURIComponent(p.name);
             const kakaoTransitUrl = `https://map.kakao.com/?eName=${encodedName}&ep=${p.lat},${p.lng}&target=transit`;
             const kakaoNavUrl = `https://map.kakao.com/link/to/${encodedName},${p.lat},${p.lng}`;
             const kakaoSearchUrl = `https://map.kakao.com/link/search/${encodedName}`;
+
+            // 구글 지도 웹 URL (해외 지역 또는 구글맵 우선)
             const googleNavUrl = isTransit
-                ? `https://www.google.com/maps/dir/?api=1&destination=${encodedName}&travelmode=transit`
-                : `https://www.google.com/maps/search/?api=1&query=${encodedName}`;
+                ? `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=transit`
+                : `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+            const googleSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodedName}`;
 
             const targetNavUrl = isDomestic
                 ? (isTransit ? kakaoTransitUrl : kakaoNavUrl)
                 : googleNavUrl;
 
-            // 모바일일 경우 버튼 텍스트에 앱 직통 연결 표시
+            // 모바일/PC 버튼 텍스트
             const navBtnText = isDomestic
                 ? (isMobile
                     ? (isTransit ? '🚌 카카오맵 앱으로 대중교통 길찾기' : '🚗 카카오맵 앱으로 길찾기')
                     : (isTransit ? '🚌 카카오맵 대중교통 길찾기' : '🚗 카카오맵 내비/길찾기'))
-                : (isTransit ? '🌐 구글맵 대중교통 길찾기' : '🌐 구글맵 길찾기');
+                : (isTransit ? '🌐 구글맵 대중교통 길찾기' : '🌐 구글맵 경로 안내');
 
             const searchBtnText = isDomestic
                 ? (isMobile ? '📍 카카오맵 앱에서 검색' : '📍 카카오맵에서 상세 검색')
-                : '📍 지도에서 위치 보기';
+                : '🗺️ 구글 지도에서 위치·사진 보기';
 
             const navOnclick = isDomestic ? `onclick="return window.openKakaoMap(event, '${p.lat}', '${p.lng}', '${encodedName}', '${isTransit ? 'transit' : 'car'}');"` : '';
             const searchOnclick = isDomestic ? `onclick="return window.openKakaoMap(event, '${p.lat}', '${p.lng}', '${encodedName}', 'search');"` : '';
@@ -2045,10 +2197,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h4 class="popup-title">${p.name}</h4>
                     <p class="popup-desc">${p.desc || ''}</p>
                     <div class="popup-actions">
-                        <a href="${targetNavUrl}" ${navOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-nav ${isTransit ? 'btn-transit-mode' : ''}">
+                        <a href="${targetNavUrl}" ${navOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-nav ${isTransit ? 'btn-transit-mode' : ''} ${!isDomestic ? 'btn-google-mode' : ''}">
                             <span>${navBtnText}</span>
                         </a>
-                        <a href="${isDomestic ? kakaoSearchUrl : googleNavUrl}" ${searchOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
+                        <a href="${isDomestic ? kakaoSearchUrl : googleSearchUrl}" ${searchOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
                             <span>${searchBtnText}</span>
                         </a>
                     </div>
@@ -2175,6 +2327,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const summaryEl = document.getElementById("mapPlacesSummary");
             if (!summaryEl) return;
 
+            const DOMESTIC_CITIES = ["제주", "부산", "강릉", "속초", "경주", "여수", "서울"];
+            const isDomesticPlan = DOMESTIC_CITIES.some(c => (plan.dest || "").includes(c));
             const isTransit = (plan.transportation || "").includes("대중교통") || (plan.transportation || "").includes("버스") || (plan.transportation || "").includes("지하철");
             const filterLabel = dayFilter === "all" ? "전체 일정" : `${dayFilter}일차`;
 
@@ -2195,10 +2349,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             });
 
+            const linkServiceLabel = isDomesticPlan
+                ? (isTransit ? '대중교통 길찾기' : '카카오맵 바로가기')
+                : (isTransit ? '구글맵 대중교통 길찾기' : '구글 지도(Google Maps) 바로가기');
+
             summaryEl.innerHTML = `
                 <div class="map-places-summary-header">
                     <span class="map-places-title">
-                        📍 주요 방문지 클릭 시 ${isTransit ? '대중교통 길찾기' : '카카오맵 바로가기'}
+                        📍 주요 방문지 클릭 시 ${linkServiceLabel}
                         <strong class="map-places-badge">(${filterLabel} ${filteredPlaces.length}곳)</strong>
                     </span>
                     <span class="map-places-hint">👉 좌우로 스크롤하여 이동</span>
@@ -2744,11 +2902,82 @@ document.addEventListener("DOMContentLoaded", () => {
                 ],
                 price: "1박 약 15~25만원"
             }
+        ],
+        guam: [
+            {
+                name: "두짓타니 괌 리조트",
+                tag: "투몬비치 럭셔리 5성급",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 4,200개)",
+                loc: "괌 투몬 베이 중심가 (쇼핑 & 해변 직결)",
+                features: [
+                    "에메랄드빛 투몬 비치 파노라마 오션프론트 뷰",
+                    "야외 인피니티 풀 & 풀사이드 카바나 & 럭셔리 스파",
+                    "더 플라자 쇼핑몰 & T갤러리아 실내 연결"
+                ],
+                price: "1박 약 38~55만원"
+            },
+            {
+                name: "호텔 닛코 괌",
+                tag: "건비치 오션뷰 & 워터슬라이드",
+                tagClass: "healing",
+                rating: "4.7 (리뷰 3,600개)",
+                loc: "괌 건비치 앞 (사랑의 절벽 인접)",
+                features: [
+                    "전 객실 환상적인 건비치 에메랄드 오션뷰 발코니",
+                    "72m 괌 최장 야외 워터슬라이드 & 스노클링 포인트",
+                    "선셋 바비큐 & 크리스탈 채플 전망"
+                ],
+                price: "1박 약 22~32만원"
+            },
+            {
+                name: "PIC 괌 (퍼시픽 아일랜드 클럽)",
+                tag: "올인클루시브 & 워터파크",
+                tagClass: "value",
+                rating: "4.6 (리뷰 5,100개)",
+                loc: "괌 투몬 만 (이파오 비치 인접)",
+                features: [
+                    "70여 가지 액티비티를 즐기는 초대형 워터파크",
+                    "가족 & 키즈 전용 클럽메이트 케어 프로그램",
+                    "무제한 스노클링, 윈드서핑, 양궁 레슨 포함"
+                ],
+                price: "1박 약 26~38만원"
+            }
+        ],
+        danang: [
+            {
+                name: "인터컨티넨탈 다낭 선 페닌슐라 리조트",
+                tag: "세계 최고 럭셔리",
+                tagClass: "luxury",
+                rating: "4.9 (리뷰 3,100개)",
+                loc: "다낭 손트라 반도 (프라이빗 베이)",
+                features: [
+                    "빌 벤슬리 디자인 몽환적인 자연 절경 속 리조트",
+                    "프라이빗 비치 & 롱풀 인피니티 수영장",
+                    "미슐랭 3스타 셰프 레스토랑 라 메종 1888"
+                ],
+                price: "1박 약 55~85만원"
+            },
+            {
+                name: "TMS 호텔 다낭 비치",
+                tag: "미케비치 1열 가성비",
+                tagClass: "value",
+                rating: "4.7 (리뷰 4,800개)",
+                loc: "다낭 미케비치 바로 앞",
+                features: [
+                    "25층 최상층 탁 트인 미케비치 파노라마 루프탑 풀",
+                    "길 건너면 바로 백사장 직결 최강 입지",
+                    "쾌적한 오션뷰 스위트 & 무료 애프터눈 티"
+                ],
+                price: "1박 약 8~14만원"
+            }
         ]
     };
 
     function getHotelsForDestination(dest) {
         const d = (dest || "").toLowerCase();
+        if (d.includes("괌")) return hotelCatalog.guam;
+        if (d.includes("다낭")) return hotelCatalog.danang;
         if (d.includes("제주")) return hotelCatalog.jeju;
         if (d.includes("오사카")) return hotelCatalog.osaka;
         if (d.includes("도쿄")) return hotelCatalog.tokyo;
@@ -2815,17 +3044,32 @@ document.addEventListener("DOMContentLoaded", () => {
         if (bookingDateSpan) bookingDateSpan.textContent = dateRangeStr;
         if (bookingDateBadge) bookingDateBadge.textContent = `📅 ${dateRangeStr} 자동 연동`;
 
-        // 2. 여기어때 링크 (날짜와 지역 쿼리 파라미터 자동 삽입)
-        let yeogiUrl = "";
-        if (startDate && endDate) {
-            yeogiUrl = `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(dest)}&checkIn=${startDate}&checkOut=${endDate}`;
+        const DOMESTIC_CITIES = ["제주", "부산", "강릉", "속초", "경주", "여수", "서울"];
+        const isDomesticDest = DOMESTIC_CITIES.some(c => dest.includes(c));
+
+        // 2. 국내는 여기어때, 해외는 아고다/글로벌 호텔 예약 링크 자동 적용
+        let primaryPortalUrl = "";
+        let primaryPortalName = isDomesticDest ? "여기어때로 예약하기" : "아고다(Agoda)로 예약하기";
+        let primaryBtnClass = isDomesticDest ? "btn-yeogi-link" : "btn-agoda-link";
+        let primaryBtnText = isDomesticDest ? "🏨 여기어때 확인" : "🏨 아고다 확인";
+
+        if (isDomesticDest) {
+            if (startDate && endDate) {
+                primaryPortalUrl = `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(dest)}&checkIn=${startDate}&checkOut=${endDate}`;
+            } else {
+                primaryPortalUrl = `https://www.yeogi.com/search?keyword=${encodeURIComponent(dest)}`;
+            }
         } else {
-            yeogiUrl = `https://www.yeogi.com/search?keyword=${encodeURIComponent(dest)}`;
+            // 해외: 아고다 글로벌 예약 검색
+            primaryPortalUrl = `https://www.agoda.com/ko-kr/search?city=${encodeURIComponent(dest)}`;
         }
+
         if (linkYeogiPortal) {
-            linkYeogiPortal.href = yeogiUrl;
+            linkYeogiPortal.href = primaryPortalUrl;
+            const strongEl = linkYeogiPortal.querySelector("strong");
+            if (strongEl) strongEl.textContent = primaryPortalName;
             const subEl = document.getElementById("subYeogi");
-            if (subEl) subEl.textContent = `${dest} · ${dateRangeStr} 검색`;
+            if (subEl) subEl.textContent = `${dest} · ${dateRangeStr} ${isDomesticDest ? '최저가' : '글로벌 특가'}`;
         }
 
         // 3. 에어비앤비 링크 (유저가 제공한 기본 추적 파라미터 + dest, checkin, checkout 자동 삽입)
@@ -2855,9 +3099,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const hotels = getHotelsForDestination(dest);
             famousHotelsGrid.innerHTML = hotels.map(hotel => {
                 const mapSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.name + ' ' + dest)}`;
-                const yeogiHotelUrl = startDate && endDate
-                    ? `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(hotel.name)}&checkIn=${startDate}&checkOut=${endDate}`
-                    : `https://www.yeogi.com/search?keyword=${encodeURIComponent(hotel.name)}`;
+                const hotelPrimaryUrl = isDomesticDest
+                    ? (startDate && endDate
+                        ? `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(hotel.name)}&checkIn=${startDate}&checkOut=${endDate}`
+                        : `https://www.yeogi.com/search?keyword=${encodeURIComponent(hotel.name)}`)
+                    : `https://www.agoda.com/ko-kr/search?keyword=${encodeURIComponent(hotel.name + ' ' + dest)}`;
                 const airbnbHotelUrl = `https://www.airbnb.co.kr/s/${encodeURIComponent(dest + ' ' + hotel.name)}/homes?${startDate ? `checkin=${startDate}&` : ''}${endDate ? `checkout=${endDate}&` : ''}c=.pi0.pk23067405305_191699516049`;
 
                 return `
@@ -2882,8 +3128,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <a href="${mapSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-map-link" title="구글 지도에서 위치, 평점, 사진, 사용자 후기 확인">
                                     🗺️ 구글 지도에서 위치·실시간 후기 보기
                                 </a>
-                                <a href="${yeogiHotelUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-yeogi-link" title="여기어때에서 실시간 빈 방 및 최저가 확인">
-                                    🏨 여기어때 확인
+                                <a href="${hotelPrimaryUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link ${primaryBtnClass}" title="${primaryBtnText}">
+                                    ${primaryBtnText}
                                 </a>
                                 <a href="${airbnbHotelUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-airbnb-link" title="에어비앤비에서 숙소 확인">
                                     🏡 에어비앤비 확인
