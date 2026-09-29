@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultMeta = document.getElementById("resultMeta");
     const planOutput = document.getElementById("planOutput");
     const copyBtn = document.getElementById("copyBtn");
+    const copyChatBtn = document.getElementById("copyChatBtn");
     const downloadBtn = document.getElementById("downloadBtn");
 
     // 플랜 비교 모드 & 다중 플랜 탭 요소
@@ -1412,14 +1413,96 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 11. 클립보드 복사
+     * 11. 카카오톡 등 모바일 메신저/채팅 앱 공유에 최적화된 포맷 생성
+     * (맨 처음에 장소, 가격, 핵심 활동을 일목요연하게 요약하고, 1일차 2일차 상세 일정을 깔끔하게 연결)
+     */
+    function formatPlanForChat(plan) {
+        if (!plan) return "";
+        const hl = extractPlanHighlights(plan);
+        const md = plan.markdown || "";
+
+        let output = `✈️ [${plan.dest} ${plan.dur} 맞춤 여행 가이드]\n`;
+        output += `━━━━━━━━━━━━━━━━━━━━\n`;
+        output += `📍 여행 장소: ${plan.dest}\n`;
+        output += `💰 예상 가격: ${hl.totalCost}\n`;
+        output += `🎯 핵심 활동: ${hl.activities.join(", ") || plan.interests}\n`;
+        output += `🏨 추천 숙소: ${hl.accommodation}\n`;
+        output += `🚗 이동 수단: ${hl.transport}\n`;
+        output += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+        // 마크다운 표 및 문법 기호를 모바일 채팅창에 알맞게 정제
+        let cleanText = md;
+
+        // 마크다운 표 제거 (모바일에서 줄바꿈 왜곡 방지)
+        cleanText = cleanText.replace(/\|[^\r\n]+\|/g, "");
+
+        // 마크다운 헤더 기호 변환
+        cleanText = cleanText.replace(/^####\s*■\s*/gm, "\n■ ");
+        cleanText = cleanText.replace(/^####\s*/gm, "\n■ ");
+        cleanText = cleanText.replace(/^###\s*/gm, "\n▶ ");
+        cleanText = cleanText.replace(/^##\s*/gm, "\n【 ");
+        cleanText = cleanText.replace(/^#\s+[^\r\n]+/gm, ""); // 헤더 제목은 위 요약으로 대체
+
+        // 볼드/이탤릭 기호 제거
+        cleanText = cleanText.replace(/\*\*([^*]+)\*\*/g, "$1");
+        cleanText = cleanText.replace(/\*([^*]+)\*/g, "$1");
+
+        // 인용부호 제거
+        cleanText = cleanText.replace(/^>\s+/gm, "");
+
+        // 글머리 기호 정리
+        cleanText = cleanText.replace(/^\s*-\s+/gm, "• ");
+
+        // 연속된 공백 및 줄바꿈 정리
+        cleanText = cleanText.replace(/[ \t]+/g, " ");
+        cleanText = cleanText.replace(/\n{3,}/g, "\n\n").trim();
+
+        return output + cleanText + "\n\n💡 *실시간 요금 및 운영시간은 방문 전 확인 필요*";
+    }
+
+    /**
+     * 11-1. 카톡/채팅 공유용 복사 버튼
+     */
+    if (copyChatBtn) {
+        copyChatBtn.addEventListener("click", async () => {
+            const plan = generatedPlans.find((p) => p.id === activePlanId) || {
+                dest: destinationInput.value.trim() || "여행지",
+                dur: durationInput.value.trim() || "일정",
+                budget: budgetInput.value.trim() || "",
+                interests: interestsInput.value.trim() || "",
+                accommodation: accommodationInput.value.trim() || "",
+                transportation: transportationInput.value.trim() || "",
+                markdown: currentPlanMarkdown
+            };
+
+            const chatText = formatPlanForChat(plan);
+            if (!chatText) return;
+
+            try {
+                await navigator.clipboard.writeText(chatText);
+                const originalHtml = copyChatBtn.innerHTML;
+                copyChatBtn.innerHTML = "<span>✅ 카톡용 복사 완료!</span>";
+                copyChatBtn.style.backgroundColor = "#e6ca00";
+
+                setTimeout(() => {
+                    copyChatBtn.innerHTML = originalHtml;
+                    copyChatBtn.style.backgroundColor = "";
+                }, 2000);
+            } catch (err) {
+                alert("클립보드 접근 권한이 필요합니다. 내용을 직접 복사해 주세요.");
+            }
+        });
+    }
+
+    /**
+     * 11-2. 원문 마크다운 전체 복사 버튼
      */
     copyBtn.addEventListener("click", async () => {
         if (!currentPlanMarkdown) return;
         try {
             await navigator.clipboard.writeText(currentPlanMarkdown);
             const originalText = copyBtn.innerHTML;
-            copyBtn.innerHTML = "<span>✅ 복사 완료!</span>";
+            copyBtn.innerHTML = "<span>✅ 전체 복사 완료!</span>";
             copyBtn.style.borderColor = "var(--agoda-green)";
             copyBtn.style.color = "var(--agoda-green)";
 

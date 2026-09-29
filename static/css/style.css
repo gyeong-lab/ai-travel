@@ -1355,6 +1355,29 @@ button {
     gap: 10px;
 }
 
+.btn-action-chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3c1e1e;
+    background-color: #fae100;
+    border: 1px solid #ebd300;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btn-action-chat:hover {
+    background-color: #f5dc00;
+    border-color: #deb800;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
 .btn-action-outline {
     display: inline-flex;
     align-items: center;
