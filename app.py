@@ -2,7 +2,7 @@ import os
 import time
 import logging
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from google import genai
 from google.genai.errors import APIError
 
@@ -216,6 +216,11 @@ def build_prompt(data: dict) -> str:
 def index():
     """메인 페이지를 렌더링합니다."""
     return render_template("index.html")
+
+@app.route("/favicon.ico")
+def favicon():
+    """브라우저 기본 요청 파비콘(비행기 아이콘)을 제공합니다."""
+    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.svg", mimetype="image/svg+xml")
 
 @app.route("/generate", methods=["POST"])
 def generate_plan():
