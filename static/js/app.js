@@ -1785,6 +1785,34 @@ document.addEventListener("DOMContentLoaded", () => {
         "성산일출봉": { lat: 33.4586, lng: 126.9427 },
         "섭지코지": { lat: 33.4243, lng: 126.9311 },
         "우도": { lat: 33.5042, lng: 126.9541 },
+        "우도 해안도로": { lat: 33.5042, lng: 126.9541 },
+        "우도봉": { lat: 33.4988, lng: 126.9602 },
+        "검멀레 해변": { lat: 33.5002, lng: 126.9625 },
+        "하고수동 해수욕장": { lat: 33.5145, lng: 126.9580 },
+        "광치기해변": { lat: 33.4608, lng: 126.9248 },
+        "자매국수": { lat: 33.5085, lng: 126.5312 },
+        "자매국수 본점": { lat: 33.5085, lng: 126.5312 },
+        "칠돈가": { lat: 33.5032, lng: 126.5298 },
+        "칠돈가 본점": { lat: 33.5032, lng: 126.5298 },
+        "숙성도": { lat: 33.4862, lng: 126.4880 },
+        "숙성도 본점": { lat: 33.4862, lng: 126.4880 },
+        "해비치 호텔": { lat: 33.3228, lng: 126.8447 },
+        "신신호텔": { lat: 33.2480, lng: 126.5620 },
+        "신라호텔": { lat: 33.2475, lng: 126.4085 },
+        "롯데호텔": { lat: 33.2482, lng: 126.4105 },
+        "아르떼뮤지엄": { lat: 33.3965, lng: 126.3475 },
+        "스누피가든": { lat: 33.4352, lng: 126.7788 },
+        "에코랜드": { lat: 33.4568, lng: 126.6685 },
+        "휴애리": { lat: 33.3085, lng: 126.6340 },
+        "산굼부리": { lat: 33.4332, lng: 126.6875 },
+        "이호테우": { lat: 33.4982, lng: 126.4528 },
+        "이호테우해수욕장": { lat: 33.4982, lng: 126.4528 },
+        "곽지해수욕장": { lat: 33.4507, lng: 126.3105 },
+        "판포포구": { lat: 33.3668, lng: 126.2005 },
+        "신창풍차해안도로": { lat: 33.3445, lng: 126.1738 },
+        "풍차해안도로": { lat: 33.3445, lng: 126.1738 },
+        "수월봉": { lat: 33.2975, lng: 126.1628 },
+        "송악산": { lat: 33.2038, lng: 126.2905 },
         "함덕": { lat: 33.5434, lng: 126.6692 },
         "함덕해수욕장": { lat: 33.5434, lng: 126.6692 },
         "동문시장": { lat: 33.5126, lng: 126.5283 },
@@ -1964,6 +1992,86 @@ document.addEventListener("DOMContentLoaded", () => {
         4: "#ea580c"
     };
 
+    /**
+     * AI 계획서 텍스트에서 '평균', '접이식 전기차' 같은 비장소 단어를 걸러내고 실제 명소/식당/상호명만 추출
+     */
+    function cleanPlaceName(rawContent, currentDay) {
+        if (!rawContent) return null;
+        let text = rawContent.trim();
+
+        // 1. 꿀팁, 이동시간, 예상 경비, 주의사항 등 정보성 텍스트는 원천 제외
+        if (/(꿀팁|소요시간|이동시간|예상\s*경비|경비|비용|이동\s*정보|준비물|주의사항|환전|안내사항)/i.test(text)) {
+            return null;
+        }
+
+        // 2. 괄호 안의 부가설명(가격, 대기시간, 세부사항 등) 제거
+        text = text.replace(/\([^\)]*\)/g, " ").replace(/（[^）]*）/g, " ");
+
+        // 3. 이동 화살표(➜, →, ->, ~>) 동선에서 메인 목적지 세그먼트 분리
+        if (/[➜→\->~>]/.test(text)) {
+            const segs = text.split(/[➜→\->~>]+/).map(s => s.trim()).filter(Boolean);
+            let targetSeg = segs[segs.length - 1];
+            // 마지막 세그먼트가 단순 '이동/도착/출발'이면 바로 앞의 명소 선택
+            if (/^(이동|출발|도착|체크인|복귀)$/.test(targetSeg) && segs.length > 1) {
+                targetSeg = segs[segs.length - 2];
+            }
+            text = targetSeg || text;
+        }
+
+        // 4. 마크다운 기호 제거
+        text = text.replace(/[\*\_`~\[\]]/g, " ").trim();
+
+        // 5. 렌터카, 접이식 전기차, 셔틀버스 등 이동수단/대여 접두어 제거
+        text = text.replace(/^(?:접이식\s*전기차|전기차|전동\s*바이크|전동\s*스쿠터|전기자전거|자전거|렌터카|렌트카|셔틀버스|대중교통|차량)\s*(?:대여|탑승|이용|픽업|인수)?\s*(?:및|후|로|타고)?\s*/gi, "");
+
+        // 6. 평균, 대략, 약, 맛집, 명소 등 일반 수식어 제거
+        text = text.replace(/^(?:평균|대략|약|최고의|인기|유명|대표|시그니처|추천|로컬|숨은|필수|감성|힐링)\s*(?:맛집|명소|식당|카페|투어|코스|만찬|체험|관광)?\s*[:：\-·]?\s*/gi, "");
+
+        // 7. SPOT_COORDS 중에서 긴 이름 순으로 포함 여부 최우선 탐색
+        const spotKeys = Object.keys(SPOT_COORDS).sort((a, b) => b.length - a.length);
+        for (const key of spotKeys) {
+            if (text.includes(key) || rawContent.includes(key)) {
+                return key;
+            }
+        }
+
+        // 8. 쉼표, 슬래시 등으로 분리 후 첫 번째 명소명 추출
+        const chunks = text.split(/[,/·&|및\s+➜→]+/);
+        let candidate = chunks[0] ? chunks[0].trim() : text;
+
+        // 9. 서술어/동사 접미사 제거 (예: "성산일출봉 탐방" -> "성산일출봉", "우도 해안도로 라이딩" -> "우도 해안도로")
+        candidate = candidate.replace(/\s*(?:탐방|관람|산책|산책로\s*걷기|등반|라이딩|투어|체험|일주|구경|방문|식사|시식|만찬|즐기기|힐링|휴식|숙박|체크인|체크아웃|이동|도착|출발|인수|반납|대여)$/gi, "").trim();
+
+        // 10. 문맥 조사 제거 (에서, 으로, 에게, 에서부터)
+        candidate = candidate.replace(/(?:에서|으로|에게|에서부터)\s*$/g, "").trim();
+
+        // 11. 무효 키워드 블랙리스트 체크 (평균, 접이식 전기차 등)
+        const INVALID_WORDS = new Set([
+            "평균", "접이식", "전기차", "접이식 전기차", "전동스쿠터", "전기자전거", "자전거",
+            "렌터카", "렌트카", "셔틀", "셔틀버스", "대중교통", "차량", "소요", "시간",
+            "소요시간", "이동시간", "경비", "예상", "비용", "대기", "웨이팅", "대기시간",
+            "확인", "필요", "주의", "참고", "안내", "꿀팁", "팁", "준비물",
+            "추천", "인기", "최고", "유명", "로컬", "식사", "만찬", "체크인", "체크아웃",
+            "휴식", "자유", "일정", "코스", "동선", "루트", "약", "대략", "최소", "최대", "총", "기준",
+            "오전", "점심", "오후", "저녁", "숙소", "도착", "출발", "이동", "탑승", "첫코스"
+        ]);
+
+        if (!candidate || candidate.length < 2 || INVALID_WORDS.has(candidate)) {
+            return null;
+        }
+
+        // 숫자나 금액으로 시작하는 경우 제외
+        if (/^(약|대략|평균|총|최소|최대)?\s*\d+/.test(candidate) || /^\d+/.test(candidate)) {
+            return null;
+        }
+
+        if (candidate.length > 15) {
+            candidate = candidate.split(/\s+/).slice(0, 3).join(" ");
+        }
+
+        return candidate;
+    }
+
     function extractPlacesFromPlan(markdown, destination, transportType) {
         if (!markdown) return [];
         const places = [];
@@ -1988,26 +2096,18 @@ document.addEventListener("DOMContentLoaded", () => {
             let orderInDay = 1;
 
             lines.forEach((line) => {
-                // 시간대별 불릿 또는 h4 하위 불릿 매칭
-                const timeMatch = line.match(/(?:[-*]\s*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소|방문 장소|추천 미식|핵심 관광)[^:]*:\s*|####\s*[\d\.\s]*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소)[^)]*\)\s*)([^\r\n]+)/i);
+                // 정보성 불릿(팁, 이동시간, 경비 등)은 장소 추출 원천 차단
+                if (/^[-*]\s*(?:💡|🚗|⏱️|💰|ℹ️|⚠️)/.test(line) || /(꿀팁|소요시간|이동시간|예상\s*경비|경비|비용|이동\s*정보|준비물|주의사항)/i.test(line)) {
+                    return;
+                }
+
+                // 장소/방문지/미식/숙소 관련 라인 매칭
+                const timeMatch = line.match(/(?:[-*]\s*(?:📍|🍴|🎯|🌙|🏨|🌅|✈️|🚢|🚄)?\s*\*\*?(도착\s*&?\s*첫\s*코스|첫\s*목적지|추천\s*미식|핵심\s*관광[^:]*|방문\s*장소|핵심\s*명소|저녁\s*만찬|점심\s*식사|숙소\s*체크인|숙소|동선\/출국수속|관광\s*지)\*\*?:\s*|[-*]\s*(?:📍|🍴|🎯|🌙|🏨)\s*(?:\[[^\]]+\])?\s*)([^\r\n]+)/i);
                 if (timeMatch) {
-                    const rawContent = timeMatch[1].trim();
-                    const cleanCandidate = rawContent.replace(/[\*\(\)\[\]]/g, " ").trim();
-                    const tokens = cleanCandidate.split(/[,→>·\-\/\s]+/).filter(s => s.length >= 2 && !s.includes("원") && !s.includes("확인") && !s.includes("소요") && !s.includes("이동"));
+                    const rawContent = (timeMatch[2] ? timeMatch[2].trim() : (timeMatch[1] || "")).trim();
+                    const placeName = cleanPlaceName(rawContent, currentDay);
 
-                    let placeName = tokens[0] || rawContent.slice(0, 14);
-                    // 더 긴 매치 탐색
-                    for (const sKey of Object.keys(SPOT_COORDS)) {
-                        if (rawContent.includes(sKey)) {
-                            placeName = sKey;
-                            break;
-                        }
-                    }
-
-                    // 렌터카, 렌트카, 셔틀버스 등 이동수단/대여 관련 키워드는 장소 마커에서 제외
-                    const isRentalCarKeyword = /(렌터카|렌트카|렌트|rent|car|대여|인수|반납|셔틀버스|차량\s*인수)/i.test(placeName) || /(렌터카|렌트카|렌트|rent\s*car|차량\s*인수)/i.test(rawContent);
-
-                    if (!isRentalCarKeyword && placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
+                    if (placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
                         let spotCoord = SPOT_COORDS[placeName];
                         if (!spotCoord) {
                             for (const [sKey, sVal] of Object.entries(SPOT_COORDS)) {
