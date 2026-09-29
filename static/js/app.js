@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const companionsInput = document.getElementById("companions");
     const transportationInput = document.getElementById("transportation");
     const accommodationInput = document.getElementById("accommodation");
+    const travelStyleInput = document.getElementById("travelStyle");
+    const travelModeInput = document.getElementById("travelMode");
+    const styleChips = document.querySelectorAll(".style-chip");
 
     // 상단 네비게이션 & 검색창
     const headerResetBtn = document.getElementById("headerResetBtn");
@@ -67,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "연인과 둘이서",
             transportation: "렌터카 (전기차)",
             accommodation: "서귀포 바다 전망 감성 숙소",
-            mode: "B"
+            mode: "B",
+            travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
         },
         osaka: {
             keyword: "오사카",
@@ -79,7 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "친구와 둘이서",
             transportation: "대중교통 (지하철, 라피트)",
             accommodation: "난바역 근처 가성비 비즈니스 호텔",
-            mode: "A"
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
         },
         tokyo: {
             keyword: "도쿄",
@@ -91,7 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "친구와 둘이서",
             transportation: "도쿄 메트로 72시간 패스",
             accommodation: "시부야/신주쿠 역세권 모던 호텔",
-            mode: "A"
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
         },
         fukuoka: {
             keyword: "후쿠오카",
@@ -103,7 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "부모님과 함께",
             transportation: "유후인노모리 관광열차 & 버스",
             accommodation: "유후인 전통 온천 료칸 (가이세키 석식)",
-            mode: "B"
+            mode: "B",
+            travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
         },
         bangkok: {
             keyword: "방콕",
@@ -115,7 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "친구 2명",
             transportation: "대중교통 (BTS/MRT) 및 그랩(Grab)",
             accommodation: "차오프라야 강변 가성비 5성급 호텔",
-            mode: "A"
+            mode: "A",
+            travel_style: "🍽️ 웨이팅 필수 현지 찐맛집 & 미식 탐방"
         },
         danang: {
             keyword: "다낭",
@@ -127,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "가족 (아이 동반)",
             transportation: "전용 렌터카 & 그랩(Grab)",
             accommodation: "미케비치 오션뷰 풀빌라 리조트",
-            mode: "B"
+            mode: "B",
+            travel_style: "👨‍👩‍👧‍👦 부모님/아이 배려 편안한 이동 & 무리 없는 동선"
         },
         taipei: {
             keyword: "타이베이",
@@ -139,7 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "친구와 함께",
             transportation: "타이베이 MRT & 예스진지 일일 투어버스",
             accommodation: "시먼딩역 중심 3성급 호텔",
-            mode: "A"
+            mode: "A",
+            travel_style: "🍽️ 웨이팅 필수 현지 찐맛집 & 미식 탐방"
         },
         paris: {
             keyword: "파리",
@@ -151,7 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "혼자 떠나는 여행",
             transportation: "대중교통 (파리 메트로) 및 도보",
             accommodation: "시내 중심 3성급 부티크 호텔",
-            mode: "B"
+            mode: "B",
+            travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
         },
         newyork: {
             keyword: "뉴욕",
@@ -163,7 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "연인과 함께",
             transportation: "뉴욕 지하철 (MTA)",
             accommodation: "맨해튼 미드타운 4성급 호텔",
-            mode: "A"
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
         },
         barcelona: {
             keyword: "바르셀로나",
@@ -175,7 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions: "친구와 둘이서",
             transportation: "바르셀로나 메트로 및 도보",
             accommodation: "람블라스 거리 근처 감성 호텔",
-            mode: "B"
+            mode: "B",
+            travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
         }
     };
 
@@ -187,26 +200,72 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     /**
-     * 1. 모드(A/B) 라디오 카드 선택 처리
+     * 1. 여행 기조 & 스타일 초이스 및 직접 입력 처리
      */
-    function setMode(modeValue) {
-        modeCards.forEach((card) => {
-            const input = card.querySelector('input[type="radio"]');
-            if (input && input.value === modeValue) {
-                card.classList.add("active");
-                input.checked = true;
+    function setTravelStyle(styleText, modeValue = "A") {
+        if (travelStyleInput && styleText) {
+            travelStyleInput.value = styleText;
+        }
+        if (travelModeInput && modeValue) {
+            travelModeInput.value = modeValue;
+        }
+
+        // 일치하는 추천 칩 하이라이트
+        styleChips.forEach((chip) => {
+            if (chip.dataset.style === styleText || (styleText && styleText.includes(chip.textContent.trim()))) {
+                chip.classList.add("active");
             } else {
-                card.classList.remove("active");
+                chip.classList.remove("active");
             }
         });
     }
 
-    modeCards.forEach((card) => {
-        card.addEventListener("click", () => {
-            const radio = card.querySelector('input[type="radio"]');
-            if (radio) setMode(radio.value);
+    function setMode(modeValue) {
+        if (modeValue === "B") {
+            setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
+        } else {
+            setTravelStyle("⚡ 알찬 핵심 투어 / 주요 랜드마크 정복", "A");
+        }
+    }
+
+    styleChips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+            styleChips.forEach((c) => c.classList.remove("active"));
+            chip.classList.add("active");
+            const styleVal = chip.dataset.style;
+            const modeVal = chip.dataset.mode || "A";
+            setTravelStyle(styleVal, modeVal);
+
+            // 입력창 시각적 피드백
+            if (travelStyleInput) {
+                travelStyleInput.classList.add("input-synced");
+                setTimeout(() => travelStyleInput.classList.remove("input-synced"), 400);
+            }
         });
     });
+
+    if (travelStyleInput) {
+        travelStyleInput.addEventListener("input", () => {
+            const val = travelStyleInput.value.trim();
+            let matched = false;
+            styleChips.forEach((chip) => {
+                if (chip.dataset.style === val) {
+                    chip.classList.add("active");
+                    matched = true;
+                    if (travelModeInput) travelModeInput.value = chip.dataset.mode || "A";
+                } else {
+                    chip.classList.remove("active");
+                }
+            });
+            if (!matched && travelModeInput) {
+                if (val.includes("힐링") || val.includes("여유") || val.includes("휴식") || val.includes("부모님") || val.includes("가족") || val.includes("인생샷")) {
+                    travelModeInput.value = "B";
+                } else {
+                    travelModeInput.value = "A";
+                }
+            }
+        });
+    }
 
     /**
      * 2. 지역 및 카테고리 교차 필터링 핵심 함수 (2차원 동시 필터링 + 찜 목록 지원)
@@ -370,7 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
         companionsInput.value = "연인과 둘이서";
         transportationInput.value = "렌터카 (전기차)";
         accommodationInput.value = "서귀포 바다 전망 감성 숙소";
-        setMode("B");
+        setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
 
         topSearchInput.value = "제주도";
         priceRange.value = 1200000;
@@ -487,7 +546,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 companionsInput.value = data.companions;
                 transportationInput.value = data.transportation;
                 accommodationInput.value = data.accommodation;
-                setMode(data.mode);
+                if (data.travel_style) {
+                    setTravelStyle(data.travel_style, data.mode);
+                } else {
+                    setMode(data.mode);
+                }
 
                 topSearchInput.value = data.shortName;
                 if (chipDestination) {
@@ -744,7 +807,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const companions = companionsInput.value.trim();
         const transportation = transportationInput.value.trim();
         const accommodation = accommodationInput.value.trim();
-        const mode = document.querySelector('input[name="mode"]:checked')?.value || "A";
+        const mode = travelModeInput ? travelModeInput.value : (document.querySelector('input[name="mode"]:checked')?.value || "A");
+        const travel_style = travelStyleInput ? travelStyleInput.value.trim() : "";
 
         if (!destination || !duration || !budget || !interests) {
             showError("목적지, 여행 기간, 예산, 여행 테마는 필수 입력 항목입니다.");
@@ -763,7 +827,8 @@ document.addEventListener("DOMContentLoaded", () => {
             companions,
             transportation,
             accommodation,
-            mode
+            mode,
+            travel_style
         };
 
         try {

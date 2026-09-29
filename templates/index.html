@@ -228,27 +228,44 @@
                         <input type="text" id="accommodation" name="accommodation" value="서귀포 바다 전망 감성 숙소" placeholder="예: 가성비 호텔, 오션뷰 리조트">
                     </div>
 
-                    <!-- 여행 기조 스타일 (Prompt A / B) -->
+                    <!-- 여행 기조 스타일 (직접 입력 + 추천 초이스 칩) -->
                     <div class="form-group">
-                        <label class="label-heading">⚡ 여행 기조 스타일</label>
-                        <div class="mode-select-grid">
-                            <label class="mode-card" for="modeA">
-                                <input type="radio" id="modeA" name="mode" value="A">
-                                <div class="mode-card-body">
-                                    <div class="mode-tag tag-a">가성비 투어</div>
-                                    <strong>⚡ 알찬 핵심 코스</strong>
-                                    <p>주요 랜드마크와 맛집을 꽉 채운 최적 동선</p>
-                                </div>
-                            </label>
-                            <label class="mode-card active" for="modeB">
-                                <input type="radio" id="modeB" name="mode" value="B" checked>
-                                <div class="mode-card-body">
-                                    <div class="mode-tag tag-b">힐링 감성</div>
-                                    <strong>🌿 여유로운 휴식</strong>
-                                    <p>하루 1~2곳만 느긋하게 즐기는 힐링 여행</p>
-                                </div>
-                            </label>
+                        <label for="travelStyle" class="label-heading">⚡ 여행 기조 &amp; 스타일 <span class="req-star">*</span></label>
+                        <!-- 1) 직접 자유롭게 적을 수 있는 입력창 -->
+                        <div class="style-input-wrap">
+                            <input type="text" id="travelStyle" name="travel_style" value="🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행" placeholder="예: 힐링 위주, 부모님 동반 도보 최소화, 인생샷 카페 위주" required>
                         </div>
+
+                        <!-- 2) 한 번의 클릭으로 선택 가능한 초이스 칩 모음 -->
+                        <div class="style-choice-container">
+                            <span class="style-choice-label">💡 추천 스타일 초이스 (클릭 시 자동 입력):</span>
+                            <div class="style-choice-chips" id="styleChoiceChips">
+                                <button type="button" class="style-chip active" data-style="🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행" data-mode="B">
+                                    🌿 여유로운 힐링
+                                </button>
+                                <button type="button" class="style-chip" data-style="⚡ 알찬 핵심 투어 / 주요 랜드마크 정복" data-mode="A">
+                                    ⚡ 가성비 &amp; 핵심 투어
+                                </button>
+                                <button type="button" class="style-chip" data-style="📸 감성 인생샷 &amp; 인스타 핫플 카페 투어" data-mode="B">
+                                    📸 감성 &amp; 인생샷
+                                </button>
+                                <button type="button" class="style-chip" data-style="🍽️ 웨이팅 필수 현지 찐맛집 &amp; 미식 탐방" data-mode="A">
+                                    🍽️ 로컬 미식 탐방
+                                </button>
+                                <button type="button" class="style-chip" data-style="👨‍👩‍👧‍👦 부모님/아이 배려 편안한 이동 &amp; 무리 없는 동선" data-mode="B">
+                                    👨‍👩‍👧‍👦 효도/가족 배려
+                                </button>
+                                <button type="button" class="style-chip" data-style="🎢 테마파크 &amp; 해양 액티비티 올데이 몰입" data-mode="A">
+                                    🎢 액티비티 몰입
+                                </button>
+                                <button type="button" class="style-chip" data-style="🌙 황홀한 야경 &amp; 루프탑 낭만 투어" data-mode="B">
+                                    🌙 야경 &amp; 낭만
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 백엔드 모드 호환용 숨김 필드 -->
+                        <input type="hidden" id="travelMode" name="mode" value="B">
                     </div>
 
                     <!-- 생성 버튼 -->

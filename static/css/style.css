@@ -880,61 +880,55 @@ button {
     display: block;
 }
 
-/* 여행 기조 모드 A/B 카드 */
-.mode-select-grid {
+/* 여행 기조 & 스타일 입력창 및 초이스 칩 */
+.style-input-wrap {
+    margin-bottom: 6px;
+}
+
+.style-choice-container {
+    margin-top: 4px;
+}
+
+.style-choice-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.style-choice-chips {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 6px;
 }
 
-.mode-card {
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 8px 10px;
-    cursor: pointer;
-    background: #ffffff;
-    transition: all 0.15s ease;
-    display: block;
-}
-
-.mode-card input {
-    display: none;
-}
-
-.mode-card.active {
-    border-color: var(--agoda-blue);
-    background-color: var(--agoda-blue-light);
-}
-
-.mode-tag {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 4px;
-    margin-bottom: 3px;
-}
-
-.tag-a {
-    background-color: #dbeafe;
-    color: #1d4ed8;
-}
-
-.tag-b {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-.mode-card strong {
-    display: block;
-    font-size: 13px;
-    color: #1f2937;
-}
-
-.mode-card p {
+.style-chip {
     font-size: 11px;
-    color: #6b7280;
-    margin-top: 2px;
+    font-weight: 600;
+    color: #4b5563;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-full);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.style-chip:hover {
+    border-color: var(--agoda-blue);
+    color: var(--agoda-blue);
+    background-color: #f0f7ff;
+}
+
+.style-chip.active {
+    background-color: var(--agoda-blue-light);
+    border-color: var(--agoda-blue);
+    color: var(--agoda-blue);
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(42, 104, 232, 0.15);
 }
 
 /* AI 생성 메인 버튼 */

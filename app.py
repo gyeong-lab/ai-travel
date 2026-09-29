@@ -82,29 +82,35 @@ def build_prompt(data: dict) -> str:
     transportation = data.get("transportation", "").strip()
     accommodation = data.get("accommodation", "").strip()
     mode = data.get("mode", "A").strip().upper()
+    travel_style = data.get("travel_style", "").strip()
 
     # 예산 등급 자동 분석
     tier_title, tier_guide = analyze_budget_tier(budget)
 
-    # 모드별 세부 지침 정의
-    if mode == "B":
-        mode_title = "여유로운 힐링 / 로컬 감성 중심 (Slow & Relaxed Local Trip)"
-        mode_instruction = """
-- 하루에 1~2개의 핵심 장소만 여유롭게 방문하도록 느긋한 일정으로 구성하세요.
-- 북적이는 관광지보다는 현지인이 사랑하는 골목, 조용한 카페, 산책로, 힐링 스팟을 우선 추천하세요.
-- 식사 시간과 휴식 시간을 넉넉히 배정하고, 서두르지 않는 쉼이 있는 여행 동선을 만드세요.
+    # 여행 기조 스타일 처리
+    if not travel_style:
+        if mode == "B":
+            travel_style = "여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
+        else:
+            travel_style = "알찬 가성비 / 주요 랜드마크 최적 동선 투어"
+
+    if mode == "B" or any(k in travel_style for k in ["힐링", "여유", "휴식", "부모님", "가족", "배려", "낭만", "인생샷"]):
+        mode_title = f"여유로운 힐링 감성 중심 ({travel_style})"
+        mode_instruction = f"""
+- 사용자가 직접 설정한 여행 기조 스타일: **"{travel_style}"**
+- [스타일 필수 준수]: 하루 1~2곳만 느긋하게 즐기는 여유로운 동선으로 구성하고, 사용자가 입력한 스타일 요구사항("{travel_style}")을 모든 일자의 오전/오후/저녁 활동과 방문지 선정에 최우선으로 반영하세요.
+- 북적이는 관광지 대신 현지 감성, 예쁜 카페, 편안한 쉼터, 휴식 시간을 넉넉하게 배정하세요.
 """
     else:
-        mode_title = "알찬 가성비 / 핵심 투어 중심 (Efficient & High-Value Tour)"
-        mode_instruction = """
-- 주요 랜드마크와 필수 방문 명소를 놓치지 않고 최대한 알차게 둘러볼 수 있도록 동선을 최적화하세요.
-- 가성비가 뛰어난 맛집과 합리적인 가격의 숙소 및 교통 수단을 적극 추천하세요.
-- 시간대별(오전/점심/오후/저녁)로 체계적이고 밀도 높은 일정 계획을 세우세요.
+        mode_title = f"알찬 핵심 투어 중심 ({travel_style})"
+        mode_instruction = f"""
+- 사용자가 직접 설정한 여행 기조 스타일: **"{travel_style}"**
+- [스타일 필수 준수]: 주요 랜드마크와 핫플레이스를 놓치지 않고 동선을 최적화하여 알차게 둘러보도록 설계하고, 사용자가 입력한 스타일 요구사항("{travel_style}")을 시간대별 일정에 빈틈없이 반영하세요.
 """
 
     prompt = f"""
 당신은 최고의 글로벌 여행 플래너이자 투어 컨설턴트입니다.
-아래 사용자가 입력한 조건, **예산 등급 지침**, 여행 모드를 철저히 반영하여, 보기 쉽고 체계적인 맞춤 여행 계획서를 **Markdown** 형식으로 작성해 주세요.
+아래 사용자가 입력한 조건, **예산 등급 지침**, **여행 기조 스타일("{travel_style}")**을 철저히 반영하여, 보기 쉽고 체계적인 맞춤 여행 계획서를 **Markdown** 형식으로 작성해 주세요.
 
 ### [사용자 여행 기본 정보]
 - 1. 여행지: {destination}
@@ -114,13 +120,14 @@ def build_prompt(data: dict) -> str:
 - 5. 동행자: {companions}
 - 6. 선호 이동수단: {transportation}
 - 7. 숙소 선호 유형: {accommodation}
+- 8. ⚡ 여행 기조 스타일: **{travel_style}**
 
 ### [💡 예산 등급 및 맞춤 지침]
 - 적용 등급: {tier_title}
 {tier_guide}
 
-### [선택된 여행 모드]
-- 모드: {mode_title}
+### [선택된 여행 기조 & 스타일 지침]
+- 적용 스타일: **{travel_style}**
 {mode_instruction}
 
 ---
@@ -132,9 +139,10 @@ def build_prompt(data: dict) -> str:
 ⚠️ [핵심 제약 사항 - 필수 준수]
 - 실시간 정보가 필요한 입장료/티켓 가격, 교통 요금 및 각 매장/명소의 운영 시간/휴무일 등은 절대 사실처럼 단정하여 단일 값으로 확정 생성하지 말고, 반드시 **"(방문 전 최신 가격/운영시간 확인 필요)"** 또는 **"(확인 필요)"**라고 명확히 표시하세요.
 - **예산 등급({tier_title})에 따라 숙소 등급, 식당 수준, 이동 수단, 유료 액티비티 여부가 확연히 차이 나도록 계획을 구성하세요.** 저예산일 때는 가성비/무료 체험 위주로, 고예산일 때는 파인다이닝/호텔스파/요트/VIP투어 등 럭셔리 체험을 적극 전면에 내세우세요.
+- **사용자가 작성/선택한 여행 기조 스타일("{travel_style}")이 전체 일정의 분위기와 동선에 선명하게 드러나야 합니다.**
 
 # ✈️ {destination} {duration} 맞춤 여행 일정표
-> **{tier_title}** | **여행 기조: {mode_title}**
+> **{tier_title}** | **여행 기조: {travel_style}**
 > **💡 이번 예산 맞춤 여행 특징**: (설정하신 예산 {budget}에 맞춰 숙소, 식사, 액티비티를 어떤 수준과 혜택으로 설계했는지 1~2줄 요약)
 
 ### 1. 📌 여행 개요 및 핵심 테마
