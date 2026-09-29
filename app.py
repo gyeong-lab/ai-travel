@@ -60,6 +60,37 @@ def decompress_plan(token: str) -> dict:
         logger.warning(f"[계획 복원 실패] {e}")
         return None
 
+def shorten_url_safely(long_url: str) -> str:
+    """긴 공유 링크를 TinyURL / da.gd 등의 무료 단축 링크 서비스로 초단축합니다."""
+    import urllib.parse
+    import urllib.request
+
+    # 1. TinyURL 시도 (안정적이고 가장 널리 쓰이는 무료 단축 링크)
+    try:
+        api = f"https://tinyurl.com/api-create.php?url={urllib.parse.quote(long_url)}"
+        req = urllib.request.Request(api, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            res = resp.read().decode("utf-8").strip()
+            if res.startswith("http"):
+                logger.info(f"[TinyURL 단축 성공] {res}")
+                return res
+    except Exception as e:
+        logger.warning(f"[TinyURL 단축 실패] {e}")
+
+    # 2. da.gd 시도 (초경량 오픈 단축기)
+    try:
+        api2 = f"https://da.gd/s?url={urllib.parse.quote(long_url)}"
+        req2 = urllib.request.Request(api2, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req2, timeout=3) as resp2:
+            res2 = resp2.read().decode("utf-8").strip()
+            if res2.startswith("http"):
+                logger.info(f"[da.gd 단축 성공] {res2}")
+                return res2
+    except Exception as e:
+        logger.warning(f"[da.gd 단축 실패] {e}")
+
+    return long_url
+
 def is_authenticated() -> bool:
     """사이트 접속 비밀번호 인증 여부를 확인합니다."""
     site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
@@ -562,13 +593,15 @@ def create_share_link():
     if "vercel.app" in host_url and host_url.startswith("http://"):
         host_url = "https://" + host_url[7:]
 
-    share_url = f"{host_url}/?share={share_id}&d={token}"
+    raw_share_url = f"{host_url}/?share={share_id}&d={token}"
+    short_share_url = shorten_url_safely(raw_share_url)
 
     return jsonify({
         "success": True,
         "share_id": share_id,
         "token": token,
-        "share_url": share_url
+        "share_url": short_share_url,
+        "raw_share_url": raw_share_url
     }), 200
 
 @app.route("/share-plan", methods=["GET"])
