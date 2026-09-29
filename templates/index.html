@@ -1584,26 +1584,81 @@
 
                 <!-- 결과 출력 컨테이너 -->
                 <div class="plan-card-result" id="resultWrapper" style="display: none;">
-                    <div class="result-header-bar">
-                        <div class="result-info">
-                            <span class="badge-tag-blue">AI 플래너 완성</span>
-                            <h2 id="resultHeaderTitle">제주도 2박 3일 맞춤 여행 일정표</h2>
-                            <p class="result-meta-text" id="resultMeta"></p>
+                    <!-- 1. 생성된 계획 탭 바 & 비교 모드 버튼 -->
+                    <div class="plan-tabs-bar" id="planTabsBar">
+                        <div class="plan-tabs-scroll" id="planTabsScroll">
+                            <!-- 동적으로 생성된 계획 탭 버튼들이 JS로 추가됨 -->
                         </div>
-                        <div class="result-actions">
-                            <button type="button" id="copyBtn" class="btn-action-outline">
-                                <span class="action-icon">📋</span> 일정 복사
-                            </button>
-                            <button type="button" id="downloadBtn" class="btn-action-primary">
-                                <span class="action-icon">💾</span> .md 다운로드
+                        <button type="button" id="btnToggleCompare" class="btn-compare-pill">
+                            <span class="compare-icon">⚖️</span>
+                            <span class="compare-btn-text">가격 &amp; 활동 비교 모드</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. AI 추천 계획 1:1 비교 분석 대시보드 (비교 모드 활성화 시 표시) -->
+                    <div class="plan-compare-dashboard" id="planCompareDashboard" style="display: none;">
+                        <div class="compare-dash-header">
+                            <div>
+                                <div class="compare-dash-badge">⚖️ 스마트 플랜 비교 분석</div>
+                                <h3 class="compare-dash-title">AI 추천 계획 가격 &amp; 활동 1:1 비교</h3>
+                                <p class="compare-dash-subtitle">생성된 여행 계획들의 예산, 숙소, 식비 및 주요 활동의 차이를 가독성 높은 비교 카드로 확인하세요.</p>
+                            </div>
+                            <div class="compare-selectors" id="compareSelectors">
+                                <div class="selector-group">
+                                    <label for="compareSelectA">계획 A:</label>
+                                    <select id="compareSelectA" class="compare-select"></select>
+                                </div>
+                                <span class="vs-badge">VS</span>
+                                <div class="selector-group">
+                                    <label for="compareSelectB">계획 B:</label>
+                                    <select id="compareSelectB" class="compare-select"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2열 비교 카드 그리드 -->
+                        <div class="compare-grid" id="compareGrid">
+                            <!-- JS로 동적 렌더링 -->
+                        </div>
+
+                        <!-- 가독성 높은 가격 & 활동 비교 매트릭스 표 -->
+                        <div class="compare-table-card" id="compareTableCard">
+                            <h4 class="compare-table-title">📊 핵심 항목별 상세 비교표</h4>
+                            <div class="compare-table-responsive" id="compareTableResponsive">
+                                <!-- JS로 표 생성 -->
+                            </div>
+                        </div>
+
+                        <div class="compare-footer-actions">
+                            <button type="button" id="btnCloseCompare" class="btn-action-outline">
+                                ◀ 단일 일정표 전체 보기로 복귀
                             </button>
                         </div>
                     </div>
 
-                    <!-- 마크다운 렌더링 영역 -->
-                    <article class="markdown-article" id="planOutput">
-                        <!-- 마크다운 내용 자동 삽입 -->
-                    </article>
+                    <!-- 3. 개별 일정표 상세 결과 영역 (기본 모드) -->
+                    <div class="plan-detail-view" id="planDetailView">
+                        <div class="result-header-bar">
+                            <div class="result-info">
+                                <span class="badge-tag-blue" id="resultBadge">AI 플래너 완성</span>
+                                <h2 id="resultHeaderTitle">제주도 2박 3일 맞춤 여행 일정표</h2>
+                                <p class="result-meta-text" id="resultMeta"></p>
+                            </div>
+                            <div class="result-actions">
+                                <button type="button" id="copyBtn" class="btn-action-outline">
+                                    <span class="action-icon">📋</span> 일정 복사
+                                </button>
+                                <button type="button" id="downloadBtn" class="btn-action-primary">
+                                    <span class="action-icon">💾</span> .md 다운로드
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 마크다운 렌더링 영역 -->
+                        <article class="markdown-article" id="planOutput">
+                            <!-- 마크다운 내용 자동 삽입 -->
+                        </article>
+                    </div>
                 </div>
             </section>
         </main>

@@ -51,12 +51,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const copyBtn = document.getElementById("copyBtn");
     const downloadBtn = document.getElementById("downloadBtn");
 
+    // 플랜 비교 모드 & 다중 플랜 탭 요소
+    const planTabsBar = document.getElementById("planTabsBar");
+    const planTabsScroll = document.getElementById("planTabsScroll");
+    const btnToggleCompare = document.getElementById("btnToggleCompare");
+    const planCompareDashboard = document.getElementById("planCompareDashboard");
+    const planDetailView = document.getElementById("planDetailView");
+    const compareSelectA = document.getElementById("compareSelectA");
+    const compareSelectB = document.getElementById("compareSelectB");
+    const compareGrid = document.getElementById("compareGrid");
+    const compareTableResponsive = document.getElementById("compareTableResponsive");
+    const btnCloseCompare = document.getElementById("btnCloseCompare");
+
     // 상태 관리 변수
     let currentPlanMarkdown = "";
     let loadingInterval = null;
     let currentCityKey = "제주";
     let currentCategory = "all";
     let wishlist = JSON.parse(localStorage.getItem("ai_travel_wishlist") || "[]");
+
+    // AI 플랜 비교 및 히스토리 관리
+    let generatedPlans = [];
+    let activePlanId = null;
+    let isCompareMode = false;
+    let comparePlanIdA = null;
+    let comparePlanIdB = null;
+
 
     // 10대 인기 여행지 프리셋 데이터
     const presets = {
@@ -845,7 +865,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             currentPlanMarkdown = data.plan;
-            renderResult(data, destination, duration);
+            renderResult(data, destination, duration, payload);
 
         } catch (err) {
             console.error("AI Generation Error:", err);
@@ -887,18 +907,508 @@ document.addEventListener("DOMContentLoaded", () => {
         errorAlert.style.display = "none";
     }
 
-    function renderResult(data, dest, dur) {
-        resultHeaderTitle.textContent = `${dest} ${dur} 맞춤 여행 일정표`;
-        resultMeta.textContent = `⚡ AI 엔진: ${data.model || "Gemini 2.5 Flash"} · 소요 시간: ${data.elapsed_seconds || "5.2"}초 · 생성 완료`;
+    /**
+     * AI 플랜에서 가격 & 활동 핵심 지표 추출 (정규식 기반 마크다운 테이블 파싱 및 폴백)
+     */
+    function extractPlanHighlights(plan) {
+        const md = plan.markdown || "";
 
-        if (window.marked) {
-            planOutput.innerHTML = window.marked.parse(data.plan);
-        } else {
-            planOutput.textContent = data.plan;
+        let totalCost = plan.budget || "예산 확인 필요";
+        let accommodation = plan.accommodation || "숙소 정보 확인 필요";
+        let activities = [];
+        let food = [];
+        let transport = plan.transportation || "대중교통 또는 렌터카";
+
+        // 1) 생성된 분석표(| **항목** | [내용] |) 추출 시도
+        const costMatch = md.match(/\|\s*\*\*💰[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/);
+        if (costMatch && costMatch[1].trim()) {
+            totalCost = costMatch[1].trim();
         }
 
+        const hotelMatch = md.match(/\|\s*\*\*🏨[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/);
+        if (hotelMatch && hotelMatch[1].trim()) {
+            accommodation = hotelMatch[1].trim();
+        }
+
+        const actMatch = md.match(/\|\s*\*\*🎯[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/);
+        if (actMatch && actMatch[1].trim()) {
+            activities = actMatch[1].trim().split(/[,•\n]/).map(s => s.trim()).filter(Boolean);
+        }
+
+        const foodMatch = md.match(/\|\s*\*\*🍽️[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/);
+        if (foodMatch && foodMatch[1].trim()) {
+            food = foodMatch[1].trim().split(/[,•\n]/).map(s => s.trim()).filter(Boolean);
+        }
+
+        const transMatch = md.match(/\|\s*\*\*🚶[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/);
+        if (transMatch && transMatch[1].trim()) {
+            transport = transMatch[1].trim();
+        }
+
+        // 2) 폴백 (마크다운 분석표가 없거나 비어있는 경우)
+        if (activities.length === 0 && plan.interests) {
+            activities = plan.interests.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+        }
+        if (activities.length === 0) {
+            activities = ["현지 대표 랜드마크 탐방", "자연 & 감성 명소 힐링"];
+        }
+        if (food.length === 0) {
+            food = ["지역 대표 특산 미식", "전망 좋은 카페 방문"];
+        }
+
+        return {
+            totalCost,
+            accommodation,
+            activities: activities.slice(0, 4),
+            food: food.slice(0, 3),
+            transport
+        };
+    }
+
+    /**
+     * 상단 생성 계획 탭 렌더링
+     */
+    function renderPlanTabs() {
+        if (!planTabsScroll) return;
+        if (generatedPlans.length === 0) {
+            if (planTabsBar) planTabsBar.style.display = "none";
+            return;
+        }
+        if (planTabsBar) planTabsBar.style.display = "flex";
+
+        planTabsScroll.innerHTML = generatedPlans.map((p) => {
+            const isActive = p.id === activePlanId && !isCompareMode;
+            return `
+                <button type="button" class="plan-tab-btn ${isActive ? 'active' : ''}" data-id="${p.id}" title="${p.title}">
+                    <span>${p.shortTitle}</span>
+                    <span class="plan-tab-budget">${p.budget || ''}</span>
+                </button>
+            `;
+        }).join("");
+
+        planTabsScroll.querySelectorAll(".plan-tab-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const planId = btn.dataset.id;
+                setActivePlan(planId);
+            });
+        });
+    }
+
+    /**
+     * 특정 플랜을 활성화하여 상세 보기 렌더링
+     */
+    function setActivePlan(id) {
+        const plan = generatedPlans.find((p) => p.id === id);
+        if (!plan) return;
+
+        activePlanId = id;
+        isCompareMode = false;
+        currentPlanMarkdown = plan.markdown;
+
+        if (resultHeaderTitle) {
+            resultHeaderTitle.textContent = `${plan.dest} ${plan.dur} 맞춤 여행 일정표`;
+        }
+        if (resultMeta) {
+            resultMeta.textContent = `⚡ AI 엔진: ${plan.model} · 소요 시간: ${plan.elapsed}초 · 생성 시각: ${plan.createdAt}`;
+        }
+
+        if (window.marked && planOutput) {
+            planOutput.innerHTML = window.marked.parse(plan.markdown);
+        } else if (planOutput) {
+            planOutput.textContent = plan.markdown;
+        }
+
+        if (planCompareDashboard) planCompareDashboard.style.display = "none";
+        if (planDetailView) planDetailView.style.display = "block";
+
+        if (btnToggleCompare) {
+            btnToggleCompare.classList.remove("active-mode");
+            btnToggleCompare.innerHTML = '<span class="compare-icon">⚖️</span><span class="compare-btn-text">가격 &amp; 활동 비교 모드</span>';
+        }
+
+        renderPlanTabs();
+    }
+
+    /**
+     * 비교 모드 토글 (단일 일정표 ↔ 가격 & 활동 비교 모드)
+     */
+    function toggleCompareMode(forceState) {
+        if (forceState !== undefined) {
+            isCompareMode = forceState;
+        } else {
+            isCompareMode = !isCompareMode;
+        }
+
+        if (isCompareMode) {
+            if (planDetailView) planDetailView.style.display = "none";
+            if (planCompareDashboard) planCompareDashboard.style.display = "block";
+            if (btnToggleCompare) {
+                btnToggleCompare.classList.add("active-mode");
+                btnToggleCompare.innerHTML = '<span class="compare-icon">📄</span><span class="compare-btn-text">단일 일정표 보기</span>';
+            }
+            renderComparisonView();
+            planCompareDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+            if (activePlanId) {
+                setActivePlan(activePlanId);
+            } else if (generatedPlans.length > 0) {
+                setActivePlan(generatedPlans[generatedPlans.length - 1].id);
+            }
+        }
+        renderPlanTabs();
+    }
+
+    /**
+     * 1:1 비교 카드 렌더링 헬퍼
+     */
+    function renderSingleCompareCard(plan, badgeLetter, badgeClass, label) {
+        const hl = extractPlanHighlights(plan);
+        return `
+            <div class="compare-card card-${badgeLetter.toLowerCase()}">
+                <div class="compare-card-header">
+                    <div>
+                        <span class="compare-card-tag ${badgeClass}">${label} · ${plan.shortTitle}</span>
+                        <h3 class="compare-card-title">${plan.dest} (${plan.dur})</h3>
+                    </div>
+                    <button type="button" class="btn-action-outline btn-view-single" data-id="${plan.id}" style="font-size:11px; padding:4px 9px;">
+                        상세 보기 ➔
+                    </button>
+                </div>
+
+                <!-- 가격 및 예산 비교 영역 -->
+                <div class="compare-section section-price">
+                    <div class="compare-section-title">
+                        <span>💰</span>
+                        <span>예산 &amp; 경비 구조</span>
+                    </div>
+                    <div class="compare-price-highlight">${hl.totalCost}</div>
+                    <ul class="compare-list">
+                        <li class="compare-list-item">
+                            <span class="compare-bullet">🏨</span>
+                            <span><strong>숙소:</strong> ${hl.accommodation}</span>
+                        </li>
+                        <li class="compare-list-item">
+                            <span class="compare-bullet">🚗</span>
+                            <span><strong>교통:</strong> ${hl.transport}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 활동 & 액티비티 비교 영역 -->
+                <div class="compare-section section-activity">
+                    <div class="compare-section-title">
+                        <span>🎯</span>
+                        <span>핵심 활동 &amp; 여행 기조 (${plan.style ? plan.style.split('/')[0].trim() : '맞춤'})</span>
+                    </div>
+                    <ul class="compare-list">
+                        ${hl.activities.map(act => `
+                            <li class="compare-list-item">
+                                <span class="compare-bullet">✔</span>
+                                <span>${act}</span>
+                            </li>
+                        `).join("")}
+                        ${hl.food.length > 0 ? `
+                            <li class="compare-list-item">
+                                <span class="compare-bullet">🍽️</span>
+                                <span><strong>미식:</strong> ${hl.food.join(", ")}</span>
+                            </li>
+                        ` : ''}
+                    </ul>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 상세 항목별 비교 매트릭스 표 렌더링 헬퍼
+     */
+    function renderCompareMatrixTable(planA, planB) {
+        const hlA = extractPlanHighlights(planA);
+        const hlB = extractPlanHighlights(planB);
+
+        return `
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th class="th-item">비교 항목</th>
+                        <th class="th-plan-a">계획 A: ${planA.shortTitle}</th>
+                        <th class="th-plan-b">계획 B: ${planB.shortTitle}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="td-item">💰 총 예상 경비</td>
+                        <td><strong style="color: #ea580c; font-size: 14px;">${hlA.totalCost}</strong></td>
+                        <td><strong style="color: #ea580c; font-size: 14px;">${hlB.totalCost}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">🎨 여행 기조 및 스타일</td>
+                        <td>${planA.style || '표준'}</td>
+                        <td>${planB.style || '표준'}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">🏨 숙소 형태 및 등급</td>
+                        <td>${hlA.accommodation}</td>
+                        <td>${hlB.accommodation}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">🎯 주요 액티비티 &amp; 코스</td>
+                        <td>
+                            <ul style="margin:0; padding-left:18px;">
+                                ${hlA.activities.map(a => `<li>${a}</li>`).join("")}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul style="margin:0; padding-left:18px;">
+                                ${hlB.activities.map(a => `<li>${a}</li>`).join("")}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">🍽️ 대표 추천 미식</td>
+                        <td>${hlA.food.join(", ")}</td>
+                        <td>${hlB.food.join(", ")}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">🚶 이동 수단 &amp; 동선 템포</td>
+                        <td>${hlA.transport}</td>
+                        <td>${hlB.transport}</td>
+                    </tr>
+                    <tr>
+                        <td class="td-item">👥 추천 동행자</td>
+                        <td>${planA.companions || '자유 동행'}</td>
+                        <td>${planB.companions || '자유 동행'}</td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    /**
+     * 비교 대상 계획 즉시 생성 (퀵 버튼 클릭 시)
+     */
+    function quickGenerateComparePlan(targetStyle, targetMode) {
+        if (typeof setTravelStyle === "function") {
+            setTravelStyle(targetStyle, targetMode);
+        }
+
+        // 예산 자동 차등화 (가성비면 낮게, 힐링/미식이면 조금 높게)
+        if (targetStyle.includes("알찬") || targetStyle.includes("가성비")) {
+            const curVal = parseInt(priceRange.value, 10) || 1000000;
+            const newVal = Math.max(300000, curVal - 200000);
+            priceRange.value = newVal;
+            priceMax.textContent = `₩ ${newVal.toLocaleString()}`;
+            budgetInput.value = `1인당 ${Math.round(newVal / 10000)}만원 (가성비 절약형)`;
+        } else if (targetStyle.includes("힐링") || targetStyle.includes("미식")) {
+            const curVal = parseInt(priceRange.value, 10) || 1000000;
+            const newVal = Math.min(3000000, curVal + 200000);
+            priceRange.value = newVal;
+            priceMax.textContent = `₩ ${newVal.toLocaleString()}`;
+            budgetInput.value = `1인당 ${Math.round(newVal / 10000)}만원 (여유/미식형)`;
+        }
+
+        travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
+        travelForm.classList.add("form-focus-pulse");
+        submitBtn.classList.add("btn-pulse");
+        setTimeout(() => {
+            travelForm.classList.remove("form-focus-pulse");
+            submitBtn.classList.remove("btn-pulse");
+            travelForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }, 300);
+    }
+
+    /**
+     * 비교 대시보드 뷰 업데이트
+     */
+    function renderComparisonView() {
+        if (!planCompareDashboard) return;
+
+        // 셀렉트 박스 갱신
+        if (compareSelectA && compareSelectB) {
+            const optionsHtml = generatedPlans.map((p) => `
+                <option value="${p.id}">${p.shortTitle} (${p.budget || ''})</option>
+            `).join("");
+
+            compareSelectA.innerHTML = optionsHtml;
+            compareSelectB.innerHTML = optionsHtml;
+
+            if (!comparePlanIdA || !generatedPlans.some(p => p.id === comparePlanIdA)) {
+                comparePlanIdA = generatedPlans[0]?.id || null;
+            }
+            if (!comparePlanIdB || !generatedPlans.some(p => p.id === comparePlanIdB)) {
+                if (generatedPlans.length >= 2) {
+                    comparePlanIdB = generatedPlans[1]?.id;
+                } else {
+                    comparePlanIdB = null;
+                }
+            }
+
+            if (comparePlanIdA) compareSelectA.value = comparePlanIdA;
+            if (comparePlanIdB) compareSelectB.value = comparePlanIdB;
+        }
+
+        const planA = generatedPlans.find(p => p.id === comparePlanIdA) || generatedPlans[0];
+        const planB = generatedPlans.find(p => p.id === comparePlanIdB);
+
+        // 1) 2열 비교 카드 렌더링
+        if (compareGrid) {
+            const cardAHtml = planA ? renderSingleCompareCard(planA, "A", "tag-plan-a", "계획 A") : "";
+            let cardBHtml = "";
+
+            if (planB && planB.id !== planA?.id) {
+                cardBHtml = renderSingleCompareCard(planB, "B", "tag-plan-b", "계획 B");
+            } else if (planB && planB.id === planA?.id && generatedPlans.length > 1) {
+                const otherPlan = generatedPlans.find(p => p.id !== planA.id);
+                if (otherPlan) {
+                    comparePlanIdB = otherPlan.id;
+                    if (compareSelectB) compareSelectB.value = otherPlan.id;
+                    cardBHtml = renderSingleCompareCard(otherPlan, "B", "tag-plan-b", "계획 B");
+                }
+            } else {
+                // 비교 대상(계획 B)이 없는 경우 안내 및 퀵 생성 버튼 제공
+                cardBHtml = `
+                    <div class="compare-card card-b">
+                        <div class="compare-card-header">
+                            <div>
+                                <span class="compare-card-tag tag-plan-b">계획 B (비교 대상 필요)</span>
+                                <h3 class="compare-card-title">또 다른 여행 계획을 추가해보세요</h3>
+                            </div>
+                        </div>
+                        <div class="compare-empty-prompt">
+                            <div class="compare-empty-icon">💡</div>
+                            <div class="compare-empty-title">비교할 두 번째 계획이 아직 없습니다</div>
+                            <p class="compare-empty-desc">
+                                다른 예산이나 다른 여행 스타일로 즉시 계획을 생성하여<br>
+                                가격과 활동을 1:1로 비교 분석해 보세요!
+                            </p>
+                            <div class="compare-quick-btns">
+                                <button type="button" class="btn-quick-compare" data-style="⚡ 알찬 핵심 투어 / 주요 랜드마크 정복" data-mode="A">
+                                    ⚡ 알찬 가성비 투어로 비교 계획 생성
+                                </button>
+                                <button type="button" class="btn-quick-compare" data-style="🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행" data-mode="B">
+                                    🌿 여유로운 힐링으로 비교 계획 생성
+                                </button>
+                                <button type="button" class="btn-quick-compare" data-style="🍽️ 웨이팅 필수 현지 찐맛집 &amp; 미식 탐방" data-mode="A">
+                                    🍽️ 로컬 미식 탐방으로 비교 계획 생성
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            compareGrid.innerHTML = cardAHtml + cardBHtml;
+
+            // 상세 보기 버튼 이벤트
+            compareGrid.querySelectorAll(".btn-view-single").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const planId = btn.dataset.id;
+                    setActivePlan(planId);
+                });
+            });
+
+            // 퀵 생성 버튼 이벤트
+            compareGrid.querySelectorAll(".btn-quick-compare").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const targetStyle = btn.dataset.style;
+                    const targetMode = btn.dataset.mode || "A";
+                    quickGenerateComparePlan(targetStyle, targetMode);
+                });
+            });
+        }
+
+        // 2) 상세 비교 매트릭스 표 렌더링
+        if (compareTableResponsive) {
+            if (planA && planB && planA.id !== planB.id) {
+                compareTableResponsive.innerHTML = renderCompareMatrixTable(planA, planB);
+            } else {
+                compareTableResponsive.innerHTML = `
+                    <div style="text-align: center; padding: 24px; color: #64748b; font-size: 14px;">
+                        ℹ️ 비교할 두 번째 계획을 상단 셀렉트 박스에서 선택하거나 새로 생성하면 상세 매트릭스 표가 자동으로 표시됩니다.
+                    </div>
+                `;
+            }
+        }
+    }
+
+    /**
+     * 비교 모드 상호작용 이벤트 바인딩
+     */
+    if (btnToggleCompare) {
+        btnToggleCompare.addEventListener("click", () => {
+            toggleCompareMode();
+        });
+    }
+
+    if (btnCloseCompare) {
+        btnCloseCompare.addEventListener("click", () => {
+            toggleCompareMode(false);
+        });
+    }
+
+    if (compareSelectA) {
+        compareSelectA.addEventListener("change", (e) => {
+            comparePlanIdA = e.target.value;
+            renderComparisonView();
+        });
+    }
+
+    if (compareSelectB) {
+        compareSelectB.addEventListener("change", (e) => {
+            comparePlanIdB = e.target.value;
+            renderComparisonView();
+        });
+    }
+
+    function renderResult(data, dest, dur, payload) {
+        const stylePrefix = payload?.travel_style ? payload.travel_style.split('/')[0].replace(/[🌿⚡🍽️📸👨‍👩‍👧‍👦🎒]/g, '').trim() : '맞춤';
+        const planIndex = generatedPlans.length + 1;
+
+        const newPlan = {
+            id: "plan_" + Date.now(),
+            title: `${dest} ${dur} (${stylePrefix})`,
+            shortTitle: `계획 ${planIndex}: ${stylePrefix}`,
+            dest: dest,
+            dur: dur,
+            budget: payload?.budget || "예산 확인 필요",
+            style: payload?.travel_style || "표준 여행",
+            interests: payload?.interests || "",
+            companions: payload?.companions || "",
+            transportation: payload?.transportation || "",
+            accommodation: payload?.accommodation || "",
+            mode: payload?.mode || "A",
+            markdown: data.plan,
+            model: data.model || "Gemini 2.5 Flash",
+            elapsed: data.elapsed_seconds || "5.2",
+            createdAt: new Date().toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' })
+        };
+
+        // 최대 5개 유지
+        if (generatedPlans.length >= 5) {
+            generatedPlans.shift();
+        }
+        generatedPlans.push(newPlan);
+        activePlanId = newPlan.id;
+
+        if (generatedPlans.length >= 2) {
+            comparePlanIdA = generatedPlans[generatedPlans.length - 2].id;
+            comparePlanIdB = newPlan.id;
+        } else {
+            comparePlanIdA = newPlan.id;
+            comparePlanIdB = null;
+        }
+
+        // 결과 래퍼 표시
         resultWrapper.style.display = "block";
-        resultWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        if (isCompareMode) {
+            renderPlanTabs();
+            renderComparisonView();
+            planCompareDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+            setActivePlan(newPlan.id);
+            resultWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     }
 
     /**

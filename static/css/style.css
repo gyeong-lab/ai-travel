@@ -1474,6 +1474,460 @@ button {
     color: #1e3a8a;
 }
 
+/* ==========================================================
+   9-1. AI 플랜 비교 탭 및 1:1 가격·활동 비교 대시보드
+   ========================================================== */
+.plan-tabs-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #f1f5f9;
+    flex-wrap: wrap;
+}
+
+.plan-tabs-scroll {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+}
+
+.plan-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.plan-tab-btn:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.plan-tab-btn.active {
+    background-color: var(--agoda-blue);
+    border-color: var(--agoda-blue);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(18, 114, 235, 0.3);
+}
+
+.plan-tab-budget {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.06);
+    color: inherit;
+    font-weight: 700;
+}
+
+.plan-tab-btn.active .plan-tab-budget {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.btn-compare-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-compare-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.45);
+}
+
+.btn-compare-pill.active-mode {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+}
+
+/* 플랜 비교 대시보드 */
+.plan-compare-dashboard {
+    padding-top: 6px;
+    animation: fadeInCompare 0.3s ease-in-out;
+}
+
+@keyframes fadeInCompare {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.compare-dash-header {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.compare-dash-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #4338ca;
+    background-color: #e0e7ff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.compare-dash-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.compare-dash-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+.compare-selectors {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.selector-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.compare-select {
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    background-color: #f8fafc;
+    color: #1e293b;
+    cursor: pointer;
+    max-width: 170px;
+    outline: none;
+}
+
+.compare-select:focus {
+    border-color: var(--agoda-blue);
+    background-color: #ffffff;
+}
+
+.vs-badge {
+    font-size: 11px;
+    font-weight: 900;
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 2px 7px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+}
+
+/* 2열 비교 카드 그리드 */
+.compare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.compare-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.compare-card.card-a {
+    border-top: 4px solid var(--agoda-blue);
+}
+
+.compare-card.card-b {
+    border-top: 4px solid #10b981;
+}
+
+.compare-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.compare-card-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.compare-card-tag {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.tag-plan-a {
+    background-color: #eff6ff;
+    color: var(--agoda-blue);
+    border: 1px solid #bfdbfe;
+}
+
+.tag-plan-b {
+    background-color: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+/* 카드 내부 섹션 */
+.compare-section {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid #f1f5f9;
+}
+
+.compare-section.section-price {
+    background-color: #fffaf0;
+    border-color: #fed7aa;
+}
+
+.compare-section.section-activity {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.compare-section-title {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.section-price .compare-section-title {
+    color: #c2410c;
+}
+
+.section-activity .compare-section-title {
+    color: #15803d;
+}
+
+.compare-price-highlight {
+    font-size: 20px;
+    font-weight: 900;
+    color: #ea580c;
+    margin-bottom: 6px;
+}
+
+.compare-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.compare-list-item {
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.compare-bullet {
+    color: var(--agoda-blue);
+    font-weight: 800;
+}
+
+.compare-empty-prompt {
+    text-align: center;
+    padding: 30px 16px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    background-color: #f8fafc;
+}
+
+.compare-empty-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.compare-empty-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.compare-empty-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.compare-quick-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.btn-quick-compare {
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+}
+
+.btn-quick-compare:hover {
+    border-color: var(--agoda-blue);
+    background-color: #eff6ff;
+    color: var(--agoda-blue);
+}
+
+/* 상세 비교표 카드 */
+.compare-table-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.compare-table-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 14px;
+}
+
+.compare-table-responsive {
+    overflow-x: auto;
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.compare-table th,
+.compare-table td {
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+    line-height: 1.5;
+}
+
+.compare-table th {
+    background-color: #f1f5f9;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.compare-table th.th-item {
+    width: 18%;
+}
+
+.compare-table th.th-plan-a {
+    width: 41%;
+    color: var(--agoda-blue);
+}
+
+.compare-table th.th-plan-b {
+    width: 41%;
+    color: #059669;
+}
+
+.compare-table td.td-item {
+    font-weight: 700;
+    background-color: #f8fafc;
+    color: #334155;
+    white-space: nowrap;
+}
+
+.compare-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+    .compare-grid {
+        grid-template-columns: 1fr;
+    }
+    .compare-dash-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .compare-selectors {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
 /* 10. 푸터 */
 .agoda-footer {
     background-color: #ffffff;
