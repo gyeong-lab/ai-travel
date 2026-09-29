@@ -2747,6 +2747,16 @@ document.addEventListener("DOMContentLoaded", () => {
          container.querySelectorAll("ul > li").forEach((li) => {
              setupItemRowActions(li);
          });
+
+         // 4) 마크다운 표(Table) 가로 스크롤 래퍼 자동 부착 (화면 우측 잘림 방지)
+         container.querySelectorAll("table").forEach((tbl) => {
+             if (!tbl.parentElement.classList.contains("table-responsive-wrapper")) {
+                 const wrap = document.createElement("div");
+                 wrap.className = "table-responsive-wrapper";
+                 tbl.parentNode.insertBefore(wrap, tbl);
+                 wrap.appendChild(tbl);
+             }
+         });
      }
 
      function setupItemRowActions(li) {
