@@ -418,7 +418,8 @@ def generate_plan():
     # 4. 프롬프트 구성 및 Gemini API 호출 (안정적인 fallback 지원)
     prompt = build_prompt(data)
     candidate_models = [
-        os.getenv("GEMINI_MODEL", "gemini-flash-latest"),
+        os.getenv("GEMINI_MODEL", "gemini-3.5-flash"),
+        "gemini-3.5-flash",
         "gemini-flash-latest",
         "gemini-flash-lite-latest",
         "gemini-3.6-flash"

@@ -2562,7 +2562,7 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: payload?.mode || "A",
             dietary_info: payload?.dietary_info || "",
             markdown: data.plan,
-            model: data.model || "Gemini 2.5 Flash",
+            model: data.model ? (data.model.includes("3.5") ? "Gemini 3.5 Flash" : (data.model.startsWith("gemini") ? data.model.replace("gemini-", "Gemini ") : data.model)) : "Gemini 3.5 Flash",
             elapsed: data.elapsed_seconds || "5.2",
             createdAt: new Date().toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' })
         };
@@ -2673,7 +2673,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     transportation: transportationInput.value.trim(),
                     accommodation: accommodationInput.value.trim(),
                     markdown: currentPlanMarkdown,
-                    model: "Gemini 2.5 Flash",
+                    model: "Gemini 3.5 Flash",
                     elapsed: "5.0",
                     createdAt: new Date().toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' }),
                     isSaved: true
