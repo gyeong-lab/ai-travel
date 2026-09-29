@@ -51,6 +51,7 @@ class VercelWSGIWrapper:
             if current_path in ("/api/index", "/api/index.py", "/api", "/api/"):
                 environ["PATH_INFO"] = "/"
 
+        environ["SCRIPT_NAME"] = ""
         return self.wsgi_app(environ, start_response)
 
 flask_app.wsgi_app = VercelWSGIWrapper(flask_app.wsgi_app)
