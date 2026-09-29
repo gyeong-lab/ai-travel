@@ -1,8 +1,9 @@
 import os
 import time
 import logging
+from datetime import timedelta
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for
 from google import genai
 from google.genai.errors import APIError
 
@@ -18,7 +19,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "ai-travel-secret-key-default")
+app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "ai-travel-secret-key-7777-v1")
+app.permanent_session_lifetime = timedelta(days=30)
+
+def is_authenticated() -> bool:
+    """사이트 접속 비밀번호 인증 여부를 확인합니다."""
+    site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
+    if not site_pw:
+        return True
+    return bool(session.get("authenticated"))
 
 def get_gemini_client():
     """환경변수에서 GEMINI_API_KEY를 읽어 Client를 생성합니다."""
@@ -340,10 +349,58 @@ def build_prompt(data: dict) -> str:
 @app.route("/api/index", methods=["GET", "POST"])
 @app.route("/api/index.py", methods=["GET", "POST"])
 def index():
-    """메인 페이지를 렌더링하거나, POST 요청 시 generate_plan으로 위임합니다."""
+    """메인 페이지를 렌더링하거나, 미인증 시 비밀번호 입력 화면을 제공합니다."""
+    if not is_authenticated():
+        if request.method == "POST":
+            return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다."}), 401
+        return render_template("login.html")
+
     if request.method == "POST":
         return generate_plan()
     return render_template("index.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """비밀번호 직접 입력 폼 처리 및 로그인 화면 제공"""
+    if is_authenticated():
+        return redirect("/")
+
+    error = None
+    if request.method == "POST":
+        input_pw = str(request.form.get("password", "")).strip()
+        site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
+        if input_pw == site_pw:
+            session.permanent = True
+            session["authenticated"] = True
+            logger.info("[인증 성공] Form 로그인 완료")
+            return redirect("/")
+        else:
+            error = "비밀번호가 올바르지 않습니다. 다시 입력해주세요."
+
+    return render_template("login.html", error=error)
+
+@app.route("/api/verify-password", methods=["POST"])
+def verify_password():
+    """AJAX 요청을 통한 비밀번호 검증 및 세션 발급 API"""
+    data = request.get_json(silent=True) or {}
+    input_pw = str(data.get("password", "")).strip()
+    site_pw = str(os.getenv("SITE_PASSWORD", "7777")).strip()
+
+    if input_pw == site_pw:
+        session.permanent = True
+        session["authenticated"] = True
+        logger.info("[인증 성공] AJAX 비밀번호 인증 성공")
+        return jsonify({"success": True, "message": "인증되었습니다."}), 200
+    else:
+        logger.warning("[인증 실패] 잘못된 비밀번호 입력")
+        return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다. 다시 입력해주세요."}), 401
+
+@app.route("/logout")
+def logout():
+    """세션을 해제하고 로그인 화면으로 리다이렉트합니다."""
+    session.pop("authenticated", None)
+    logger.info("[로그아웃] 세션 해제 완료")
+    return redirect("/")
 
 @app.route("/debug-env")
 def debug_env():
@@ -371,6 +428,11 @@ def service_worker():
 def generate_plan():
     """사용자의 입력값을 검증하고 Gemini API를 호출하여 여행 계획을 반환합니다."""
     start_time = time.time()
+
+    # 0. 비밀번호 인증 여부 확인
+    if not is_authenticated():
+        logger.warning("[요청 차단] 미인증 사용자의 AI 생성 요청")
+        return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다. 새로고침 후 로그인해주세요."}), 401
 
     # 1. JSON 요청 데이터 수신 확인
     if not request.is_json:

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>접속 비밀번호 입력 | AI Travel Planner</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --agoda-blue: #1272eb;
+            --agoda-blue-dark: #0b56b9;
+            --agoda-blue-light: #e8f2fe;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-page: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --error-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 16px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(18, 114, 235, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
+
+        /* 헤더 로고 */
+        .login-header {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 0 20px;
+        }
+        .header-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #1272eb, #3b82f6);
+            color: #ffffff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(18, 114, 235, 0.25);
+        }
+        .header-logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #0f172a;
+        }
+        .header-badge {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* 로그인 카드 */
+        .login-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+            width: 100%;
+            max-width: 390px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .lock-icon-wrap {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #bfdbfe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--agoda-blue);
+            box-shadow: 0 4px 14px rgba(18, 114, 235, 0.15);
+        }
+
+        .login-title {
+            font-size: 21px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .login-desc {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 24px;
+            word-break: keep-all;
+        }
+
+        /* 비밀번호 입력 폼 */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            text-align: left;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-pw {
+            width: 100%;
+            padding: 13px 44px 13px 16px;
+            font-size: 16px; /* iOS 자동 확대 방지 */
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #f8fafc;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .input-pw:focus {
+            border-color: var(--agoda-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(18, 114, 235, 0.15);
+        }
+
+        .input-pw.is-error {
+            border-color: var(--error-red);
+            background-color: #fff5f5;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .btn-toggle-pw {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+            padding: 4px;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .btn-toggle-pw:hover {
+            color: #475569;
+        }
+
+        /* 에러 메시지 */
+        .error-msg {
+            color: var(--error-red);
+            font-size: 12.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 20px;
+        }
+
+        /* 접속 버튼 */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--agoda-blue), var(--agoda-blue-dark));
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(18, 114, 235, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(18, 114, 235, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        .btn-submit.loading {
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        /* 보안 안내 박스 */
+        .security-hint {
+            margin-top: 18px;
+            padding: 10px 12px;
+            background-color: #f1f5f9;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* 푸터 */
+        .login-footer {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            padding: 16px 0;
+        }
+
+        /* 흔들림 애니메이션 (오류 시) */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 헤더 -->
+    <header class="login-header">
+        <div class="header-logo-icon">✈️</div>
+        <h1 class="header-logo-text">AI Travel Planner</h1>
+        <span class="header-badge">Gemini 3.5 Flash</span>
+    </header>
+
+    <!-- 중앙 잠금 카드 -->
+    <main class="login-card" id="loginCard">
+        <div class="lock-icon-wrap">🔒</div>
+        <h2 class="login-title">비공개 여행 플래너</h2>
+        <p class="login-desc">
+            본 서비스는 인증된 사용자만 접속 가능한 프라이빗 서비스입니다. 관리자가 지정한 접속 비밀번호를 입력해주세요.
+        </p>
+
+        <form class="login-form" id="loginForm" method="POST" action="/login">
+            <div class="input-group">
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    name="password" 
+                    class="input-pw {% if error %}is-error{% endif %}" 
+                    placeholder="접속 비밀번호 입력" 
+                    autocomplete="current-password"
+                    inputmode="numeric"
+                    maxlength="20"
+                    required 
+                    autofocus
+                >
+                <button type="button" id="btnTogglePw" class="btn-toggle-pw" title="비밀번호 보기/숨기기" aria-label="비밀번호 보기/숨기기">
+                    👁️
+                </button>
+            </div>
+
+            <div class="error-msg" id="errorMsg">
+                {% if error %}
+                    <span>⚠️</span> <span>{{ error }}</span>
+                {% endif %}
+            </div>
+
+            <button type="submit" id="btnSubmit" class="btn-submit">
+                <span>접속하기</span>
+                <span>➔</span>
+            </button>
+        </form>
+
+        <div class="security-hint">
+            <span>🛡️</span>
+            <span>한 번 인증하면 브라우저에 접속 상태가 안전하게 유지됩니다.</span>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="login-footer">
+        <p>© 2026 AI Travel Planner | Powered by Google Gemini 3.5 Flash</p>
+    </footer>
+
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const passwordInput = document.getElementById("passwordInput");
+        const btnTogglePw = document.getElementById("btnTogglePw");
+        const btnSubmit = document.getElementById("btnSubmit");
+        const errorMsg = document.getElementById("errorMsg");
+        const loginCard = document.getElementById("loginCard");
+
+        // 비밀번호 표시 / 숨기기 토글
+        btnTogglePw.addEventListener("click", () => {
+            const isPassword = passwordInput.getAttribute("type") === "password";
+            passwordInput.setAttribute("type", isPassword ? "text" : "password");
+            btnTogglePw.textContent = isPassword ? "🙈" : "👁️";
+        });
+
+        // AJAX 비동기 비밀번호 검증 (실패 시 흔들림 애니메이션)
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const password = passwordInput.value.trim();
+            if (!password) {
+                showError("비밀번호를 입력해주세요.");
+                return;
+            }
+
+            btnSubmit.classList.add("loading");
+            btnSubmit.innerHTML = `<span>인증 중...</span>`;
+            errorMsg.innerHTML = "";
+            passwordInput.classList.remove("is-error");
+
+            try {
+                const res = await fetch("/api/verify-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password: password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    btnSubmit.innerHTML = `<span>✅ 인증 성공! 이동 중...</span>`;
+                    setTimeout(() => {
+                        window.location.href = "/";
+                    }, 400);
+                } else {
+                    showError(data.error || "비밀번호가 올바르지 않습니다.");
+                }
+            } catch (err) {
+                // AJAX 실패 시 일반 Form POST로 폴백 제출
+                loginForm.submit();
+            } finally {
+                btnSubmit.classList.remove("loading");
+                if (btnSubmit.innerHTML.indexOf("이동 중") === -1) {
+                    btnSubmit.innerHTML = `<span>접속하기</span><span>➔</span>`;
+                }
+            }
+        });
+
+        function showError(msg) {
+            errorMsg.innerHTML = `<span>⚠️</span> <span>${msg}</span>`;
+            passwordInput.classList.add("is-error");
+            loginCard.classList.remove("shake");
+            void loginCard.offsetWidth; // trigger reflow
+            loginCard.classList.add("shake");
+            passwordInput.focus();
+            passwordInput.select();
+        }
+    </script>
+</body>
+</html>
