@@ -2259,7 +2259,6 @@ button {
     font-weight: 800;
     padding: 3px 8px;
     border-radius: 6px;
-    animation: pulseRing 2s infinite;
 }
 
 .compare-overbudget-alert {
