@@ -512,7 +512,7 @@ def index():
             return logout()
         if "/login" in vercel_path:
             return login()
-        if vercel_path.startswith("/share/"):
+        if vercel_path.startswith("/s/") or vercel_path.startswith("/share/"):
             parts = [p for p in vercel_path.rstrip("/").split("/") if p]
             return redirect_share(parts[-1])
 
@@ -607,6 +607,7 @@ def verify_password():
         return render_template("login.html", error="비밀번호가 올바르지 않습니다. 다시 입력해주세요.", is_shared=is_shared)
 
 @app.route("/share-plan", methods=["POST"])
+@app.route("/share-plan", methods=["POST"])
 @app.route("/api/share", methods=["POST"])
 def create_share_link():
     """현재 계획을 공유 가능한 고유 링크와 압축 토큰으로 생성합니다."""
@@ -629,6 +630,26 @@ def create_share_link():
     except Exception as e:
         logger.warning(f"[공유 파일 저장 실패] {e}")
 
+    # 3. 글로벌 영구 클라우드 스토리지 저장 (외부 단축기 피싱 경고창 원천 차단)
+    try:
+        import urllib.request
+        import urllib.parse
+        dpaste_data = urllib.parse.urlencode({
+            'content': json.dumps(plan, ensure_ascii=False),
+            'expiry_days': 365,
+            'format': 'url'
+        }).encode('utf-8')
+        dpaste_req = urllib.request.Request('https://dpaste.org/api/', data=dpaste_data, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(dpaste_req, timeout=3) as dpaste_resp:
+            dp_url = dpaste_resp.read().decode('utf-8').strip()
+            dp_code = dp_url.rstrip('/').split('/')[-1]
+            if dp_code:
+                share_id = dp_code
+                SHARED_PLANS_CACHE[share_id] = plan
+                logger.info(f"[영구 클라우드 보관 완료] ID: {share_id}")
+    except Exception as e:
+        logger.warning(f"[클라우드 저장 실패] {e}")
+
     # 프로토콜 및 호스트 보정 (Vercel 배포 시 https 보장)
     forwarded_proto = request.headers.get("x-forwarded-proto", "http")
     host = request.headers.get("x-forwarded-host") or request.host
@@ -637,8 +658,10 @@ def create_share_link():
     else:
         host_url = request.host_url.rstrip("/")
 
-    raw_share_url = f"{host_url}/?share={share_id}&d={token}"
-    short_share_url = shorten_url_safely(raw_share_url)
+    # 자체 도메인의 깔끔한 초단축 링크 (외부 단축기의 피싱 경고창 및 중간 광고 원천 차단!)
+    # 예: https://ai-travel-git-main-9752gung-5273.vercel.app/s/VkzzD
+    short_share_url = f"{host_url}/s/{share_id}"
+    raw_share_url = f"{host_url}/?s={share_id}&d={token}"
 
     return jsonify({
         "success": True,
@@ -652,6 +675,7 @@ def create_share_link():
 @app.route("/api/share", methods=["GET"])
 @app.route("/share-plan/<share_id>", methods=["GET"])
 @app.route("/api/share/<share_id>", methods=["GET"])
+@app.route("/api/s/<share_id>", methods=["GET"])
 def get_shared_plan(share_id=None):
     """공유 ID 또는 압축 토큰을 통해 원본 여행 계획을 반환합니다."""
     share_id = share_id or request.args.get("share") or request.args.get("share_id") or request.args.get("s") or ""
@@ -672,7 +696,21 @@ def get_shared_plan(share_id=None):
             except Exception:
                 pass
 
-    # 3. 쿼리 파라미터 d (압축 토큰)로 무손실 복원
+    # 3. 글로벌 클라우드 (dpaste) 복원 확인
+    if share_id and len(share_id) <= 12:
+        try:
+            import urllib.request
+            dp_code = share_id[3:] if share_id.startswith("dp_") else share_id
+            dp_url = f"https://dpaste.org/{dp_code}/raw"
+            dp_req = urllib.request.Request(dp_url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(dp_req, timeout=4) as dp_resp:
+                plan = json.loads(dp_resp.read().decode("utf-8"))
+                SHARED_PLANS_CACHE[share_id] = plan
+                return jsonify({"success": True, "plan": plan}), 200
+        except Exception as e:
+            logger.warning(f"[dpaste 복원 실패] {e}")
+
+    # 4. 쿼리 파라미터 d (압축 토큰)로 무손실 복원
     token = request.args.get("d") or request.args.get("token") or ""
     if token:
         plan = decompress_plan(token)
@@ -697,11 +735,12 @@ def decode_shared_token():
     return jsonify({"success": False, "error": "복원에 실패했습니다."}), 400
 
 
+@app.route("/s/<share_id>")
 @app.route("/share/<share_id>")
 def redirect_share(share_id):
-    """/share/<share_id> 접속 시 메인 페이지 공유 링크로 리다이렉트합니다."""
+    """/s/<share_id> 또는 /share/<share_id> 접속 시 메인 페이지 공유 링크로 리다이렉트합니다."""
     qs = request.query_string.decode("utf-8") if request.query_string else ""
-    target = f"/?share={share_id}"
+    target = f"/?s={share_id}"
     if qs:
         target += f"&{qs}"
     return redirect(target)
