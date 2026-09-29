@@ -523,6 +523,9 @@ document.addEventListener("DOMContentLoaded", () => {
         budgetInput._syncTimer = setTimeout(() => {
             budgetInput.classList.remove("input-synced");
         }, 500);
+
+        // 예산 슬라이더 변경 시 저장된 여행지들의 예산 초과 배지 상태 실시간 동기화
+        renderWishlistUI();
     }
 
     function syncSliderFromText(budgetText) {
@@ -676,21 +679,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 emptyMsg.style.display = "none";
                 miniList.style.display = "flex";
                 footer.style.display = "block";
-                miniList.innerHTML = wishlist.map((item, idx) => `
-                    <div class="wishlist-mini-item" data-index="${idx}">
-                        <img src="${item.img || ''}" alt="" class="wishlist-mini-thumb" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80'">
-                        <div class="wishlist-mini-info">
-                            <div class="wishlist-mini-title">${item.title}</div>
-                            <div class="wishlist-mini-meta">
-                                <span>📍 ${item.dest || '추천지'}</span>
-                                <span class="wishlist-mini-price">₩ ${item.price || ''}</span>
-                            </div>
-                        </div>
-                        <button type="button" class="wishlist-mini-remove" data-title="${encodeURIComponent(item.title)}" title="삭제">✕</button>
-                    </div>
-                `).join("");
 
-                // 미니 아이템 클릭 시 폼에 해당 코스 자동 반영
+                const currentBudgetVal = priceRange ? parseInt(priceRange.value, 10) : 1000000;
+
+                miniList.innerHTML = wishlist.map((item, idx) => {
+                    const itemBudgetVal = parseBudgetNumber(item.budget) || parseBudgetNumber(item.price);
+                    const isOver = itemBudgetVal > currentBudgetVal && itemBudgetVal > 0;
+                    const overDiff = Math.round((itemBudgetVal - currentBudgetVal) / 10000);
+
+                    return `
+                        <div class="wishlist-mini-item" data-index="${idx}">
+                            <img src="${item.img || ''}" alt="" class="wishlist-mini-thumb" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80'">
+                            <div class="wishlist-mini-info">
+                                <div class="wishlist-mini-title">${item.title}</div>
+                                <div class="wishlist-mini-meta">
+                                    <span>📍 ${item.dest || '추천지'}</span>
+                                    <span class="wishlist-mini-price">₩ ${item.price || ''}</span>
+                                </div>
+                                ${isOver ? `<span class="wishlist-over-badge" title="현재 예산보다 약 ${overDiff}만원 초과">⚠️ 예산 초과 (+${overDiff}만)</span>` : ''}
+                            </div>
+                            <button type="button" class="wishlist-mini-remove" data-title="${encodeURIComponent(item.title)}" title="삭제">✕</button>
+                        </div>
+                    `;
+                }).join("");
+
+                // 미니 아이템 클릭 시 폼에 해당 코스 자동 반영 및 예산 초과 감지
                 miniList.querySelectorAll(".wishlist-mini-item").forEach((el) => {
                     el.addEventListener("click", (e) => {
                         if (e.target.closest(".wishlist-mini-remove")) return;
@@ -699,12 +712,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (item) {
                             if (item.dest) destinationInput.value = item.dest;
                             if (item.dur) durationInput.value = item.dur;
-                            if (item.budget) {
-                                budgetInput.value = item.budget;
-                                syncSliderFromText(item.budget);
-                            }
                             if (item.transport) transportationInput.value = item.transport;
                             if (item.theme) interestsInput.value = item.theme;
+
+                            // 예산 초과 검사 및 배너 표시
+                            const isOver = checkAndShowBudgetOverload(item.budget, item.title);
+                            if (isOver) {
+                                interestsInput.value = `[저장 코스 예산 초과 가성비 대체 추천] ${item.theme} (⚠️ 희망 코스가 현재 예산보다 높으므로, 감성은 동일하고 더 저렴한 가성비 대체 코스로 제안해 주세요)`;
+                            }
 
                             travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
                             travelForm.classList.add("form-focus-pulse");
@@ -728,6 +743,79 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
         }
+    }
+
+    /**
+     * 예산 문자열에서 숫자 금액(원 단위)을 추출하는 헬퍼
+     */
+    function parseBudgetNumber(text) {
+        if (!text) return 0;
+        const manMatch = text.match(/(\d+)\s*만/);
+        if (manMatch) return parseInt(manMatch[1], 10) * 10000;
+        const cleanDigits = text.replace(/[^0-9]/g, "");
+        if (cleanDigits) {
+            const val = parseInt(cleanDigits, 10);
+            if (val < 1000) return val * 10000;
+            return val;
+        }
+        return 0;
+    }
+
+    /**
+     * 저장한 여행지 코스 예산 초과(오버) 감지 및 배너 표시
+     */
+    function checkAndShowBudgetOverload(itemBudgetStr, courseTitle = "") {
+        const budgetOverBanner = document.getElementById("budgetOverBanner");
+        const budgetOverDesc = document.getElementById("budgetOverDesc");
+        if (!budgetOverBanner || !budgetOverDesc) return false;
+
+        const currentBudgetVal = priceRange ? parseInt(priceRange.value, 10) : 1000000;
+        const itemBudgetVal = parseBudgetNumber(itemBudgetStr);
+
+        if (itemBudgetVal > currentBudgetVal && itemBudgetVal > 0) {
+            const overDiff = Math.round((itemBudgetVal - currentBudgetVal) / 10000);
+            const itemMan = Math.round(itemBudgetVal / 10000);
+            const currentMan = Math.round(currentBudgetVal / 10000);
+
+            budgetOverDesc.innerHTML = `
+                선택하신 <strong>${courseTitle ? courseTitle + ' ' : ''}저장 코스 비용(약 ${itemMan}만원)</strong>이 현재 설정 예산(<strong>${currentMan}만원</strong>)보다 <strong style="color:#b45309; text-decoration: underline;">약 ${overDiff}만원 초과(오버)</strong>됩니다.
+            `;
+            const bannerTip = document.querySelector(".over-banner-tip");
+            if (bannerTip) {
+                bannerTip.innerHTML = "💡 분위기는 그대로 유지하면서 더 저렴한 가성비 대체 코스로 추천해 드립니다.";
+                bannerTip.style.color = "#78350f";
+            }
+            if (btnApplyCheaperAlt) btnApplyCheaperAlt.style.display = "inline-block";
+            budgetOverBanner.style.display = "block";
+            return true;
+        } else {
+            budgetOverBanner.style.display = "none";
+            return false;
+        }
+    }
+
+    /**
+     * 예산 초과 시 '더 저렴한 대체 코스로 적용하기' 버튼 동작
+     */
+    const btnApplyCheaperAlt = document.getElementById("btnApplyCheaperAlt");
+    if (btnApplyCheaperAlt) {
+        btnApplyCheaperAlt.addEventListener("click", () => {
+            setTravelStyle("⚡ 알찬 가성비 투어 / 주요 랜드마크 정복", "A");
+            if (interestsInput) {
+                const currentVal = interestsInput.value.replace(/\(⚠️[^\)]+\)/g, "").trim();
+                interestsInput.value = `${currentVal} (💡 예산 초과 방지: 동일 감성의 무료 뷰포인트 & 현지 도민 가성비 맛집으로 대체 추천)`;
+            }
+            const bannerTip = document.querySelector(".over-banner-tip");
+            if (bannerTip) {
+                bannerTip.innerHTML = "✅ <strong>가성비 알뜰 대체 모드가 적용되었습니다!</strong> 아래 일정 생성 버튼을 눌러주세요.";
+                bannerTip.style.color = "#059669";
+            }
+            btnApplyCheaperAlt.style.display = "none";
+
+            submitBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+            submitBtn.classList.add("btn-pulse");
+            setTimeout(() => submitBtn.classList.remove("btn-pulse"), 1500);
+        });
     }
 
     /**
@@ -793,7 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 9-3. '✨ 찜한 코스로 일정 채우기' 버튼 클릭 시 폼에 일괄 자동 완성
+     * 9-3. '✨ 찜한 코스로 일정 채우기' 버튼 클릭 시 폼에 일괄 자동 완성 및 예산 초과 분석
      */
     const btnPlanWithWishlist = document.getElementById("btnPlanWithWishlist");
     if (btnPlanWithWishlist) {
@@ -801,9 +889,19 @@ document.addEventListener("DOMContentLoaded", () => {
             if (wishlist.length === 0) return;
             const uniqueDests = [...new Set(wishlist.map((w) => w.dest).filter(Boolean))].join(" & ");
             const themes = wishlist.map((w) => w.theme).filter(Boolean).slice(0, 3).join(", ");
+            const maxBudgetItem = wishlist.reduce((max, w) => {
+                const bVal = parseBudgetNumber(w.budget) || parseBudgetNumber(w.price);
+                return bVal > max.val ? { val: bVal, budget: w.budget, title: w.title } : max;
+            }, { val: 0, budget: "", title: "" });
 
             if (uniqueDests) destinationInput.value = uniqueDests;
             if (themes) interestsInput.value = `[저장한 추천 코스] ${themes}`;
+
+            // 예산 초과 여부 확인
+            const isOver = checkAndShowBudgetOverload(maxBudgetItem.budget, maxBudgetItem.title);
+            if (isOver) {
+                interestsInput.value += ` (⚠️ 저장 코스 예산 초과: 분위기는 같고 더 저렴한 가성비 대체 계획으로 추천)`;
+            }
 
             travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
             travelForm.classList.add("form-focus-pulse");
