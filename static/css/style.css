@@ -1640,6 +1640,7 @@ button {
 .result-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .btn-action-save {
@@ -1910,12 +1911,14 @@ button {
 }
 
 .markdown-article table {
+    display: block;
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-collapse: collapse;
     margin: 18px 0;
     font-size: 14px;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -2916,7 +2919,7 @@ button {
     background-color: #e2e8f0;
 }
 
-/* 12. 반응형 미디어 쿼리 */
+/* 12. 반응형 미디어 쿼리 (태블릿 & 모바일 가독성 및 레이아웃 완벽 최적화) */
 @media (max-width: 1200px) {
     .product-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -2926,6 +2929,7 @@ button {
 @media (max-width: 992px) {
     .main-container {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -2933,14 +2937,280 @@ button {
     .nav-links {
         display: none;
     }
+    .sidebar-filters {
+        order: 1;
+    }
+    .content-column {
+        order: 2;
+    }
 }
 
-@media (max-width: 600px) {
-    .product-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    /* 상단 네비게이션 모바일 최적화 */
+    .nav-container {
+        padding: 0 16px;
+        height: 56px;
+    }
+    .logo-brand {
+        font-size: 19px;
+    }
+    .logo-icon-wrap {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
+    }
+    .engine-badge {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+    .btn-outline-pill {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    /* 검색창 & 카테고리 캐러셀 터치 최적화 */
+    .search-section {
+        padding: 12px 16px;
+    }
+    .search-bar-pill {
+        padding: 3px 6px 3px 12px;
+    }
+    .btn-search-trigger {
+        padding: 7px 16px;
+        font-size: 13px;
+    }
+    .category-carousel {
+        padding: 10px 16px 6px 16px;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .cat-item {
+        min-width: 62px;
+        padding: 4px 6px;
+    }
+    .cat-icon {
+        font-size: 20px;
+    }
+    .cat-label {
+        font-size: 11px;
+    }
+
+    /* 메인 레이아웃 및 폼 요소 */
+    .main-container {
+        margin: 14px auto 40px auto;
+        padding: 0 14px;
+        gap: 16px;
     }
     .form-row-2 {
         grid-template-columns: 1fr;
+    }
+    .filter-box {
+        padding: 15px;
+        border-radius: 14px;
+    }
+    .budget-label-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .people-control-wrap {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .style-input-wrap input,
+    .dietary-input-wrap input,
+    .form-group input,
+    .form-group select {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+    .style-choice-chips,
+    .allergy-quick-chips {
+        gap: 6px;
+    }
+    .style-chip {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    .btn-allergy-chip {
+        font-size: 11.5px;
+        padding: 4px 8px;
+    }
+
+    /* 플랜 비교 탭 및 대시보드 */
+    .plan-tabs-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .plan-tabs-list {
+        overflow-x: auto;
+        width: 100%;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .btn-compare-mode {
+        width: 100%;
+        justify-content: center;
+    }
+    .compare-selectors {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+    .compare-select-wrap {
+        width: 100%;
+    }
+    .compare-select {
+        width: 100%;
+    }
+    .compare-summary-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* 지도 영역 모바일 핏 */
+    .plan-map-section {
+        padding: 14px;
+        margin: 16px 0;
+        border-radius: 14px;
+    }
+    .interactive-map-canvas {
+        height: 280px;
+        border-radius: 10px;
+    }
+    .map-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .map-day-filters {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .btn-map-filter {
+        white-space: nowrap;
+        padding: 5px 12px;
+        font-size: 11.5px;
+    }
+    .waypoint-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .waypoint-input {
+        min-width: 100%;
+        width: 100%;
+    }
+    .map-places-summary {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .map-place-chip {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* 생성 결과 헤더 및 액션 버튼 */
+    .result-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+    .result-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    #resultHeaderTitle {
+        font-size: 18px;
+    }
+    .result-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .result-actions button {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    /* 마크다운 본문 모바일 가독성 */
+    .markdown-article {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+    .markdown-article h1 {
+        font-size: 18px;
+    }
+    .markdown-article h2 {
+        font-size: 16px;
+    }
+    .markdown-article h3 {
+        font-size: 15px;
+        padding: 8px 12px;
+    }
+    .markdown-article .day-card-header {
+        font-size: 15px;
+        padding: 10px 14px;
+        flex-wrap: wrap;
+    }
+    .markdown-article blockquote {
+        padding: 10px 12px;
+        font-size: 13px;
+        margin: 10px 0;
+    }
+    .markdown-article h4 {
+        font-size: 13.5px;
+        padding: 6px 10px;
+    }
+    .markdown-article table th,
+    .markdown-article table td {
+        padding: 8px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    /* 푸터 */
+    .agoda-footer {
+        padding: 24px 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 0 12px;
+    }
+    .logo-brand {
+        font-size: 17px;
+    }
+    .logo-sub {
+        display: none;
+    }
+    .engine-badge span:last-child {
+        display: none;
+    }
+    .engine-badge::after {
+        content: "Gemini";
+    }
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    .card-img-wrap {
+        height: 160px;
+    }
+    .result-actions {
+        grid-template-columns: 1fr;
+    }
+    .pwa-banner-content {
+        padding: 12px 14px;
     }
 }
 
