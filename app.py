@@ -17,7 +17,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static")
+)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "ai-travel-secret-key-default")
 
 def get_gemini_client():
@@ -328,6 +333,18 @@ def index():
 def favicon():
     """브라우저 기본 요청 파비콘(비행기 아이콘)을 제공합니다."""
     return send_from_directory(os.path.join(app.root_path, "static"), "favicon.svg", mimetype="image/svg+xml")
+
+@app.route("/manifest.json")
+def manifest():
+    """PWA 웹 앱 매니페스트를 제공합니다."""
+    return send_from_directory(os.path.join(app.root_path, "static"), "manifest.json", mimetype="application/manifest+json")
+
+@app.route("/sw.js")
+def service_worker():
+    """PWA 서비스 워커를 루트 스코프로 제공합니다."""
+    response = send_from_directory(os.path.join(app.root_path, "static", "js"), "sw.js", mimetype="application/javascript")
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
 
 @app.route("/generate", methods=["POST"])
 def generate_plan():
