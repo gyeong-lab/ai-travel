@@ -613,8 +613,13 @@ def create_share_link():
     """현재 계획을 공유 가능한 고유 링크와 압축 토큰으로 생성합니다."""
     data = request.get_json(silent=True) or {}
     plan = data.get("plan")
-    if not plan:
+    if not plan or not isinstance(plan, dict):
         return jsonify({"success": False, "error": "공유할 계획 데이터가 없습니다."}), 400
+
+    # 보안 및 과부하 방지: 최대 페이로드 크기 100KB 제한
+    plan_json_str = json.dumps(plan, ensure_ascii=False)
+    if len(plan_json_str) > 100000:
+        return jsonify({"success": False, "error": "공유 데이터 용량이 초과되었습니다."}), 400
 
     share_id = f"s_{secrets.token_hex(4)}"
     token = compress_plan(plan)
