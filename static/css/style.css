@@ -1160,29 +1160,16 @@ button {
     word-break: keep-all; /* 단어 단위 줄바꿈으로 글자가 삐죽 잘리거나 어색해지지 않게 방지 */
 }
 
-/* 평점 */
+/* 평점: 아직 리뷰가 없으므로 사용자 요청에 따라 숨김 처리 */
 .card-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    margin-bottom: 6px;
+    display: none !important;
 }
 
 .star-icon {
-    color: var(--agoda-gold);
+    display: none;
 }
 
-.rating-score {
-    font-weight: 800;
-    color: #111827;
-}
-
-.review-count {
-    color: #6b7280;
-}
-
-/* 초록색 혜택 태그 (예약 즉시 확정 / 무료 취소) */
+/* 초록색 혜택 태그 (예약 즉시 확정 / 패스 티켓 등) */
 .card-badges-green {
     font-size: 11px;
     color: var(--agoda-green);
@@ -1190,7 +1177,7 @@ button {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1205,42 +1192,43 @@ button {
     color: #cbd5e1;
 }
 
-/* 요금 영역 */
+/* 요금 영역: 호텔 금액식 분리/할인율 제거, 직관적인 '예상 가격' 단일 표기 */
 .card-price-area {
     margin-top: auto;
-    text-align: right;
-}
-
-.price-original {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 6px;
-    font-size: 12px;
-}
-
-.strikethrough {
-    text-decoration: line-through;
-    color: #9ca3af;
-}
-
-.discount-percent {
-    color: var(--agoda-red);
-    font-weight: 700;
-}
-
-.price-current {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--agoda-red);
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
+    gap: 6px;
+}
+
+.price-original {
+    display: none !important;
+}
+
+.card-price-area::before {
+    content: "예상 가격";
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.price-current {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: baseline;
     gap: 2px;
 }
 
 .price-current .currency {
-    font-size: 14px;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.price-current .amount {
+    color: var(--agoda-blue);
 }
 
 /* 9. AI 결과 영역 & 로딩 */
