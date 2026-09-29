@@ -1746,6 +1746,30 @@
                                     <!-- 일차별 버튼이 JS로 동적 추가됨 -->
                                 </div>
                             </div>
+
+                            <!-- 사용자 숙소 & 경유지 직접 추가 툴바 -->
+                            <div class="map-custom-waypoint-bar">
+                                <div class="waypoint-input-group">
+                                    <span class="waypoint-icon">🏨</span>
+                                    <input type="text" id="customWaypointName" class="waypoint-input" placeholder="내 숙소 또는 가고 싶은 장소명 입력 (예: 신라호텔 제주, 감성에어비앤비)">
+                                    <select id="customWaypointDay" class="waypoint-day-select">
+                                        <option value="1">1일차 경유지로 추가</option>
+                                        <option value="2">2일차 경유지로 추가</option>
+                                        <option value="3">3일차 경유지로 추가</option>
+                                        <option value="4">4일차 경유지로 추가</option>
+                                    </select>
+                                    <button type="button" id="btnPickOnMap" class="btn-pick-map" title="지도를 직접 클릭하여 해당 위치를 숙소/경유지로 추가">
+                                        <span>📍 지도에서 위치 찍기</span>
+                                    </button>
+                                    <button type="button" id="btnAddWaypoint" class="btn-add-waypoint">
+                                        <span>➕ 경유지 추가</span>
+                                    </button>
+                                </div>
+                                <div id="mapPickNotice" class="map-pick-notice" style="display: none;">
+                                    🎯 <strong>지도에서 원하는 숙소나 장소를 클릭하세요!</strong> 클릭한 지점의 좌표가 자동으로 경유지로 추가됩니다. (취소하려면 다시 클릭)
+                                </div>
+                            </div>
+
                             <div class="map-container-box">
                                 <div id="planInteractiveMap" class="interactive-map-canvas"></div>
                             </div>

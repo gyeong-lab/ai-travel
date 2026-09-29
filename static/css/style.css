@@ -2511,6 +2511,181 @@ button {
 .btn-map-filter.filter-day-3.active { background: #7c3aed; border-color: #6d28d9; }
 .btn-map-filter.filter-day-4.active { background: #ea580c; border-color: #c2410c; }
 
+/* 숙소 및 경유지 직접 추가 툴바 */
+.map-custom-waypoint-bar {
+    margin-bottom: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+.waypoint-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.waypoint-icon {
+    font-size: 18px;
+}
+
+.waypoint-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.waypoint-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+.waypoint-day-select {
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    background-color: #ffffff;
+    outline: none;
+}
+
+.btn-pick-map {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #4338ca;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-pick-map:hover {
+    background: #e0e7ff;
+    border-color: #a5b4fc;
+}
+
+.btn-pick-map.active {
+    background: #4f46e5;
+    color: #ffffff;
+    border-color: #4338ca;
+    animation: pulseRing 1.5s infinite;
+}
+
+.btn-add-waypoint {
+    background: #059669;
+    border: 1px solid #047857;
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-add-waypoint:hover {
+    background: #047857;
+}
+
+.map-pick-notice {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.4;
+}
+
+/* 📝 계획 항목별 사용자 추가 / 삭제 인터랙션 UI */
+.plan-item-row {
+    position: relative;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+}
+
+.plan-item-row:hover {
+    background-color: #f1f5f9;
+}
+
+.plan-item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    opacity: 0.85;
+}
+
+.btn-item-action {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1.2;
+}
+
+.btn-item-delete {
+    color: #ef4444;
+}
+.btn-item-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.btn-item-add {
+    color: #2563eb;
+}
+.btn-item-add:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.time-slot-add-bar {
+    margin-top: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-slot-quick-add {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-slot-quick-add:hover {
+    background: #eef2ff;
+    border-color: #818cf8;
+    color: #4338ca;
+}
+
 .map-container-box {
     border-radius: 12px;
     overflow: hidden;

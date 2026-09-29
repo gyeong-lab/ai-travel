@@ -1557,6 +1557,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
             mapMarkerLayerGroup = L.layerGroup().addTo(leafletMap);
             mapPolylineLayerGroup = L.layerGroup().addTo(leafletMap);
+
+            // 지도 직접 클릭 시 숙소/경유지 추가 이벤트
+            leafletMap.on("click", (e) => {
+                if (!isMapPickingMode) return;
+                const clickedLat = e.latlng.lat;
+                const clickedLng = e.latlng.lng;
+                const customWaypointName = document.getElementById("customWaypointName");
+                const customWaypointDay = document.getElementById("customWaypointDay");
+                const defaultName = customWaypointName && customWaypointName.value.trim() ? customWaypointName.value.trim() : "지도 지정 숙소";
+                const day = customWaypointDay ? parseInt(customWaypointDay.value, 10) : 1;
+
+                const spotName = prompt(`[Day ${day}] 선택한 지도 좌표에 추가할 숙소 또는 장소 이름을 입력하세요:`, defaultName);
+                if (spotName && spotName.trim()) {
+                    addCustomWaypointToActivePlan(spotName.trim(), day, { lat: clickedLat, lng: clickedLng });
+                    if (customWaypointName) customWaypointName.value = "";
+                }
+
+                // 픽업 모드 자동 해제
+                isMapPickingMode = false;
+                const btnPickOnMap = document.getElementById("btnPickOnMap");
+                const mapPickNotice = document.getElementById("mapPickNotice");
+                if (btnPickOnMap) {
+                    btnPickOnMap.classList.remove("active");
+                    btnPickOnMap.innerHTML = "<span>📍 지도에서 위치 찍기</span>";
+                }
+                if (mapPickNotice) mapPickNotice.style.display = "none";
+                if (leafletMap) leafletMap.getContainer().style.cursor = "";
+            });
         }
 
         mapMarkerLayerGroup.clearLayers();
@@ -1736,8 +1764,86 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ==========================================
+    // 🗺️ 숙소 및 사용자 경유지 지도 픽업 & 동선 실시간 추가 모듈
+    // ==========================================
+    let isMapPickingMode = false;
+    let currentActivePlanRef = null;
+
+    function setupMapWaypointControls() {
+        const btnPickOnMap = document.getElementById("btnPickOnMap");
+        const btnAddWaypoint = document.getElementById("btnAddWaypoint");
+        const customWaypointName = document.getElementById("customWaypointName");
+        const customWaypointDay = document.getElementById("customWaypointDay");
+        const mapPickNotice = document.getElementById("mapPickNotice");
+
+        if (btnPickOnMap) {
+            btnPickOnMap.onclick = () => {
+                isMapPickingMode = !isMapPickingMode;
+                if (isMapPickingMode) {
+                    btnPickOnMap.classList.add("active");
+                    btnPickOnMap.innerHTML = "<span>🛑 지도 클릭 대기 중...</span>";
+                    if (mapPickNotice) mapPickNotice.style.display = "block";
+                    if (leafletMap) leafletMap.getContainer().style.cursor = "crosshair";
+                } else {
+                    btnPickOnMap.classList.remove("active");
+                    btnPickOnMap.innerHTML = "<span>📍 지도에서 위치 찍기</span>";
+                    if (mapPickNotice) mapPickNotice.style.display = "none";
+                    if (leafletMap) leafletMap.getContainer().style.cursor = "";
+                }
+            };
+        }
+
+        if (btnAddWaypoint) {
+            btnAddWaypoint.onclick = () => {
+                const name = customWaypointName ? customWaypointName.value.trim() : "";
+                const day = customWaypointDay ? parseInt(customWaypointDay.value, 10) : 1;
+                if (!name) {
+                    alert("추가할 숙소명 또는 장소명을 입력해 주세요!");
+                    if (customWaypointName) customWaypointName.focus();
+                    return;
+                }
+                addCustomWaypointToActivePlan(name, day);
+                if (customWaypointName) customWaypointName.value = "";
+            };
+        }
+    }
+
+    function addCustomWaypointToActivePlan(name, day, coords = null) {
+        if (!currentActivePlanRef) return;
+        const plan = currentActivePlanRef;
+
+        // 1) 마크다운 문서 내 해당 일자의 저녁/숙소 섹션 또는 일자 끝에 항목 추가
+        const dayHeaderRegex = new RegExp(`(###\\s*🌟?\\s*\\[?Day\\s*${day}[\\s\\S]*?)(?=###\\s*🌟?\\s*\\[?Day\\s*\\d+|###\\s*🍽️|$)`, "i");
+        const match = plan.markdown.match(dayHeaderRegex);
+
+        const newEntry = `\n- 🏨 **[사용자 지정 숙소/경유지]**: **${name}** (동선 경유지로 추가됨 - 확인 필요)\n`;
+
+        if (match) {
+            const originalDayBlock = match[1];
+            let updatedDayBlock = originalDayBlock;
+            if (updatedDayBlock.includes("#### 🏨 [숙소 휴식]")) {
+                updatedDayBlock = updatedDayBlock.replace("#### 🏨 [숙소 휴식]", `#### 🏨 [숙소 휴식]${newEntry}`);
+            } else {
+                updatedDayBlock += newEntry;
+            }
+            plan.markdown = plan.markdown.replace(originalDayBlock, updatedDayBlock);
+        } else {
+            plan.markdown += `\n### 🌟 [Day ${day}] 추가 경유지 일정\n${newEntry}`;
+        }
+
+        // 2) SPOT_COORDS에 사용자 좌표 저장 (지도 핀 정확도 반영)
+        if (coords) {
+            SPOT_COORDS[name] = coords;
+        }
+
+        // 3) 화면 리렌더링
+        setActivePlan(plan.id);
+        alert(`✅ [${day}일차] 에 "${name}" 이(가) 숙소/경유지로 성공적으로 추가되었습니다! 동선 지도와 일정표에 즉시 반영됩니다.`);
+    }
+
     /**
-     * 일자별(Day 1, 2, 3) 및 시간대별(오전/점심/오후/저녁/숙소) 일정 카드 시각적 가독성 강화
+     * 일자별(Day 1, 2, 3) 및 시간대별(오전/점심/오후/저녁/숙소) 일정 카드 시각적 가독성 강화 + 추가/삭제 버튼
      */
      function enhanceDailyPlanLayout(container) {
          if (!container) return;
@@ -1753,21 +1859,125 @@ document.addEventListener("DOMContentLoaded", () => {
              }
          });
 
-         // 2) H4 태그 중 시간대(오전, 점심, 오후, 저녁, 숙소) 감지하여 시간 블록 스타일 적용
+         // 2) H4 태그 중 시간대(오전, 점심, 오후, 저녁, 숙소) 감지하여 시간 블록 스타일 적용 및 시간대별 빠른 추가 버튼
          container.querySelectorAll("h4").forEach((h4) => {
              const txt = h4.textContent || "";
+             let slotType = "";
              if (txt.includes("오전") || txt.includes("🌅")) {
                  h4.classList.add("time-morning");
+                 slotType = "오전 일정";
              } else if (txt.includes("점심") || txt.includes("🍴")) {
                  h4.classList.add("time-lunch");
+                 slotType = "점심 맛집";
              } else if (txt.includes("오후") || txt.includes("🎯")) {
                  h4.classList.add("time-afternoon");
+                 slotType = "오후 명소";
              } else if (txt.includes("저녁") || txt.includes("야경") || txt.includes("🌙")) {
                  h4.classList.add("time-dinner");
+                 slotType = "저녁 & 야경";
              } else if (txt.includes("숙소") || txt.includes("휴식") || txt.includes("🏨")) {
                  h4.classList.add("time-hotel");
+                 slotType = "숙소/호텔";
+             }
+
+             // 시간대 헤더 우측에 [+ 이 시간대 계획 추가] 버튼 부착
+             if (slotType && !h4.querySelector(".btn-slot-quick-add")) {
+                 const addBtn = document.createElement("button");
+                 addBtn.type = "button";
+                 addBtn.className = "btn-slot-quick-add";
+                 addBtn.innerHTML = `<span>➕ ${slotType} 추가</span>`;
+                 addBtn.onclick = (e) => {
+                     e.stopPropagation();
+                     const newSpot = prompt(`[${slotType}]에 추가할 장소나 활동을 입력하세요:`, "");
+                     if (newSpot && newSpot.trim()) {
+                         const parentList = h4.nextElementSibling;
+                         if (parentList && parentList.tagName === "UL") {
+                             const newLi = document.createElement("li");
+                             newLi.innerHTML = `📍 **방문 코스**: <strong>${newSpot.trim()}</strong> (사용자 직접 추가)`;
+                             parentList.appendChild(newLi);
+                             setupItemRowActions(newLi);
+                         } else {
+                             const newUl = document.createElement("ul");
+                             const newLi = document.createElement("li");
+                             newLi.innerHTML = `📍 **방문 코스**: <strong>${newSpot.trim()}</strong> (사용자 직접 추가)`;
+                             newUl.appendChild(newLi);
+                             h4.parentNode.insertBefore(newUl, h4.nextSibling);
+                             setupItemRowActions(newLi);
+                         }
+
+                         // 동선 지도에도 즉시 추가 반영
+                         if (currentActivePlanRef) {
+                             currentActivePlanRef.markdown += `\n- 📍 **추가 코스**: **${newSpot.trim()}**\n`;
+                             renderPlanMapForPlan(currentActivePlanRef);
+                         }
+                     }
+                 };
+                 h4.appendChild(addBtn);
              }
          });
+
+         // 3) 일정표 내 세부 불릿 리스트(li)에 수정/삭제/추가 액션 툴바 부착
+         container.querySelectorAll("ul > li").forEach((li) => {
+             setupItemRowActions(li);
+         });
+     }
+
+     function setupItemRowActions(li) {
+         if (!li || li.querySelector(".plan-item-actions")) return;
+         li.classList.add("plan-item-row");
+
+         const actionsWrap = document.createElement("span");
+         actionsWrap.className = "plan-item-actions";
+
+         // ➕ 바로 아래 항목 추가 버튼
+         const btnAdd = document.createElement("button");
+         btnAdd.type = "button";
+         btnAdd.className = "btn-item-action btn-item-add";
+         btnAdd.title = "이 일정 바로 아래에 새 방문지 추가";
+         btnAdd.textContent = "➕ 추가";
+         btnAdd.onclick = (e) => {
+             e.stopPropagation();
+             const newName = prompt("추가할 장소나 계획 내용을 입력하세요:", "");
+             if (newName && newName.trim()) {
+                 const newLi = document.createElement("li");
+                 newLi.innerHTML = `📍 **추가 방문지**: <strong>${newName.trim()}</strong> (사용자 추가)`;
+                 li.parentNode.insertBefore(newLi, li.nextSibling);
+                 setupItemRowActions(newLi);
+
+                 if (currentActivePlanRef) {
+                     currentActivePlanRef.markdown += `\n- 📍 **추가 방문지**: **${newName.trim()}**\n`;
+                     renderPlanMapForPlan(currentActivePlanRef);
+                 }
+             }
+         };
+
+         // 🗑️ 항목 삭제 버튼
+         const btnDel = document.createElement("button");
+         btnDel.type = "button";
+         btnDel.className = "btn-item-action btn-item-delete";
+         btnDel.title = "이 일정 항목 삭제하기";
+         btnDel.textContent = "🗑️ 삭제";
+         btnDel.onclick = (e) => {
+             e.stopPropagation();
+             if (confirm(`"${li.textContent.slice(0, 30)}..." 일정을 삭제하시겠습니까?`)) {
+                 const removedText = li.textContent;
+                 li.remove();
+
+                 // 마크다운에서 해당 장소명 지우고 지도 갱신
+                 if (currentActivePlanRef) {
+                     const tokens = removedText.split(/[:\n]/);
+                     const spotWord = (tokens[1] || tokens[0] || "").trim().slice(0, 8);
+                     if (spotWord) {
+                         currentActivePlanRef.markdown = currentActivePlanRef.markdown.split('\n').filter(line => !line.includes(spotWord)).join('\n');
+                         renderPlanMapForPlan(currentActivePlanRef);
+                     }
+                 }
+             }
+         };
+
+         actionsWrap.appendChild(btnAdd);
+         actionsWrap.appendChild(btnDel);
+         li.appendChild(actionsWrap);
      }
 
     /**
@@ -1779,6 +1989,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!plan) return;
 
         activePlanId = id;
+        currentActivePlanRef = plan;
         isCompareMode = false;
         currentPlanMarkdown = plan.markdown;
 
@@ -1799,6 +2010,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3-1. 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 렌더링
         renderPlanMapForPlan(plan);
+        setupMapWaypointControls();
 
         if (planCompareDashboard) planCompareDashboard.style.display = "none";
         if (planDetailView) planDetailView.style.display = "block";
