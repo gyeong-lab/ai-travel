@@ -194,85 +194,56 @@ button {
     color: var(--text-muted);
 }
 
-/* 네비게이션 우측 버튼들 */
+/* 네비게이션 우측 기능 버튼들 */
 .nav-right {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+}
+
+.engine-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--agoda-blue);
+    background: var(--agoda-blue-light);
+    border: 1px solid var(--agoda-blue-border);
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    background-color: var(--agoda-green);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 2px rgba(0, 135, 90, 0.2);
 }
 
 .btn-outline-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     font-size: 13px;
     font-weight: 600;
     color: var(--agoda-blue);
     border: 1px solid var(--agoda-blue);
-    padding: 7px 16px;
+    padding: 6px 14px;
     border-radius: var(--radius-full);
     transition: all 0.15s ease;
+    cursor: pointer;
 }
 
 .btn-outline-pill:hover {
     background-color: var(--agoda-blue-light);
 }
 
-.nav-locale {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #444;
-    cursor: pointer;
-    padding: 4px 6px;
-    border-radius: 4px;
-}
-
-.nav-locale:hover {
-    background-color: #f1f3f5;
-}
-
-.flag-icon {
-    font-size: 16px;
-}
-
-.currency-code {
-    font-size: 14px;
-}
-
-.btn-text {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--agoda-blue);
-    padding: 6px 10px;
-}
-
-.btn-text:hover {
-    text-decoration: underline;
-}
-
-.btn-primary-pill {
-    font-size: 13px;
-    font-weight: 600;
-    color: #ffffff;
-    background-color: var(--agoda-blue);
-    padding: 8px 18px;
-    border-radius: var(--radius-full);
-    transition: background 0.15s ease;
-}
-
-.btn-primary-pill:hover {
-    background-color: var(--agoda-blue-hover);
-}
-
-.hamburger-btn {
-    font-size: 18px;
-    color: #555;
-    padding: 6px;
-    border-radius: 4px;
-}
-
-.hamburger-btn:hover {
-    background-color: #f1f3f5;
+.req-star {
+    color: var(--agoda-red);
+    font-weight: 700;
 }
 
 /* 4. 아고다 중앙 검색창 영역 */
@@ -1208,55 +1179,7 @@ button {
     color: #1e3a8a;
 }
 
-/* 10. 우측 하단 아고다 스타일 플로팅 장바구니/플래너 버튼 (FAB) */
-.floating-fab {
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 99;
-}
-
-.fab-circle {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background-color: var(--agoda-blue);
-    color: #ffffff;
-    box-shadow: 0 6px 20px rgba(42, 104, 232, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: transform 0.2s ease, background 0.15s ease;
-}
-
-.fab-circle:hover {
-    transform: scale(1.08);
-    background-color: var(--agoda-blue-hover);
-}
-
-.fab-icon {
-    font-size: 24px;
-}
-
-.fab-badge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background-color: var(--agoda-red);
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 800;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #ffffff;
-}
-
-/* 11. 푸터 */
+/* 10. 푸터 */
 .agoda-footer {
     background-color: #ffffff;
     border-top: 1px solid var(--border-color);

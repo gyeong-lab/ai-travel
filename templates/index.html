@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>agoda | AI Travel Planner - 맞춤 여행 일정 & 예약</title>
+    <title>agoda | AI Travel Planner - 맞춤 여행 일정 플래너</title>
     <!-- Pretendard 최신 웹폰트 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <!-- 1. 아고다 스타일 상단 글로벌 네비게이션 바 (GNB) -->
+    <!-- 1. 아고다 스타일 상단 헤더 (불필요한 더미 버튼 제거 및 동작하는 기능만 유지) -->
     <header class="agoda-navbar">
         <div class="nav-container">
             <div class="nav-left">
@@ -27,226 +27,149 @@
                     <span class="logo-brand">agoda</span>
                     <span class="logo-sub">AI Travel</span>
                 </a>
-
-                <!-- 상단 메뉴 카테고리 -->
-                <nav class="nav-links">
-                    <a href="#" class="nav-item">모텔</a>
-                    <a href="#" class="nav-item has-badge">
-                        항공 + 숙소
-                        <span class="badge-discount">큰 할인!</span>
-                    </a>
-                    <a href="#" class="nav-item">숙소</a>
-                    <a href="#" class="nav-item active has-badge">
-                        교통편
-                        <span class="badge-new">신규오픈</span>
-                        <span class="dropdown-arrow">▾</span>
-                    </a>
-                    <a href="#" class="nav-item">즐길 거리</a>
-                    <a href="#" class="nav-item">···</a>
-                </nav>
             </div>
 
-            <!-- 우측 유틸리티 (회원가입, 로그인, 통화, 국기) -->
+            <!-- 우측: 동작하는 기능 버튼 및 AI 엔진 상태 -->
             <div class="nav-right">
-                <button type="button" class="btn-outline-pill">숙소 등록</button>
-                <div class="nav-locale">
-                    <span class="flag-icon" title="대한민국">🇰🇷</span>
-                    <span class="currency-code">₩</span>
+                <div class="engine-badge" title="Google Gemini API 연동 완료">
+                    <span class="status-dot"></span>
+                    <span>Gemini 2.5 Flash</span>
                 </div>
-                <button type="button" class="btn-text">로그인</button>
-                <button type="button" class="btn-primary-pill">회원 가입</button>
-                <button type="button" class="btn-icon hamburger-btn" aria-label="메뉴">
-                    <span>☰</span>
+                <button type="button" id="headerResetBtn" class="btn-outline-pill">
+                    <span>🔄</span> 폼 초기화
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- 2. 아고다 스타일 중앙 검색창 영역 (Search Bar) -->
+    <!-- 2. 아고다 스타일 검색창 영역 (실제 검색 & 폼 연동 동작) -->
     <section class="search-section">
         <div class="search-bar-wrapper">
             <div class="search-bar-pill">
                 <div class="search-input-group">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="topSearchInput" value="Jeju" placeholder="어디로 떠나시나요? 도시, 관광명소, 숙소 검색" autocomplete="off">
+                    <input type="text" id="topSearchInput" value="제주도" placeholder="어디로 떠나시나요? 목적지 입력 (예: 제주도, 오사카, 파리, 방콕)" autocomplete="off">
                 </div>
                 <button type="button" id="topSearchBtn" class="btn-search-trigger">검색</button>
             </div>
         </div>
     </section>
 
-    <!-- 3. 아고다 스타일 가로 카테고리 아이콘 바 (Category Carousel) -->
+    <!-- 3. 동작하는 카테고리 필터 바 (클릭 시 우측 카드 필터링 & 테마 자동 설정) -->
     <section class="category-carousel-section">
         <div class="category-carousel">
-            <button type="button" class="cat-item" data-category="sale">
-                <div class="cat-icon">🏷️</div>
-                <span class="cat-label">세일!</span>
+            <button type="button" class="cat-item active" data-category="all">
+                <div class="cat-icon">🌟</div>
+                <span class="cat-label">전체 추천</span>
             </button>
-            <button type="button" class="cat-item" data-category="attraction">
-                <div class="cat-icon">🏯</div>
-                <span class="cat-label">관광 명소</span>
-            </button>
-            <button type="button" class="cat-item" data-category="amusement">
-                <div class="cat-icon">🎡</div>
-                <span class="cat-label">놀이공원</span>
-            </button>
-            <button type="button" class="cat-item" data-category="tour">
-                <div class="cat-icon">🚶</div>
-                <span class="cat-label">투어</span>
-            </button>
-            <button type="button" class="cat-item" data-category="daytour">
-                <div class="cat-icon">🚩</div>
-                <span class="cat-label">일일 투어</span>
-            </button>
-            <button type="button" class="cat-item" data-category="activity">
-                <div class="cat-icon">🧗</div>
-                <span class="cat-label">체험</span>
-            </button>
-            <button type="button" class="cat-item" data-category="adventure">
-                <div class="cat-icon">🏕️</div>
-                <span class="cat-label">어드벤처 체험</span>
-            </button>
-            <button type="button" class="cat-item" data-category="food">
-                <div class="cat-icon">🍴</div>
-                <span class="cat-label">음식 및 음료</span>
-            </button>
-            <button type="button" class="cat-item" data-category="cruise">
-                <div class="cat-icon">🍸</div>
-                <span class="cat-label">다이닝 크루즈</span>
-            </button>
-            <button type="button" class="cat-item active" data-category="transport">
+            <button type="button" class="cat-item" data-category="transport">
                 <div class="cat-icon icon-with-check">
                     🚗
                     <span class="cat-check-badge">✓</span>
                 </div>
-                <span class="cat-label">교통편</span>
+                <span class="cat-label">교통편 &amp; 렌터카</span>
             </button>
-            <button type="button" class="cat-item" data-category="airport">
-                <div class="cat-icon">🚙</div>
-                <span class="cat-label">공항 이동 교통편</span>
+            <button type="button" class="cat-item" data-category="tour">
+                <div class="cat-icon">🏯</div>
+                <span class="cat-label">관광 명소 &amp; 투어</span>
             </button>
-            <button type="button" class="cat-item" data-category="family">
-                <div class="cat-icon">👨‍👩‍👧‍👦</div>
-                <span class="cat-label">가족 친화적 관광 명소</span>
+            <button type="button" class="cat-item" data-category="healing">
+                <div class="cat-icon">🌿</div>
+                <span class="cat-label">자연 &amp; 힐링 산책</span>
             </button>
-            <button type="button" class="cat-item has-count-badge" data-category="all">
-                <div class="cat-icon icon-with-count">
-                    🪟
-                    <span class="cat-number-badge">1</span>
-                </div>
-                <span class="cat-label">모든 카테고리</span>
+            <button type="button" class="cat-item" data-category="cruise">
+                <div class="cat-icon">🍸</div>
+                <span class="cat-label">다이닝 크루즈 &amp; 미식</span>
             </button>
         </div>
     </section>
 
-    <!-- 4. 메인 2단 분할 레이아웃 (좌측 필터 & AI 플래너 설정 / 우측 상품 그리드 & 일정표) -->
+    <!-- 4. 메인 2단 분할 레이아웃 -->
     <div class="main-container">
-        <!-- 좌측 사이드바: 아고다 스타일 필터 및 AI 여행 설정 폼 -->
+        <!-- 좌측 사이드바: 필터 요약 및 AI 여행 플래너 폼 -->
         <aside class="sidebar-filters">
-            <!-- 1. 선택된 검색 조건 -->
+            <!-- 1. 선택된 검색 조건 (동작하는 태그) -->
             <div class="filter-box">
                 <div class="filter-box-header">
-                    <h3 class="filter-title">선택된 검색 조건</h3>
-                    <a href="javascript:void(0)" id="resetFiltersBtn" class="link-blue">모든 검색 조건 해제하기</a>
+                    <h3 class="filter-title">선택된 여행 조건</h3>
+                    <a href="javascript:void(0)" id="resetFiltersBtn" class="link-blue">조건 초기화</a>
                 </div>
                 <div class="selected-chips" id="selectedChips">
-                    <span class="filter-chip" data-chip="transport">
-                        교통편 <button type="button" class="chip-remove">✕</button>
+                    <span class="filter-chip" id="chipDestination">
+                        <span class="chip-text">제주도</span> <button type="button" class="chip-remove" title="삭제">✕</button>
                     </span>
-                    <span class="filter-chip" id="chipDestination" style="display: inline-flex;">
-                        제주도 <button type="button" class="chip-remove">✕</button>
+                    <span class="filter-chip" id="chipCategory">
+                        <span class="chip-text">전체 추천</span> <button type="button" class="chip-remove" title="삭제">✕</button>
                     </span>
                 </div>
             </div>
 
-            <!-- 2. 정렬 기준 -->
-            <div class="filter-box">
-                <h3 class="filter-title">정렬 기준</h3>
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="sort" value="popular" checked>
-                        <span class="radio-custom"></span>
-                        <span class="radio-text">인기순</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="sort" value="low_price">
-                        <span class="radio-custom"></span>
-                        <span class="radio-text">낮은 요금순</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="sort" value="high_rating">
-                        <span class="radio-custom"></span>
-                        <span class="radio-text">높은 평점순</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- 3. 요금 필터 슬라이더 -->
+            <!-- 2. 요금(예산) 슬라이더 (예산 폼과 실시간 연동) -->
             <div class="filter-box">
                 <div class="filter-box-header">
-                    <h3 class="filter-title">요금</h3>
+                    <h3 class="filter-title">예상 예산 설정</h3>
                 </div>
                 <div class="price-range-display">
-                    <span id="priceMin">₩ 0</span>
-                    <span id="priceMax">₩ 2,533,914</span>
+                    <span>₩ 0</span>
+                    <span id="priceMax">₩ 1,200,000</span>
                 </div>
                 <div class="slider-container">
-                    <input type="range" id="priceRange" min="0" max="3000000" step="50000" value="1200000" class="agoda-slider">
+                    <input type="range" id="priceRange" min="100000" max="3000000" step="50000" value="1200000" class="agoda-slider">
                 </div>
             </div>
 
-            <!-- 4. AI 맞춤 여행 조건 폼 (아고다 카드 스타일로 일체화) -->
+            <!-- 3. AI 맞춤 여행 조건 설정 폼 -->
             <div class="filter-box ai-planner-box">
                 <div class="ai-box-badge">
                     <span class="sparkle-icon">✨</span> Gemini AI 스마트 플래너
                 </div>
                 <h3 class="filter-title mb-8">AI 맞춤 조건 설정</h3>
-                <p class="filter-desc">원하는 조건을 입력하면 AI가 아고다 상품과 연계된 최적 일정표를 생성합니다.</p>
+                <p class="filter-desc">원하는 조건을 입력하거나 우측의 추천 코스를 클릭하면 AI가 10초 만에 완벽한 일정표를 설계합니다.</p>
 
                 <form id="travelForm" novalidate>
-                    <!-- 여행지 -->
+                    <!-- 목적지 -->
                     <div class="form-group">
-                        <label for="destination">📍 목적지</label>
+                        <label for="destination">📍 목적지 <span class="req-star">*</span></label>
                         <input type="text" id="destination" name="destination" value="제주도 서귀포 & 애월" placeholder="예: 제주도, 오사카, 파리, 방콕" required>
                     </div>
 
                     <!-- 여행 기간 -->
                     <div class="form-group">
-                        <label for="duration">⏱️ 여행 기간</label>
+                        <label for="duration">⏱️ 여행 기간 <span class="req-star">*</span></label>
                         <input type="text" id="duration" name="duration" value="2박 3일" placeholder="예: 2박 3일, 4박 5일" required>
                     </div>
 
                     <!-- 예상 예산 -->
                     <div class="form-group">
-                        <label for="budget">💰 예상 예산</label>
-                        <input type="text" id="budget" name="budget" value="2인 총 120만원" placeholder="예: 1인 80만원, 총 150만원" required>
+                        <label for="budget">💰 예상 예산 <span class="req-star">*</span></label>
+                        <input type="text" id="budget" name="budget" value="2인 총 120만원" placeholder="예: 1인 80만원, 총 120만원" required>
                     </div>
 
-                    <!-- 관심사 및 테마 -->
+                    <!-- 여행 테마 / 관심사 -->
                     <div class="form-group">
-                        <label for="interests">🎯 여행 테마</label>
-                        <input type="text" id="interests" name="interests" value="오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길" placeholder="예: 미식, 힐링, 쇼핑, 액티비티" required>
+                        <label for="interests">🎯 여행 테마 &amp; 관심사 <span class="req-star">*</span></label>
+                        <input type="text" id="interests" name="interests" value="오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링" placeholder="예: 미식, 힐링, 쇼핑, 액티비티" required>
                     </div>
 
                     <!-- 동행자 & 이동수단 2열 -->
                     <div class="form-row-2">
                         <div class="form-group">
                             <label for="companions">👥 동행자</label>
-                            <input type="text" id="companions" name="companions" value="연인과 둘이서" placeholder="예: 연인, 친구, 가족" required>
+                            <input type="text" id="companions" name="companions" value="연인과 둘이서" placeholder="예: 연인, 친구, 가족, 혼자">
                         </div>
                         <div class="form-group">
                             <label for="transportation">🚗 이동수단</label>
-                            <input type="text" id="transportation" name="transportation" value="렌터카 (전기차)" placeholder="예: 렌터카, 대중교통" required>
+                            <input type="text" id="transportation" name="transportation" value="렌터카 (전기차)" placeholder="예: 렌터카, 대중교통">
                         </div>
                     </div>
 
                     <!-- 숙소 유형 -->
                     <div class="form-group">
                         <label for="accommodation">🏨 숙소 선호</label>
-                        <input type="text" id="accommodation" name="accommodation" value="서귀포 바다 전망 감성 펜션" placeholder="예: 오션뷰 호텔, 가성비 호텔" required>
+                        <input type="text" id="accommodation" name="accommodation" value="서귀포 바다 전망 감성 숙소" placeholder="예: 가성비 호텔, 오션뷰 리조트">
                     </div>
 
-                    <!-- 여행 모드 선택 (Prompt A / B) -->
+                    <!-- 여행 기조 스타일 (Prompt A / B) -->
                     <div class="form-group">
                         <label class="label-heading">⚡ 여행 기조 스타일</label>
                         <div class="mode-select-grid">
@@ -280,13 +203,14 @@
 
         <!-- 우측 메인 영역: 추천 상품 카드 그리드 & AI 생성 결과 섹션 -->
         <main class="main-content">
-            <!-- 1. 추천 상품 카드 그리드 (sample.png 완벽 재현) -->
+            <!-- 1. 추천 상품 카드 그리드 (클릭 시 폼에 바로 반영) -->
             <section class="products-section" id="productsSection">
                 <div class="section-header">
                     <div>
-                        <h2 class="section-title">제주 및 인기 추천 상품 &amp; 액티비티</h2>
-                        <p class="section-subtitle">아고다 단독 특가 및 즉시 예약 가능한 교통·투어 상품입니다. 카드를 클릭하면 여행 조건에 바로 반영됩니다.</p>
+                        <h2 class="section-title">인기 추천 여행 코스 &amp; 액티비티</h2>
+                        <p class="section-subtitle">카드를 클릭하면 왼쪽 플래너에 여행지가 바로 채워지며, 하트(♡)를 눌러 보관할 수 있습니다.</p>
                     </div>
+                    <!-- 동작하는 빠른 도시 프리셋 버튼들 -->
                     <div class="quick-preset-chips">
                         <button type="button" class="preset-btn active" data-preset="jeju">🍊 제주도</button>
                         <button type="button" class="preset-btn" data-preset="osaka">🇯🇵 오사카</button>
@@ -297,8 +221,8 @@
 
                 <!-- 4열 카드 그리드 -->
                 <div class="product-grid" id="productGrid">
-                    <!-- 카드 1: 제주 시내 공항 왕복 차량 서비스 -->
-                    <article class="agoda-card" data-dest="제주도" data-theme="공항 왕복 픽업 전용 차량 투어">
+                    <!-- 카드 1: 제주 공항 차량 서비스 -->
+                    <article class="agoda-card" data-category="transport" data-dest="제주도" data-dur="2박 3일" data-budget="2인 총 100만원" data-transport="전용 차량 및 택시" data-theme="제주 시내 & 공항 전용 차량 편안한 힐링 투어">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80" alt="제주 시내 공항 왕복 차량 서비스" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -323,8 +247,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 2: [최대 50% 할인] 한국 | SOCAR 렌터카 | 제주 렌터카 서비스 -->
-                    <article class="agoda-card" data-dest="제주도" data-theme="SOCAR 렌터카 자유 드라이브 여행">
+                    <!-- 카드 2: SOCAR 렌터카 -->
+                    <article class="agoda-card" data-category="transport" data-dest="제주도 서귀포 & 애월" data-dur="2박 3일" data-budget="2인 총 120만원" data-transport="렌터카 (전기차)" data-theme="SOCAR 렌터카 애월 해안도로 & 서귀포 드라이브">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=600&q=80" alt="SOCAR 렌터카 제주 서비스" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -349,10 +273,10 @@
                         </div>
                     </article>
 
-                    <!-- 카드 3: Jeju International Airport Transfer 픽업 및 발송 서비스 (리본 배지 포함) -->
-                    <article class="agoda-card" data-dest="제주도" data-theme="제주 국제공항 프라이빗 픽업">
+                    <!-- 카드 3: Jeju International Airport Transfer -->
+                    <article class="agoda-card" data-category="transport" data-dest="제주도" data-dur="3박 4일" data-budget="2인 총 150만원" data-transport="공항 픽업 리무진" data-theme="제주 국제공항 프라이빗 픽업 & 전일정 럭셔리 투어">
                         <div class="card-img-wrap">
-                            <span class="ribbon-banner">최근 90일간 교통편 부문 인기 상품</span>
+                            <span class="ribbon-banner">최근 90일간 교통편 인기 상품</span>
                             <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80" alt="Jeju International Airport Transfer" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
@@ -381,8 +305,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 4: 용머리 해안까지 왕복 개인 교통편 -->
-                    <article class="agoda-card" data-dest="제주도 서귀포" data-theme="용머리 해안 및 서귀포 해안절경">
+                    <!-- 카드 4: 용머리 해안 왕복 개인 교통편 -->
+                    <article class="agoda-card" data-category="tour" data-dest="제주도 서귀포" data-dur="2박 3일" data-budget="2인 총 130만원" data-transport="개인 전용 차량" data-theme="용머리 해안 및 산방산 서귀포 절경 투어">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80" alt="용머리 해안 왕복 개인 교통편" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -407,8 +331,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 5: 일본 오사카 난바 라피트 특급 열차 왕복권 -->
-                    <article class="agoda-card" data-dest="일본 오사카 & 교토" data-theme="오사카 난바 도톤보리 & 라피트 투어">
+                    <!-- 카드 5: 일본 오사카 라피트 -->
+                    <article class="agoda-card" data-category="transport" data-dest="일본 오사카 & 교토" data-dur="3박 4일" data-budget="1인 100만원" data-transport="간사이 라피트 & 지하철" data-theme="오사카 난바 도톤보리 & 라피트 미식 투어">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1590559899731-a372a1464730?auto=format&fit=crop&w=600&q=80" alt="오사카 난바 라피트 특급 열차" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -436,8 +360,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 6: 제주 서귀포 카멜리아힐 & 힐링 숲 일일 투어 -->
-                    <article class="agoda-card" data-dest="제주도" data-theme="카멜리아힐 & 사려니숲길 힐링 투어">
+                    <!-- 카드 6: 제주 카멜리아힐 일일 투어 -->
+                    <article class="agoda-card" data-category="healing" data-dest="제주도 서귀포" data-dur="2박 3일" data-budget="2인 총 100만원" data-transport="투어 버스" data-theme="카멜리아힐 & 사려니숲길 힐링 피톤치드 산책">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1538669715315-155098f9fb17?auto=format&fit=crop&w=600&q=80" alt="제주 카멜리아힐 일일 투어" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -465,8 +389,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 7: 프랑스 파리 세느강 바토무슈 & 야경 투어 -->
-                    <article class="agoda-card" data-dest="프랑스 파리" data-theme="에펠탑 & 세느강 크루즈 로맨틱 투어">
+                    <!-- 카드 7: 파리 바토무슈 -->
+                    <article class="agoda-card" data-category="cruise" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인 300만원" data-transport="파리 메트로 & 유람선" data-theme="에펠탑 & 세느강 크루즈 로맨틱 야경 투어">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" alt="파리 세느강 바토무슈" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -494,8 +418,8 @@
                         </div>
                     </article>
 
-                    <!-- 카드 8: 태국 방콕 차오프라야 디너 크루즈 뷔페 -->
-                    <article class="agoda-card" data-dest="태국 방콕" data-theme="차오프라야 프린세스 디너 크루즈">
+                    <!-- 카드 8: 방콕 디너 크루즈 -->
+                    <article class="agoda-card" data-category="cruise" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인 90만원" data-transport="디너 크루즈 & 그랩" data-theme="방콕 차오프라야 프린세스 디너 크루즈 & 야시장">
                         <div class="card-img-wrap">
                             <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=600&q=80" alt="방콕 차오프라야 디너 크루즈" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
@@ -544,7 +468,7 @@
 
                 <!-- 에러 알림 -->
                 <div class="error-banner" id="errorAlert" style="display: none;">
-                    <div class="error-badge">⚠️ 오류 안내</div>
+                    <div class="error-badge">⚠️ 안내</div>
                     <p id="errorMessage">오류가 발생했습니다.</p>
                 </div>
 
@@ -568,20 +492,12 @@
 
                     <!-- 마크다운 렌더링 영역 -->
                     <article class="markdown-article" id="planOutput">
-                        <!-- 마크다운 내용 삽입 -->
+                        <!-- 마크다운 내용 자동 삽입 -->
                     </article>
                 </div>
             </section>
         </main>
     </div>
-
-    <!-- 우측 하단 아고다 스타일 플로팅 장바구니/플래너 버튼 (배지 2) -->
-    <aside class="floating-fab" id="floatingFab" title="선택된 여행 아이템 2개">
-        <button type="button" class="fab-circle">
-            <span class="fab-icon">🛍️</span>
-            <span class="fab-badge">2</span>
-        </button>
-    </aside>
 
     <!-- 푸터 -->
     <footer class="agoda-footer">

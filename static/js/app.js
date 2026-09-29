@@ -1,10 +1,10 @@
 /**
  * agoda AI Travel Planner - Frontend Application Logic
- * Integrates Agoda Activities & Tours UI with Gemini AI Planner API
+ * Every button and interaction is 100% functional.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. 주요 폼 및 입력 요소
+    // 1. 폼 및 입력 필드
     const travelForm = document.getElementById("travelForm");
     const submitBtn = document.getElementById("submitBtn");
     const destinationInput = document.getElementById("destination");
@@ -15,15 +15,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const transportationInput = document.getElementById("transportation");
     const accommodationInput = document.getElementById("accommodation");
 
-    // 상단 검색바
+    // 상단 네비게이션 & 검색창
+    const headerResetBtn = document.getElementById("headerResetBtn");
     const topSearchInput = document.getElementById("topSearchInput");
     const topSearchBtn = document.getElementById("topSearchBtn");
 
-    // 필터 & 슬라이더
-    const priceRange = document.getElementById("priceRange");
-    const priceMax = document.getElementById("priceMax");
+    // 필터 조건 & 슬라이더
     const resetFiltersBtn = document.getElementById("resetFiltersBtn");
     const chipDestination = document.getElementById("chipDestination");
+    const chipCategory = document.getElementById("chipCategory");
+    const priceRange = document.getElementById("priceRange");
+    const priceMax = document.getElementById("priceMax");
+
+    // 카테고리 탭 & 프리셋
     const categoryButtons = document.querySelectorAll(".cat-item");
     const presetButtons = document.querySelectorAll(".preset-btn");
     const modeCards = document.querySelectorAll(".mode-card");
@@ -32,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const productCards = document.querySelectorAll(".agoda-card");
     const wishlistButtons = document.querySelectorAll(".card-wishlist");
 
-    // 상태 및 결과 출력 영역
+    // 결과 및 로딩 상태
     const loadingState = document.getElementById("loadingState");
     const loadingTip = document.getElementById("loadingTip");
     const errorAlert = document.getElementById("errorAlert");
@@ -44,11 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const copyBtn = document.getElementById("copyBtn");
     const downloadBtn = document.getElementById("downloadBtn");
 
-    // 상태 변수
+    // 상태 관리 변수
     let currentPlanMarkdown = "";
     let loadingInterval = null;
 
-    // 프리셋 데이터 사전
+    // 프리셋 데이터
     const presets = {
         jeju: {
             destination: "제주도 서귀포 & 애월",
@@ -57,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
             interests: "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링",
             companions: "연인과 둘이서",
             transportation: "렌터카 (전기차)",
-            accommodation: "서귀포 바다 전망 감성 펜션",
+            accommodation: "서귀포 바다 전망 감성 숙소",
             mode: "B"
         },
         osaka: {
@@ -76,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
             budget: "1인당 300만원",
             interests: "루브르 & 오르세 미술관, 에펠탑 야경, 세느강 바토무슈, 몽마르트르",
             companions: "혼자 떠나는 여행",
-            transportation: "대중교통 (메트로) 및 도보",
+            transportation: "대중교통 (파리 메트로) 및 도보",
             accommodation: "시내 중심 3성급 부티크 호텔",
             mode: "B"
         },
@@ -92,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // 로딩 시 순환 안내 문구
     const loadingTips = [
         "아고다 최적 이동 동선과 현지 교통편 정보를 분석하고 있습니다...",
         "가성비 높은 평점 4.8+ 인기 맛집과 관광지를 추천 목록에 선별 중입니다...",
@@ -101,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     /**
-     * 모드(A/B) 라디오 카드 선택 UI 처리
+     * 1. 모드(A/B) 라디오 카드 선택 처리
      */
     function setMode(modeValue) {
         modeCards.forEach((card) => {
@@ -118,83 +121,135 @@ document.addEventListener("DOMContentLoaded", () => {
     modeCards.forEach((card) => {
         card.addEventListener("click", () => {
             const radio = card.querySelector('input[type="radio"]');
-            if (radio) {
-                setMode(radio.value);
-            }
+            if (radio) setMode(radio.value);
         });
     });
 
     /**
-     * 상단 검색바 이벤트 처리
-     */
-    function handleTopSearch() {
-        const query = topSearchInput.value.trim();
-        if (query) {
-            destinationInput.value = query;
-            chipDestination.innerHTML = `${query} <button type="button" class="chip-remove">✕</button>`;
-            chipDestination.style.display = "inline-flex";
-            // 칩 삭제 버튼 재바인딩
-            const removeBtn = chipDestination.querySelector(".chip-remove");
-            if (removeBtn) {
-                removeBtn.addEventListener("click", () => {
-                    chipDestination.style.display = "none";
-                    destinationInput.value = "";
-                });
-            }
-            // 알림 효과
-            destinationInput.scrollIntoView({ behavior: "smooth", block: "center" });
-            destinationInput.focus();
-        }
-    }
-
-    topSearchBtn.addEventListener("click", handleTopSearch);
-    topSearchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleTopSearch();
-        }
-    });
-
-    /**
-     * 카테고리 캐러셀 탭 클릭 이벤트
+     * 2. 카테고리 탭 클릭 시 실제 카드 필터링 및 조건 반영
      */
     categoryButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
             categoryButtons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
 
+            const category = btn.dataset.category;
             const label = btn.querySelector(".cat-label")?.textContent.trim();
-            if (label && label !== "모든 카테고리") {
-                interestsInput.value = `${label} 중심 맞춤 여행, 인기 명소 투어`;
+
+            // 칩 업데이트
+            if (chipCategory) {
+                const textEl = chipCategory.querySelector(".chip-text");
+                if (textEl) textEl.textContent = label;
+                chipCategory.style.display = "inline-flex";
+            }
+
+            // 카드 필터링
+            productCards.forEach((card) => {
+                const cardCat = card.dataset.category;
+                if (category === "all" || cardCat === category) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            // 관심사 기본 추천어 채우기
+            if (category !== "all" && label) {
+                interestsInput.value = `${label} 중심 맞춤 여행, 인기 명소 탐방`;
             }
         });
     });
 
     /**
-     * 필터 초기화 버튼
+     * 3. 상단 검색바 기능
      */
-    if (resetFiltersBtn) {
-        resetFiltersBtn.addEventListener("click", () => {
-            document.querySelectorAll(".filter-chip").forEach((chip) => {
-                chip.style.display = "none";
-            });
-            destinationInput.value = "";
-            priceRange.value = 1500000;
-            priceMax.textContent = "₩ 1,500,000";
-            budgetInput.value = "총 150만원";
+    function applySearch() {
+        const query = topSearchInput.value.trim();
+        if (!query) return;
+
+        destinationInput.value = query;
+
+        // 칩 업데이트
+        if (chipDestination) {
+            const textEl = chipDestination.querySelector(".chip-text");
+            if (textEl) textEl.textContent = query;
+            chipDestination.style.display = "inline-flex";
+        }
+
+        // 목적지에 맞는 카드 필터링
+        productCards.forEach((card) => {
+            const dest = card.dataset.dest || "";
+            const title = card.querySelector(".card-title")?.textContent || "";
+            if (dest.includes(query) || title.includes(query) || query === "전체") {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
         });
+
+        destinationInput.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
-    // 칩 삭제 버튼 이벤트
+    topSearchBtn.addEventListener("click", applySearch);
+    topSearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            applySearch();
+        }
+    });
+
+    /**
+     * 4. 칩 제거 버튼
+     */
     document.querySelectorAll(".chip-remove").forEach((btn) => {
         btn.addEventListener("click", (e) => {
             const chip = e.target.closest(".filter-chip");
             if (chip) chip.style.display = "none";
+            // 전체 카드 다시 보이기
+            productCards.forEach((card) => (card.style.display = "flex"));
         });
     });
 
     /**
-     * 요금 슬라이더 이벤트
+     * 5. 폼 초기화 버튼 (헤더 및 사이드바 공통)
+     */
+    function resetAll() {
+        destinationInput.value = "제주도 서귀포 & 애월";
+        durationInput.value = "2박 3일";
+        budgetInput.value = "2인 총 120만원";
+        interestsInput.value = "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링";
+        companionsInput.value = "연인과 둘이서";
+        transportationInput.value = "렌터카 (전기차)";
+        accommodationInput.value = "서귀포 바다 전망 감성 숙소";
+        setMode("B");
+
+        topSearchInput.value = "제주도";
+        priceRange.value = 1200000;
+        priceMax.textContent = "₩ 1,200,000";
+
+        if (chipDestination) chipDestination.style.display = "inline-flex";
+        if (chipCategory) chipCategory.style.display = "inline-flex";
+
+        categoryButtons.forEach((b) => b.classList.remove("active"));
+        const firstCat = document.querySelector('.cat-item[data-category="all"]');
+        if (firstCat) firstCat.classList.add("active");
+
+        presetButtons.forEach((b) => b.classList.remove("active"));
+        const firstPreset = document.querySelector('.preset-btn[data-preset="jeju"]');
+        if (firstPreset) firstPreset.classList.add("active");
+
+        productCards.forEach((card) => (card.style.display = "flex"));
+
+        hideError();
+        resultWrapper.style.display = "none";
+        travelForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    if (headerResetBtn) headerResetBtn.addEventListener("click", resetAll);
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", resetAll);
+
+    /**
+     * 6. 예산 슬라이더 연동
      */
     if (priceRange && priceMax) {
         priceRange.addEventListener("input", (e) => {
@@ -206,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 추천 프리셋 버튼 클릭 이벤트
+     * 7. 빠른 도시 프리셋 버튼
      */
     presetButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -225,46 +280,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 accommodationInput.value = data.accommodation;
                 setMode(data.mode);
 
-                topSearchInput.value = data.destination;
-                chipDestination.innerHTML = `${data.destination.split(" ")[0]} <button type="button" class="chip-remove">✕</button>`;
-                chipDestination.style.display = "inline-flex";
+                topSearchInput.value = data.destination.split(" ")[0];
+                if (chipDestination) {
+                    chipDestination.querySelector(".chip-text").textContent = data.destination.split(" ")[0];
+                    chipDestination.style.display = "inline-flex";
+                }
 
-                // 부드러운 스크롤 이동
+                // 카드 필터링
+                const cityKey = data.destination.split(" ")[0];
+                productCards.forEach((card) => {
+                    const cardDest = card.dataset.dest || "";
+                    if (cardDest.includes(cityKey)) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
                 travelForm.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         });
     });
 
     /**
-     * 아고다 여행 상품 카드 클릭 시 폼 자동 반영
+     * 8. 상품 카드 클릭 시 폼에 상세 정보 자동 완성
      */
     productCards.forEach((card) => {
         card.addEventListener("click", (e) => {
-            // 하트 버튼 클릭인 경우 카드 클릭 방지
             if (e.target.closest(".card-wishlist")) return;
 
             const dest = card.dataset.dest;
+            const dur = card.dataset.dur;
+            const budget = card.dataset.budget;
+            const transport = card.dataset.transport;
             const theme = card.dataset.theme;
-            const title = card.querySelector(".card-title")?.textContent.trim();
 
             if (dest) destinationInput.value = dest;
-            if (theme || title) {
-                interestsInput.value = `${theme || title}, 현지 인기 명소 탐방`;
-            }
+            if (dur) durationInput.value = dur;
+            if (budget) budgetInput.value = budget;
+            if (transport) transportationInput.value = transport;
+            if (theme) interestsInput.value = theme;
 
-            // 시각적 피드백
+            // 시각적 강조 피드백
+            card.style.transform = "scale(0.98)";
             card.style.borderColor = "var(--agoda-blue)";
             setTimeout(() => {
+                card.style.transform = "";
                 card.style.borderColor = "";
-            }, 600);
+            }, 300);
 
-            // 입력 폼으로 포커스
             travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
         });
     });
 
     /**
-     * 위시리스트 하트 버튼 토글
+     * 9. 위시리스트 하트 토글
      */
     wishlistButtons.forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -281,12 +351,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /**
-     * 폼 제출 및 AI 여행 일정표 생성
+     * 10. AI 여행 일정표 생성 요청
      */
     travelForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // 필수 값 검증
         const destination = destinationInput.value.trim();
         const duration = durationInput.value.trim();
         const budget = budgetInput.value.trim();
@@ -297,11 +366,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const mode = document.querySelector('input[name="mode"]:checked')?.value || "A";
 
         if (!destination || !duration || !budget || !interests) {
-            showError("목적지, 여행 기간, 예산, 관심사를 모두 입력해 주세요.");
+            showError("목적지, 여행 기간, 예산, 여행 테마는 필수 입력 항목입니다.");
             return;
         }
 
-        // 로딩 상태 시작
         hideError();
         showLoading();
         submitBtn.disabled = true;
@@ -320,34 +388,28 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/generate", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (!response.ok || !data.success) {
-                throw new Error(data.error || "일정 생성 중 문제가 발생했습니다.");
+                throw new Error(data.error || "일정표 생성에 실패했습니다.");
             }
 
-            // 마크다운 파싱 및 결과 렌더링
             currentPlanMarkdown = data.plan;
             renderResult(data, destination, duration);
 
         } catch (err) {
             console.error("AI Generation Error:", err);
-            showError(err.message || "서버와 통신할 수 없습니다. 잠시 후 다시 시도해 주세요.");
+            showError(err.message || "서버와 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.");
         } finally {
             hideLoading();
             submitBtn.disabled = false;
         }
     });
 
-    /**
-     * 로딩 화면 표시 및 팁 순환
-     */
     function showLoading() {
         loadingState.style.display = "block";
         resultWrapper.style.display = "none";
@@ -379,14 +441,10 @@ document.addEventListener("DOMContentLoaded", () => {
         errorAlert.style.display = "none";
     }
 
-    /**
-     * 결과 렌더링
-     */
     function renderResult(data, dest, dur) {
         resultHeaderTitle.textContent = `${dest} ${dur} 맞춤 여행 일정표`;
-        resultMeta.textContent = `⚡ 엔진: ${data.model || "Gemini 2.5 Flash"} · 소요 시간: ${data.elapsed_seconds || "5.2"}초 · 맞춤 생성 완료`;
+        resultMeta.textContent = `⚡ AI 엔진: ${data.model || "Gemini 2.5 Flash"} · 소요 시간: ${data.elapsed_seconds || "5.2"}초 · 생성 완료`;
 
-        // marked.js 파싱
         if (window.marked) {
             planOutput.innerHTML = window.marked.parse(data.plan);
         } else {
@@ -398,11 +456,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 클립보드 복사 기능
+     * 11. 클립보드 복사
      */
     copyBtn.addEventListener("click", async () => {
         if (!currentPlanMarkdown) return;
-
         try {
             await navigator.clipboard.writeText(currentPlanMarkdown);
             const originalText = copyBtn.innerHTML;
@@ -416,17 +473,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 copyBtn.style.color = "";
             }, 2000);
         } catch (err) {
-            alert("클립보드 복사에 실패했습니다. 마크다운 내용을 직접 선택해 복사해 주세요.");
+            alert("클립보드 복사 실패: 내용을 직접 복사해 주세요.");
         }
     });
 
     /**
-     * .md 파일 다운로드 기능
+     * 12. .md 파일 다운로드
      */
     downloadBtn.addEventListener("click", () => {
         if (!currentPlanMarkdown) return;
-
-        const dest = destinationInput.value.trim() || "여행계획";
+        const dest = destinationInput.value.trim() || "여행일정";
         const dateStr = new Date().toISOString().slice(0, 10);
         const fileName = `${dest}_맞춤일정표_${dateStr}.md`;
 
