@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>agoda | AI Travel Planner - 맞춤 여행 일정 플래너</title>
+    <title>AI Travel | 맞춤 여행 일정 플래너</title>
     <!-- Pretendard 최신 웹폰트 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -11,21 +11,15 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <!-- 1. 아고다 스타일 상단 헤더 (불필요한 더미 버튼 제거 및 동작하는 기능만 유지) -->
+    <!-- 1. 상단 헤더 (AI Travel 브랜드 적용) -->
     <header class="agoda-navbar">
         <div class="nav-container">
             <div class="nav-left">
-                <!-- 아고다 시그니처 5컬러 도트 로고 -->
-                <a href="/" class="agoda-logo" title="agoda AI Travel Planner">
-                    <span class="logo-dots">
-                        <span class="dot dot-red"></span>
-                        <span class="dot dot-orange"></span>
-                        <span class="dot dot-green"></span>
-                        <span class="dot dot-blue"></span>
-                        <span class="dot dot-lightblue"></span>
-                    </span>
-                    <span class="logo-brand">agoda</span>
-                    <span class="logo-sub">AI Travel</span>
+                <!-- AI Travel 브랜드 로고 -->
+                <a href="/" class="brand-logo" title="AI Travel - 맞춤 여행 플래너">
+                    <span class="logo-icon-wrap">✈️</span>
+                    <span class="logo-brand">AI Travel</span>
+                    <span class="logo-sub">Planner</span>
                 </a>
             </div>
 
@@ -459,7 +453,7 @@
                         <div class="radar-circle"></div>
                         <div class="radar-plane">✈️</div>
                     </div>
-                    <h3>Gemini AI가 아고다 최적 코스 &amp; 일정을 설계 중입니다</h3>
+                    <h3>Gemini AI가 최적의 맞춤 여행 일정을 설계 중입니다</h3>
                     <div class="progress-bar-wrap">
                         <div class="progress-bar-fill"></div>
                     </div>
@@ -502,7 +496,7 @@
     <!-- 푸터 -->
     <footer class="agoda-footer">
         <div class="footer-inner">
-            <p>agoda Travel Planner UI Clone &amp; AI Integration | Powered by <strong>Google Gemini API</strong> &amp; <strong>Flask</strong></p>
+            <p>AI Travel Planner | Powered by <strong>Google Gemini API</strong> &amp; <strong>Flask</strong></p>
             <p class="copyright">모든 콘텐츠 및 디자인은 포트폴리오 및 연구 목적으로 제작되었습니다.</p>
         </div>
     </footer>

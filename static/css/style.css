@@ -86,42 +86,36 @@ button {
     gap: 32px;
 }
 
-/* 아고다 5도트 로고 */
-.agoda-logo {
+/* AI Travel 브랜드 로고 */
+.brand-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     text-decoration: none;
 }
 
-.logo-dots {
+.logo-icon-wrap {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    background: var(--agoda-blue-light);
+    border: 1px solid var(--agoda-blue-border);
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 3px;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(42, 104, 232, 0.12);
 }
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.dot-red { background-color: #e12d2d; }
-.dot-orange { background-color: #ff9800; }
-.dot-green { background-color: #00a651; }
-.dot-blue { background-color: #0073e6; }
-.dot-lightblue { background-color: #00c0f3; }
 
 .logo-brand {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    color: #2a2a2a;
+    color: #1a1a1a;
 }
 
 .logo-sub {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--agoda-blue);
     background: var(--agoda-blue-light);
