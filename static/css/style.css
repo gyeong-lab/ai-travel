@@ -4324,4 +4324,427 @@ button {
     background: rgba(255, 255, 255, 0.25);
 }
 
+/* ==========================================================================
+   🏨 맞춤 숙소 예약 & 구글 지도 추천 숙소 섹션 스타일
+   ========================================================================== */
+.accommodation-booking-section {
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 2px dashed #e2e8f0;
+    animation: fadeIn 0.4s ease;
+}
+
+.booking-section-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.booking-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.booking-badge {
+    background: var(--agoda-blue);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: -0.2px;
+}
+
+.booking-date-badge {
+    background: #ecfdf5;
+    color: #059669;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #a7f3d0;
+}
+
+.booking-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.4px;
+}
+
+.booking-section-title span {
+    color: var(--agoda-blue);
+}
+
+.booking-section-sub {
+    font-size: 13.5px;
+    color: #64748b;
+    line-height: 1.55;
+    margin: 0 0 20px 0;
+}
+
+.booking-section-sub strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* 3대 포털 바로가기 버튼 */
+.booking-quick-portals {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.portal-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.portal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.09);
+}
+
+.portal-icon-wrap {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.portal-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.portal-texts strong {
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.portal-texts small {
+    font-size: 11.5px;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.portal-arrow {
+    font-size: 16px;
+    font-weight: 800;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.portal-btn:hover .portal-arrow {
+    transform: translate(2px, -2px);
+    opacity: 1;
+}
+
+/* 포털별 테마 컬러 */
+.portal-yeogi {
+    background: #fff5f5;
+    border: 1px solid #fed7d7;
+    color: #c53030;
+}
+
+.portal-yeogi:hover {
+    background: #fed7d7;
+    border-color: #feb2b2;
+}
+
+.portal-airbnb {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #e11d48;
+}
+
+.portal-airbnb:hover {
+    background: #ffe4e6;
+    border-color: #fda4af;
+}
+
+.portal-google {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+}
+
+.portal-google:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+/* 유명 숙소 카드 컨테이너 */
+.famous-hotels-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.famous-hotels-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.famous-hotels-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.title-star {
+    color: #eab308;
+    font-size: 18px;
+}
+
+.famous-badge-info {
+    font-size: 12px;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* 숙소 카드 그리드 */
+.famous-hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 18px;
+}
+
+.hotel-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hotel-card:hover {
+    border-color: var(--agoda-blue);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    transform: translateY(-2px);
+}
+
+.hotel-card-tag-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.hotel-tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.hotel-tag.luxury {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.hotel-tag.value {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.hotel-tag.healing {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.hotel-rating {
+    font-size: 13px;
+    font-weight: 800;
+    color: #b45309;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: #fffbeb;
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid #fde68a;
+}
+
+.hotel-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    line-height: 1.35;
+}
+
+.hotel-loc {
+    font-size: 12.5px;
+    color: #64748b;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hotel-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hotel-feature-item {
+    font-size: 12.5px;
+    color: #334155;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+}
+
+.hotel-feature-item::before {
+    content: "✓";
+    color: #10b981;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.hotel-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+}
+
+.hotel-price-lbl {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.hotel-price-val {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--agoda-blue);
+}
+
+.hotel-btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.btn-hotel-link {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.btn-map-link {
+    grid-column: span 2;
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.btn-map-link:hover {
+    background: #1d4ed8;
+}
+
+.btn-yeogi-link {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+}
+
+.btn-yeogi-link:hover {
+    background: #ffe4e6;
+    color: #be123c;
+}
+
+.btn-airbnb-link {
+    background: #fdf2f8;
+    color: #be185d;
+    border: 1px solid #fbcfe8;
+}
+
+.btn-airbnb-link:hover {
+    background: #fce7f3;
+    color: #9d174d;
+}
+
+/* 모바일 반응형 처리 */
+@media (max-width: 768px) {
+    .accommodation-booking-section {
+        margin-top: 24px;
+        padding-top: 20px;
+    }
+    .booking-section-header {
+        padding: 16px;
+    }
+    .booking-section-title {
+        font-size: 17px;
+    }
+    .booking-quick-portals {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+    .famous-hotels-container {
+        padding: 16px;
+    }
+    .famous-hotels-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .hotel-btn-group {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
 

@@ -1905,6 +1905,67 @@
                         <article class="markdown-article" id="planOutput">
                             <!-- 마크다운 내용 자동 삽입 -->
                         </article>
+
+                        <!-- 🏨 맞춤 숙소 예약 및 구글 지도 추천 숙소 섹션 -->
+                        <section class="accommodation-booking-section" id="accommodationBookingSection" style="display: none;">
+                            <div class="booking-section-header">
+                                <div class="booking-title-group">
+                                    <div class="booking-badge-row">
+                                        <span class="booking-badge">🏨 원클릭 숙소 예약</span>
+                                        <span class="booking-date-badge" id="bookingDateBadge">📅 날짜·지역 자동 연동</span>
+                                    </div>
+                                    <h3 class="booking-section-title">
+                                        <span id="bookingDestName">제주도</span> 일정 맞춤 숙소 예약 &amp; 구글 지도 추천
+                                    </h3>
+                                    <p class="booking-section-sub">
+                                        선택하신 일정 기간(<strong id="bookingDateSpan">2026-10-15 ~ 2026-10-17</strong>)과 여행 지역이 자동으로 세팅되어 원하는 플랫폼에서 최저가 빈 방을 즉시 조회하실 수 있습니다.
+                                    </p>
+                                </div>
+
+                                <!-- 포털 바로가기 카드 버튼 3종 -->
+                                <div class="booking-quick-portals">
+                                    <a href="https://www.yeogi.com/" id="linkYeogiPortal" target="_blank" rel="noopener noreferrer" class="portal-btn portal-yeogi">
+                                        <div class="portal-icon-wrap">🏨</div>
+                                        <div class="portal-texts">
+                                            <strong>여기어때로 예약하기</strong>
+                                            <small id="subYeogi">지역 &amp; 체크인 자동 연동</small>
+                                        </div>
+                                        <span class="portal-arrow">↗</span>
+                                    </a>
+
+                                    <a href="https://www.airbnb.co.kr/" id="linkAirbnbPortal" target="_blank" rel="noopener noreferrer" class="portal-btn portal-airbnb">
+                                        <div class="portal-icon-wrap">🏡</div>
+                                        <div class="portal-texts">
+                                            <strong>에어비앤비로 예약하기</strong>
+                                            <small id="subAirbnb">감성 독채 &amp; 숙소 자동 연동</small>
+                                        </div>
+                                        <span class="portal-arrow">↗</span>
+                                    </a>
+
+                                    <a href="https://www.google.com/maps" id="linkGoogleMapsPortal" target="_blank" rel="noopener noreferrer" class="portal-btn portal-google">
+                                        <div class="portal-icon-wrap">🗺️</div>
+                                        <div class="portal-texts">
+                                            <strong>구글 지도 숙소 둘러보기</strong>
+                                            <small id="subGoogle">주변 위치 &amp; 실시간 후기</small>
+                                        </div>
+                                        <span class="portal-arrow">↗</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- 구글 지도 평점 & 특징 포함 추천 숙소 카드 그리드 -->
+                            <div class="famous-hotels-container">
+                                <div class="famous-hotels-head">
+                                    <h4 class="famous-hotels-title">
+                                        <span class="title-star">⭐</span> 구글 지도 평점 4.6+ 근처 유명 숙소 &amp; 특징 가이드
+                                    </h4>
+                                    <span class="famous-badge-info">실시간 평점 및 동선 밀착 추천</span>
+                                </div>
+                                <div class="famous-hotels-grid" id="famousHotelsGrid">
+                                    <!-- JS에서 여행지/동선에 맞춰 동적 렌더링 -->
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </section>

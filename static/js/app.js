@@ -85,6 +85,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const compareTableResponsive = document.getElementById("compareTableResponsive");
     const btnCloseCompare = document.getElementById("btnCloseCompare");
 
+    // 숙소 예약 & 구글 지도 추천 숙소 요소
+    const accommodationBookingSection = document.getElementById("accommodationBookingSection");
+    const bookingDestName = document.getElementById("bookingDestName");
+    const bookingDateSpan = document.getElementById("bookingDateSpan");
+    const bookingDateBadge = document.getElementById("bookingDateBadge");
+    const linkYeogiPortal = document.getElementById("linkYeogiPortal");
+    const linkAirbnbPortal = document.getElementById("linkAirbnbPortal");
+    const linkGoogleMapsPortal = document.getElementById("linkGoogleMapsPortal");
+    const famousHotelsGrid = document.getElementById("famousHotelsGrid");
+
     // 상태 관리 변수
     let currentPlanMarkdown = "";
     let loadingInterval = null;
@@ -2146,6 +2156,491 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 🏨 3-2. 맞춤 숙소 예약 포털 링크 & 구글 지도 유명 숙소 렌더러
+     */
+    const hotelCatalog = {
+        jeju: [
+            {
+                name: "제주 신라 호텔",
+                tag: "럭셔리 호캉스",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 3,420개)",
+                loc: "서귀포시 중문관광로 (중문 해변 도보 5분)",
+                features: [
+                    "전 객실 최고급 침구 & 프라이빗 발코니",
+                    "사계절 야외 온수풀 & 풀사이드 바",
+                    "더 파크뷰 조식 뷔페 & 글램핑 카바나"
+                ],
+                price: "1박 약 38~55만원"
+            },
+            {
+                name: "다인오세아노 호텔",
+                tag: "오션뷰 & 인피니티풀",
+                tagClass: "healing",
+                rating: "4.7 (리뷰 1,890개)",
+                loc: "제주시 애월읍 애월해안로 (한담산책로 인접)",
+                features: [
+                    "사계절 루프탑 인피니티 온수풀 & 일몰 뷰",
+                    "전 객실 스파 욕조 & 시원한 바다 파노라마",
+                    "1층 카페 & 흑돼지 전문점 도보 3분"
+                ],
+                price: "1박 약 16~24만원"
+            },
+            {
+                name: "신라스테이 제주",
+                tag: "가성비 & 공항 10분",
+                tagClass: "value",
+                rating: "4.6 (리뷰 4,120개)",
+                loc: "제주시 노연로 (제주국제공항 차로 8분)",
+                features: [
+                    "모던하고 청결한 침실 & 비즈니스 라운지",
+                    "공항 및 렌터카 하우스 최적의 접근성",
+                    "가성비 높은 뷔페식 조식 & 쾌적한 피트니스"
+                ],
+                price: "1박 약 9~14만원"
+            }
+        ],
+        osaka: [
+            {
+                name: "스위소텔 난카이 오사카",
+                tag: "난바역 직결 5성급",
+                tagClass: "luxury",
+                rating: "4.7 (리뷰 5,120개)",
+                loc: "오사카 난바역 직결 (간사이 공항 라피트 38분)",
+                features: [
+                    "난바역 개찰구 엘리베이터 직결 (비 안 맞고 이동)",
+                    "36층 최상층 스카이라운지 조식 & 도심 야경",
+                    "도톤보리 먹거리 골목 도보 5분"
+                ],
+                price: "1박 약 22~35만원"
+            },
+            {
+                name: "온야도 노노 난바 내추럴 핫 스프링",
+                tag: "천연 온천 & 가성비",
+                tagClass: "healing",
+                rating: "4.8 (리뷰 3,890개)",
+                loc: "오사카 닛폰바시역 도보 1분 (도톤보리 3분)",
+                features: [
+                    "전통 다다미 바닥 & 천연 온천 대욕장 사우나",
+                    "매일 밤 투숙객 무료 야식 라멘(요나키소바) 제공",
+                    "구로몬 시장 및 도톤보리 도보 3분 최강 입지"
+                ],
+                price: "1박 약 15~22만원"
+            },
+            {
+                name: "호텔 한큐 레스파이어 오사카",
+                tag: "우메다 쇼핑 최적",
+                tagClass: "value",
+                rating: "4.6 (리뷰 4,500개)",
+                loc: "오사카 우메다 요도바시 타워 (오사카역 도보 3분)",
+                features: [
+                    "지하철/JR/한큐선 3개 노선 교차 최강 교통",
+                    "대형 쇼핑몰 링크스 우메다 상층부 위치",
+                    "쾌적한 신축 룸 컨디션 & 9층 일본식 정원"
+                ],
+                price: "1박 약 18~28만원"
+            }
+        ],
+        tokyo: [
+            {
+                name: "시부야 스트림 엑셀 호텔 도큐",
+                tag: "시부야역 직결",
+                tagClass: "luxury",
+                rating: "4.7 (리뷰 2,650개)",
+                loc: "도쿄 시부야 스트림 빌딩 (시부야역 지하 연결)",
+                features: [
+                    "시부야 스크램블 교차로 및 쇼핑가 도보 3분",
+                    "감각적인 빈티지 모던 인테리어 & 도심 야경",
+                    "건물 내 인기 미식 핫플 & 블루보틀 커피"
+                ],
+                price: "1박 약 26~40만원"
+            },
+            {
+                name: "온센 료칸 유엔 신주쿠",
+                tag: "도심 속 노천 온천",
+                tagClass: "healing",
+                rating: "4.8 (리뷰 3,200개)",
+                loc: "도쿄 신주쿠구 신주쿠역 도보 10분",
+                features: [
+                    "하코네에서 매일 공수해오는 최상층 천연 노천탕",
+                    "도심 속 고즈넉한 전통 일본 료칸 분위기",
+                    "신주쿠 스카이라인이 내려다보이는 파노라마 뷰"
+                ],
+                price: "1박 약 19~28만원"
+            },
+            {
+                name: "호텔 그레이서리 신주쿠",
+                tag: "가부키초 랜드마크",
+                tagClass: "value",
+                rating: "4.6 (리뷰 6,800개)",
+                loc: "신주쿠역 동쪽 출구 도보 5분 (고질라 로드)",
+                features: [
+                    "신주쿠 상징 거대 고질라 헤드 테라스 보유",
+                    "주변 맛집/이자카야/돈키호테 도보 1분",
+                    "독립된 욕실 & 쾌적한 방음 시설"
+                ],
+                price: "1박 약 14~22만원"
+            }
+        ],
+        fukuoka: [
+            {
+                name: "미야코 호텔 하카타",
+                tag: "하카타역 직결 & 루프탑",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 3,100개)",
+                loc: "후쿠오카 하카타역 동쪽 출구 지하 직결",
+                features: [
+                    "하카타역 지하 통로 연결 (비 안 맞고 이동)",
+                    "최상층 야외 온천 수영장 & 온천 자쿠지 스파",
+                    "전 객실 30㎡ 이상 넓고 쾌적한 룸 스케일"
+                ],
+                price: "1박 약 24~36만원"
+            },
+            {
+                name: "도미인 프리미엄 하카타 캐널시티마에",
+                tag: "천연 온천 & 캐널시티",
+                tagClass: "healing",
+                rating: "4.7 (리뷰 4,200개)",
+                loc: "캐널시티 하카타 바로 맞은편 (도보 1분)",
+                features: [
+                    "천연 온천 대욕장 & 건식 사우나 완비",
+                    "저녁 무료 소바 & 온천 후 무료 아이스크림/요구르트",
+                    "하카타역 및 나카스 포장마차 도보 이동 가능"
+                ],
+                price: "1박 약 12~18만원"
+            },
+            {
+                name: "유후인 바이엔 (온천 료칸)",
+                tag: "유후인 힐링 료칸",
+                tagClass: "luxury",
+                rating: "4.9 (리뷰 1,450개)",
+                loc: "오이타현 유후인 유후다케 전망",
+                features: [
+                    "만 평 규모의 사계절 일본 정원 & 프라이빗 노천탕",
+                    "정갈하고 화려한 제철 가이세키 코스 요리 석식",
+                    "유후인역 무료 송영 셔틀버스 제공"
+                ],
+                price: "1박 약 35~55만원 (조/석식 포함)"
+            }
+        ],
+        bangkok: [
+            {
+                name: "아난타라 리버사이드 방콕 리조트",
+                tag: "도심 속 휴양 리조트",
+                tagClass: "healing",
+                rating: "4.8 (리뷰 5,800개)",
+                loc: "방콕 짜오프라야 강변 (사톤 피어 무료 셔틀보트)",
+                features: [
+                    "열대 야자수 정원 & 방콕 최대 규모 야외 수영장",
+                    "강바람을 맞으며 즐기는 리버뷰 테라스 조식",
+                    "아이콘시암 및 아시아티크 무료 셔틀보트 운항"
+                ],
+                price: "1박 약 18~28만원"
+            },
+            {
+                name: "이스틴 그랜드 호텔 사톤",
+                tag: "인피니티 풀 & 역 직결",
+                tagClass: "value",
+                rating: "4.8 (리뷰 7,200개)",
+                loc: "BTS 수라삭역 전용 스카이브릿지 직결",
+                features: [
+                    "방콕 도심이 한눈에 보이는 14층 인피니티 풀",
+                    "지상철역 다리 직결로 트래픽 잼 없는 최강 이동",
+                    "가성비와 퀄리티를 모두 잡은 글래스하우스 조식"
+                ],
+                price: "1박 약 14~20만원"
+            },
+            {
+                name: "칼튼 호텔 방콕 수쿰빗",
+                tag: "신축 5성급 럭셔리",
+                tagClass: "luxury",
+                rating: "4.7 (리뷰 3,400개)",
+                loc: "아속역 & 프롬퐁역 사이 (도보 5분)",
+                features: [
+                    "싱가포르 칼튼 그룹 5성급 럭셔리 침구",
+                    "34층 쿨링보 루프탑 바 & 탁 트인 도심 전망",
+                    "미슐랭 플레이트 중식당 왁유크보우 보유"
+                ],
+                price: "1박 약 20~30만원"
+            }
+        ],
+        busan: [
+            {
+                name: "시그니엘 부산",
+                tag: "해운대 럭셔리 호캉스",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 3,600개)",
+                loc: "부산 해운대 엘시티 타워 (해운대 해변 1열)",
+                features: [
+                    "전 객실 발코니에서 바라보는 해운대 바다 파노라마",
+                    "사계절 야외 인피니티 온수풀 & 투숙객 전용 라운지 무료",
+                    "미슐랭 3스타 셰프 감수의 최고급 다이닝"
+                ],
+                price: "1박 약 38~58만원"
+            },
+            {
+                name: "아난티 앳 부산 코브",
+                tag: "기장 오션뷰 힐링",
+                tagClass: "healing",
+                rating: "4.7 (리뷰 4,100개)",
+                loc: "부산 기장군 기장해안로 (오시리아 관광단지)",
+                features: [
+                    "압도적인 바다 절경의 인피니티 풀 & 워터하우스 온천",
+                    "해안 산책로와 아난티 타운 서점/카페 라이프스타일",
+                    "전 객실 오션뷰 프라이빗 발코니 테라스"
+                ],
+                price: "1박 약 30~48만원"
+            },
+            {
+                name: "호텔 포레 더 스파 부산",
+                tag: "히노끼 스파 & 가성비",
+                tagClass: "value",
+                rating: "4.6 (리뷰 2,100개)",
+                loc: "부산 초량역 도보 3분 (부산역 1정거장)",
+                features: [
+                    "객실 내 프라이빗 편백나무(히노끼) 스파 욕조 완비",
+                    "KTX 부산역 접근성 우수 & 조용한 주택가",
+                    "편안한 힐링 테라피 & 합리적인 숙박 요금"
+                ],
+                price: "1박 약 8~13만원"
+            }
+        ],
+        gangneung: [
+            {
+                name: "스카이베이 호텔 경포",
+                tag: "경포 인피니티 풀",
+                tagClass: "healing",
+                rating: "4.6 (리뷰 5,800개)",
+                loc: "강릉 경포로 (경포해변과 경포호수 사이)",
+                features: [
+                    "지상 20층 최상층 루프탑 인피니티 온수풀",
+                    "동해 바다와 경포호수를 동시에 즐기는 더블 뷰",
+                    "경포 해변 모래사장 도보 1분 직결"
+                ],
+                price: "1박 약 13~24만원"
+            },
+            {
+                name: "씨마크 호텔",
+                tag: "최고급 5성급 럭셔리",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 2,400개)",
+                loc: "강릉 강문동 (경포대 해변 언덕 위)",
+                features: [
+                    "세계적 건축가 리처드 마이어 설계 백색의 미학",
+                    "바다와 맞닿은 야외 인피니티 온수풀 클럽 인피니티",
+                    "최고급 올데이 다이닝 & 친환경 어메니티"
+                ],
+                price: "1박 약 45~65만원"
+            },
+            {
+                name: "세인트존스 호텔",
+                tag: "강문해변 앞 복합 리조트",
+                tagClass: "value",
+                rating: "4.5 (리뷰 7,900개)",
+                loc: "강릉 창해로 (강문해변 & 해송 숲 앞)",
+                features: [
+                    "피톤치드 해송 숲길과 동해안 바다 도보 산책",
+                    "파인풀 & 오션풀 2개의 대형 인피니티 풀",
+                    "반려견 동반 펫 룸 및 다양한 엔터테인먼트 시설"
+                ],
+                price: "1박 약 11~19만원"
+            }
+        ],
+        gyeongju: [
+            {
+                name: "라한셀렉트 경주",
+                tag: "보문호수 뷰 호캉스",
+                tagClass: "healing",
+                rating: "4.7 (리뷰 4,600개)",
+                loc: "경주시 보문로 (보문호수 바로 앞)",
+                features: [
+                    "보문호수 전망 프라이빗 발코니 & 산책로 직결",
+                    "실내외 수영장, 북스토어 & 키즈 플레이그라운드",
+                    "경주 주요 역사 유적 지구 차로 10~15분"
+                ],
+                price: "1박 약 16~26만원"
+            },
+            {
+                name: "힐튼 경주",
+                tag: "5성급 패밀리 리조트",
+                tagClass: "luxury",
+                rating: "4.7 (리뷰 3,800개)",
+                loc: "경주시 보문로 (우양미술관 인접)",
+                features: [
+                    "유라시아 실내외 수영장 & 스쿼시/사우나",
+                    "신라 천년의 고도 품격이 깃든 조경 및 객실",
+                    "황리단길 & 첨성대 차로 12분"
+                ],
+                price: "1박 약 20~32만원"
+            },
+            {
+                name: "황리단길 감성 한옥 스테이",
+                tag: "전통 한옥 독채",
+                tagClass: "value",
+                rating: "4.9 (리뷰 1,100개)",
+                loc: "경주 포석로 (황리단길 중심가 도보 2분)",
+                features: [
+                    "고즈넉한 서까래와 안마당 자쿠지 노천스파",
+                    "황리단길 감성 카페 및 로컬 맛집 도보 2분",
+                    "정갈한 다도 세트 및 아침 조식 바구니"
+                ],
+                price: "1박 약 15~25만원"
+            }
+        ]
+    };
+
+    function getHotelsForDestination(dest) {
+        const d = (dest || "").toLowerCase();
+        if (d.includes("제주")) return hotelCatalog.jeju;
+        if (d.includes("오사카")) return hotelCatalog.osaka;
+        if (d.includes("도쿄")) return hotelCatalog.tokyo;
+        if (d.includes("후쿠오카") || d.includes("유후인")) return hotelCatalog.fukuoka;
+        if (d.includes("방콕")) return hotelCatalog.bangkok;
+        if (d.includes("부산")) return hotelCatalog.busan;
+        if (d.includes("강릉") || d.includes("속초")) return hotelCatalog.gangneung;
+        if (d.includes("경주")) return hotelCatalog.gyeongju;
+
+        const cleanDest = dest.replace(/[0-9&·\-_/]/g, "").trim() || "여행지";
+        return [
+            {
+                name: `${cleanDest} 센트럴 파크 호텔 & 스위트`,
+                tag: "시내 중심 & 랜드마크 뷰",
+                tagClass: "luxury",
+                rating: "4.8 (리뷰 2,150개)",
+                loc: `${cleanDest} 중심가 (주요 관광지 & 역세권)`,
+                features: [
+                    "파노라마 랜드마크 전망 객실 & 최고급 침구",
+                    "정갈한 조식 뷔페 & 피트니스/비즈니스 센터",
+                    "주변 맛집과 대중교통 도보 3분 이내"
+                ],
+                price: "1박 약 18~28만원"
+            },
+            {
+                name: `${cleanDest} 감성 부티크 스테이`,
+                tag: "프라이빗 힐링 & 독채",
+                tagClass: "healing",
+                rating: "4.9 (리뷰 980개)",
+                loc: `${cleanDest} 감성 힐링 스팟 인근`,
+                features: [
+                    "프라이빗 테라스 & 독립된 스파 욕조",
+                    "현지 감성이 가득한 모던 인테리어 & 웰컴 티",
+                    "한적한 휴식과 인생샷을 위한 최적의 공간"
+                ],
+                price: "1박 약 16~25만원"
+            },
+            {
+                name: `${cleanDest} 프리미엄 비즈니스 호텔`,
+                tag: "가성비 최고 & 교통 요충지",
+                tagClass: "value",
+                rating: "4.7 (리뷰 3,420개)",
+                loc: `${cleanDest} 교통 거점 도보 5분`,
+                features: [
+                    "합리적인 가격의 청결하고 쾌적한 룸 컨디션",
+                    "빠른 체크인/체크아웃 & 무료 고속 Wi-Fi",
+                    "편의점 및 로컬 식당 인접 가성비 1등"
+                ],
+                price: "1박 약 8~14만원"
+            }
+        ];
+    }
+
+    function renderAccommodationBookingSection(plan) {
+        if (!accommodationBookingSection) return;
+
+        const dest = plan?.dest || destinationInput?.value.trim() || "제주도";
+        const startDate = plan?.startDate || startDateInput?.value || "";
+        const endDate = plan?.endDate || endDateInput?.value || "";
+        const dateRangeStr = startDate && endDate ? `${startDate} ~ ${endDate}` : (plan?.dur || "2박 3일");
+
+        // 1. 헤더 안내 텍스트 갱신
+        if (bookingDestName) bookingDestName.textContent = dest;
+        if (bookingDateSpan) bookingDateSpan.textContent = dateRangeStr;
+        if (bookingDateBadge) bookingDateBadge.textContent = `📅 ${dateRangeStr} 자동 연동`;
+
+        // 2. 여기어때 링크 (날짜와 지역 쿼리 파라미터 자동 삽입)
+        let yeogiUrl = "";
+        if (startDate && endDate) {
+            yeogiUrl = `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(dest)}&checkIn=${startDate}&checkOut=${endDate}`;
+        } else {
+            yeogiUrl = `https://www.yeogi.com/search?keyword=${encodeURIComponent(dest)}`;
+        }
+        if (linkYeogiPortal) {
+            linkYeogiPortal.href = yeogiUrl;
+            const subEl = document.getElementById("subYeogi");
+            if (subEl) subEl.textContent = `${dest} · ${dateRangeStr} 검색`;
+        }
+
+        // 3. 에어비앤비 링크 (유저가 제공한 기본 추적 파라미터 + dest, checkin, checkout 자동 삽입)
+        let airbnbUrl = `https://www.airbnb.co.kr/s/${encodeURIComponent(dest)}/homes?`;
+        const airbnbParams = [];
+        if (startDate) airbnbParams.push(`checkin=${startDate}`);
+        if (endDate) airbnbParams.push(`checkout=${endDate}`);
+        airbnbParams.push("c=.pi0.pk23067405305_191699516049&gad_source=1&gad_campaignid=23067405305");
+        airbnbUrl += airbnbParams.join("&");
+
+        if (linkAirbnbPortal) {
+            linkAirbnbPortal.href = airbnbUrl;
+            const subEl = document.getElementById("subAirbnb");
+            if (subEl) subEl.textContent = `${dest} 감성 숙소 · ${dateRangeStr}`;
+        }
+
+        // 4. 구글 지도 링크 (지역 및 숙소 검색어 자동 연동)
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest + ' 숙소 호텔')}`;
+        if (linkGoogleMapsPortal) {
+            linkGoogleMapsPortal.href = googleMapsUrl;
+            const subEl = document.getElementById("subGoogle");
+            if (subEl) subEl.textContent = `${dest} 실시간 평점 & 리뷰`;
+        }
+
+        // 5. 구글 지도 기반 유명 숙소 카드 목록 렌더링
+        if (famousHotelsGrid) {
+            const hotels = getHotelsForDestination(dest);
+            famousHotelsGrid.innerHTML = hotels.map(hotel => {
+                const mapSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.name + ' ' + dest)}`;
+                const yeogiHotelUrl = startDate && endDate
+                    ? `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(hotel.name)}&checkIn=${startDate}&checkOut=${endDate}`
+                    : `https://www.yeogi.com/search?keyword=${encodeURIComponent(hotel.name)}`;
+                const airbnbHotelUrl = `https://www.airbnb.co.kr/s/${encodeURIComponent(dest + ' ' + hotel.name)}/homes?${startDate ? `checkin=${startDate}&` : ''}${endDate ? `checkout=${endDate}&` : ''}c=.pi0.pk23067405305_191699516049`;
+
+                return `
+                    <div class="hotel-card">
+                        <div>
+                            <div class="hotel-card-tag-row">
+                                <span class="hotel-tag ${hotel.tagClass}">${hotel.tag}</span>
+                                <span class="hotel-rating">⭐ ${hotel.rating}</span>
+                            </div>
+                            <h5 class="hotel-name">${hotel.name}</h5>
+                            <p class="hotel-loc">📍 ${hotel.loc}</p>
+                            <ul class="hotel-features">
+                                ${hotel.features.map(f => `<li class="hotel-feature-item">${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="hotel-price-row">
+                                <span class="hotel-price-lbl">예상 1박 요금</span>
+                                <strong class="hotel-price-val">${hotel.price}</strong>
+                            </div>
+                            <div class="hotel-btn-group">
+                                <a href="${mapSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-map-link" title="구글 지도에서 위치, 평점, 사진, 사용자 후기 확인">
+                                    🗺️ 구글 지도에서 위치·실시간 후기 보기
+                                </a>
+                                <a href="${yeogiHotelUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-yeogi-link" title="여기어때에서 실시간 빈 방 및 최저가 확인">
+                                    🏨 여기어때 확인
+                                </a>
+                                <a href="${airbnbHotelUrl}" target="_blank" rel="noopener noreferrer" class="btn-hotel-link btn-airbnb-link" title="에어비앤비에서 숙소 확인">
+                                    🏡 에어비앤비 확인
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        accommodationBookingSection.style.display = "block";
+    }
+
+    /**
      * 일자별(Day 1, 2, 3) 및 시간대별(오전/점심/오후/저녁/숙소) 일정 카드 시각적 가독성 강화 + 추가/삭제 버튼
      */
      function enhanceDailyPlanLayout(container) {
@@ -2314,6 +2809,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // 3-1. 스마트 인터랙티브 여행 동선 지도 & 카카오맵 연동 렌더링
         renderPlanMapForPlan(plan);
         setupMapWaypointControls();
+
+        // 3-2. 맞춤 숙소 예약 포털 & 구글 지도 추천 숙소 렌더링
+        renderAccommodationBookingSection(plan);
 
         if (planCompareDashboard) planCompareDashboard.style.display = "none";
         if (planDetailView) planDetailView.style.display = "block";
