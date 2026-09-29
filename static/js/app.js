@@ -2777,4 +2777,95 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         });
     }
+
+    // ==========================================
+    // PWA 앱 설치 배너 & 버튼 인터랙션 제어
+    // ==========================================
+    let deferredInstallPrompt = null;
+
+    function initPwaInstall() {
+        const pwaInstallBanner = document.getElementById("pwaInstallBanner");
+        const pwaInstallBtn = document.getElementById("pwaInstallBtn");
+        const pwaCloseBtn = document.getElementById("pwaCloseBtn");
+        const pwaHeaderBtn = document.getElementById("pwaHeaderBtn");
+
+        const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+        if (isStandalone) {
+            console.log("PWA 이미 설치된 독립 실행형(Standalone) 모드입니다.");
+            return;
+        }
+
+        const isBannerDismissed = sessionStorage.getItem("pwa_banner_dismissed") === "true";
+
+        function showInstallUi() {
+            if (pwaHeaderBtn) pwaHeaderBtn.style.display = "inline-flex";
+            if (pwaInstallBanner && !isBannerDismissed) {
+                pwaInstallBanner.style.display = "block";
+            }
+        }
+
+        function hideInstallUi() {
+            if (pwaInstallBanner) pwaInstallBanner.style.display = "none";
+            if (pwaHeaderBtn) pwaHeaderBtn.style.display = "none";
+        }
+
+        // Chrome, Edge, Android PWA 설치 이벤트 감지
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            console.log("PWA beforeinstallprompt 이벤트 감지: 설치 가능");
+            showInstallUi();
+        });
+
+        // 이미 설치 완료된 경우 처리
+        window.addEventListener("appinstalled", () => {
+            console.log("PWA 앱이 설치되었습니다.");
+            deferredInstallPrompt = null;
+            hideInstallUi();
+            alert("AI Travel Planner 앱이 성공적으로 설치되었습니다! 홈 화면이나 앱 서랍에서 이용하실 수 있습니다.");
+        });
+
+        async function handleInstallClick() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const choiceResult = await deferredInstallPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === "accepted") {
+                    console.log("사용자가 PWA 앱 설치를 수락했습니다.");
+                } else {
+                    console.log("사용자가 PWA 앱 설치를 취소했습니다.");
+                }
+                deferredInstallPrompt = null;
+                hideInstallUi();
+            } else {
+                const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIos) {
+                    alert("📱 iOS(아이폰/아이패드) 앱 설치 안내:\n\n1. Safari 브라우저 하단의 [공유] 버튼(네모+화살표)을 누릅니다.\n2. 메뉴에서 [홈 화면에 추가]를 선택하시면 앱으로 설치됩니다!");
+                } else {
+                    alert("📱 앱 설치 안내:\n\n브라우저 주소창 우측의 [앱 설치] 아이콘(컴퓨터 모니터/다운로드 모양)을 클릭하거나 브라우저 메뉴(⋮)에서 [앱 설치]를 선택해 주세요.");
+                }
+            }
+        }
+
+        if (pwaInstallBtn) pwaInstallBtn.addEventListener("click", handleInstallClick);
+        if (pwaHeaderBtn) pwaHeaderBtn.addEventListener("click", handleInstallClick);
+
+        if (pwaCloseBtn) {
+            pwaCloseBtn.addEventListener("click", () => {
+                if (pwaInstallBanner) pwaInstallBanner.style.display = "none";
+                sessionStorage.setItem("pwa_banner_dismissed", "true");
+            });
+        }
+
+        // 로드 0.8초 후 설치 UI 노출 시도 (헤더 버튼은 항상 대기)
+        setTimeout(() => {
+            if (!isStandalone) {
+                if (pwaHeaderBtn) pwaHeaderBtn.style.display = "inline-flex";
+                if (pwaInstallBanner && !isBannerDismissed) {
+                    pwaInstallBanner.style.display = "block";
+                }
+            }
+        }, 800);
+    }
+
+    initPwaInstall();
 });
