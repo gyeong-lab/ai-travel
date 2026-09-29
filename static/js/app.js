@@ -1456,6 +1456,46 @@ document.addEventListener("DOMContentLoaded", () => {
         return places;
     }
 
+    // 모바일 카카오맵 앱(Deep Link) 직접 실행 및 미설치 시 웹 폴백 핸들러
+    window.openKakaoMap = function(event, lat, lng, encodedName, mode) {
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!isMobile) {
+            // PC 환경: 기본 a 태그 href 웹 링크로 새 탭에서 열기
+            return true;
+        }
+
+        if (event) event.preventDefault();
+
+        let appScheme = "";
+        let webFallback = "";
+
+        if (mode === "transit") {
+            // 카카오맵 앱 대중교통 길찾기 스킴
+            appScheme = `kakaomap://route?ep=${lat},${lng}&by=PUBLICTRANSIT`;
+            webFallback = `https://map.kakao.com/?eName=${encodedName}&ep=${lat},${lng}&target=transit`;
+        } else if (mode === "search") {
+            // 카카오맵 앱 장소 검색 스킴
+            appScheme = `kakaomap://search?q=${encodedName}`;
+            webFallback = `https://map.kakao.com/link/search/${encodedName}`;
+        } else {
+            // 카카오맵 앱 자동차 길찾기/내비 스킴
+            appScheme = `kakaomap://route?ep=${lat},${lng}&by=CAR`;
+            webFallback = `https://map.kakao.com/link/to/${encodedName},${lat},${lng}`;
+        }
+
+        const startTime = Date.now();
+        window.location.href = appScheme;
+
+        // 카카오맵 앱 미설치 시 1.2초 후 모바일 웹 페이지로 자동 폴백
+        setTimeout(() => {
+            if (Date.now() - startTime < 2000 && !document.hidden) {
+                window.location.href = webFallback;
+            }
+        }, 1200);
+
+        return false;
+    };
+
     function drawMapLayers(places, filterDay, destName, transportType) {
         if (!leafletMap || !mapMarkerLayerGroup || !mapPolylineLayerGroup) return;
 
@@ -1468,6 +1508,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const bounds = [];
         const isDomestic = !["오사카", "도쿄", "후쿠오카", "방콕", "다낭", "타이베이", "파리", "뉴욕", "바르셀로나"].some(c => destName.includes(c));
         const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
         filtered.forEach((p) => {
             bounds.push([p.lat, p.lng]);
@@ -1486,20 +1527,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 `
             });
 
-            // 대중교통 선택 시: 카카오맵 대중교통 최적화 경로(target=transit)로 연결
-            const kakaoTransitUrl = `https://map.kakao.com/?eName=${encodeURIComponent(p.name)}&ep=${p.lat},${p.lng}&target=transit`;
-            const kakaoNavUrl = `https://map.kakao.com/link/to/${encodeURIComponent(p.name)},${p.lat},${p.lng}`;
-            const kakaoSearchUrl = `https://map.kakao.com/link/search/${encodeURIComponent(p.name)}`;
+            // 카카오맵 웹 URL (PC 및 앱 미설치 시 기본 경로)
+            const encodedName = encodeURIComponent(p.name);
+            const kakaoTransitUrl = `https://map.kakao.com/?eName=${encodedName}&ep=${p.lat},${p.lng}&target=transit`;
+            const kakaoNavUrl = `https://map.kakao.com/link/to/${encodedName},${p.lat},${p.lng}`;
+            const kakaoSearchUrl = `https://map.kakao.com/link/search/${encodedName}`;
             const googleNavUrl = isTransit
-                ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name)}&travelmode=transit`
-                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+                ? `https://www.google.com/maps/dir/?api=1&destination=${encodedName}&travelmode=transit`
+                : `https://www.google.com/maps/search/?api=1&query=${encodedName}`;
 
             const targetNavUrl = isDomestic
                 ? (isTransit ? kakaoTransitUrl : kakaoNavUrl)
                 : googleNavUrl;
+
+            // 모바일일 경우 버튼 텍스트에 앱 직통 연결 표시
             const navBtnText = isDomestic
-                ? (isTransit ? '🚌 카카오맵 대중교통 길찾기' : '🚗 카카오맵 내비/길찾기')
+                ? (isMobile
+                    ? (isTransit ? '🚌 카카오맵 앱으로 대중교통 길찾기' : '🚗 카카오맵 앱으로 길찾기')
+                    : (isTransit ? '🚌 카카오맵 대중교통 길찾기' : '🚗 카카오맵 내비/길찾기'))
                 : (isTransit ? '🌐 구글맵 대중교통 길찾기' : '🌐 구글맵 길찾기');
+
+            const searchBtnText = isDomestic
+                ? (isMobile ? '📍 카카오맵 앱에서 검색' : '📍 카카오맵에서 상세 검색')
+                : '📍 지도에서 위치 보기';
+
+            const navOnclick = isDomestic ? `onclick="return window.openKakaoMap(event, '${p.lat}', '${p.lng}', '${encodedName}', '${isTransit ? 'transit' : 'car'}');"` : '';
+            const searchOnclick = isDomestic ? `onclick="return window.openKakaoMap(event, '${p.lat}', '${p.lng}', '${encodedName}', 'search');"` : '';
 
             const popupContent = `
                 <div class="kakao-map-popup">
@@ -1507,11 +1560,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h4 class="popup-title">${p.name}</h4>
                     <p class="popup-desc">${p.desc || ''}</p>
                     <div class="popup-actions">
-                        <a href="${targetNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-nav ${isTransit ? 'btn-transit-mode' : ''}">
+                        <a href="${targetNavUrl}" ${navOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-nav ${isTransit ? 'btn-transit-mode' : ''}">
                             <span>${navBtnText}</span>
                         </a>
-                        <a href="${isDomestic ? kakaoSearchUrl : googleNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
-                            <span>${isDomestic ? '📍 카카오맵에서 상세 검색' : '📍 지도에서 위치 보기'}</span>
+                        <a href="${isDomestic ? kakaoSearchUrl : googleNavUrl}" ${searchOnclick} target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
+                            <span>${searchBtnText}</span>
                         </a>
                     </div>
                 </div>
