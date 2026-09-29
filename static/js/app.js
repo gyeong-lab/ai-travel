@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultHeaderTitle = document.getElementById("resultHeaderTitle");
     const resultMeta = document.getElementById("resultMeta");
     const planOutput = document.getElementById("planOutput");
+    const btnSaveCurrentPlan = document.getElementById("btnSaveCurrentPlan");
     const copyBtn = document.getElementById("copyBtn");
     const copyChatBtn = document.getElementById("copyChatBtn");
     const downloadBtn = document.getElementById("downloadBtn");
@@ -71,9 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentCategory = "all";
     let wishlist = JSON.parse(localStorage.getItem("ai_travel_wishlist") || "[]");
 
-    // AI 플랜 비교 및 히스토리 관리
-    let generatedPlans = [];
-    let activePlanId = null;
+    // 영구 저장된 여행 계획 (localStorage)
+    let savedPlans = JSON.parse(localStorage.getItem("ai_travel_saved_plans") || "[]");
+
+    // AI 플랜 비교 및 히스토리 관리 (이전 저장된 계획이 있으면 연동)
+    let generatedPlans = [...savedPlans];
+    let activePlanId = generatedPlans.length > 0 ? generatedPlans[0].id : null;
     let isCompareMode = false;
     let comparePlanIdA = null;
     let comparePlanIdB = null;
@@ -1065,21 +1069,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 상단 생성 계획 탭 렌더링
+     * 비교 대상에 포함될 모든 계획 (생성된 계획 + 저장된 계획) 조회
+     */
+    function getAllPlansForComparison() {
+        const map = new Map();
+        generatedPlans.forEach(p => map.set(p.id, p));
+        savedPlans.forEach(sp => {
+            if (!map.has(sp.id)) {
+                map.set(sp.id, { ...sp, isSaved: true });
+            }
+        });
+        return Array.from(map.values());
+    }
+
+    /**
+     * 상단 생성 및 저장된 계획 탭 렌더링
      */
     function renderPlanTabs() {
         if (!planTabsScroll) return;
-        if (generatedPlans.length === 0) {
+        const allPlans = getAllPlansForComparison();
+        if (allPlans.length === 0) {
             if (planTabsBar) planTabsBar.style.display = "none";
             return;
         }
         if (planTabsBar) planTabsBar.style.display = "flex";
 
-        planTabsScroll.innerHTML = generatedPlans.map((p) => {
+        planTabsScroll.innerHTML = allPlans.map((p) => {
             const isActive = p.id === activePlanId && !isCompareMode;
+            const isSaved = p.isSaved || savedPlans.some(sp => sp.id === p.id);
             return `
                 <button type="button" class="plan-tab-btn ${isActive ? 'active' : ''}" data-id="${p.id}" title="${p.title}">
-                    <span>${p.shortTitle}</span>
+                    <span>${isSaved ? '📌 ' : ''}${p.shortTitle}</span>
                     <span class="plan-tab-budget">${p.budget || ''}</span>
                 </button>
             `;
@@ -1097,7 +1117,8 @@ document.addEventListener("DOMContentLoaded", () => {
      * 특정 플랜을 활성화하여 상세 보기 렌더링
      */
     function setActivePlan(id) {
-        const plan = generatedPlans.find((p) => p.id === id);
+        const allPlans = getAllPlansForComparison();
+        const plan = allPlans.find((p) => p.id === id);
         if (!plan) return;
 
         activePlanId = id;
@@ -1108,7 +1129,8 @@ document.addEventListener("DOMContentLoaded", () => {
             resultHeaderTitle.textContent = `${plan.dest} ${plan.dur} 맞춤 여행 일정표`;
         }
         if (resultMeta) {
-            resultMeta.textContent = `⚡ AI 엔진: ${plan.model} · 소요 시간: ${plan.elapsed}초 · 생성 시각: ${plan.createdAt}`;
+            const isSaved = plan.isSaved || savedPlans.some(sp => sp.id === plan.id);
+            resultMeta.textContent = `⚡ AI 엔진: ${plan.model} · 소요 시간: ${plan.elapsed}초 · 생성 시각: ${plan.createdAt} ${isSaved ? '· 📌 보관함 저장됨' : ''}`;
         }
 
         if (window.marked && planOutput) {
@@ -1123,6 +1145,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnToggleCompare) {
             btnToggleCompare.classList.remove("active-mode");
             btnToggleCompare.innerHTML = '<span class="compare-icon">⚖️</span><span class="compare-btn-text">가격 &amp; 활동 비교 모드</span>';
+        }
+
+        if (btnSaveCurrentPlan) {
+            const isSaved = plan.isSaved || savedPlans.some(sp => sp.id === plan.id || sp.title === plan.title && sp.dest === plan.dest && sp.dur === plan.dur);
+            if (isSaved) {
+                btnSaveCurrentPlan.innerHTML = '<span class="action-icon">✅</span> 저장된 계획 (비교 가능)';
+                btnSaveCurrentPlan.classList.add("saved-active");
+            } else {
+                btnSaveCurrentPlan.innerHTML = '<span class="action-icon">📌</span> 이 계획 저장하기';
+                btnSaveCurrentPlan.classList.remove("saved-active");
+            }
         }
 
         renderPlanTabs();
@@ -1148,10 +1181,11 @@ document.addEventListener("DOMContentLoaded", () => {
             renderComparisonView();
             planCompareDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
         } else {
+            const allPlans = getAllPlansForComparison();
             if (activePlanId) {
                 setActivePlan(activePlanId);
-            } else if (generatedPlans.length > 0) {
-                setActivePlan(generatedPlans[generatedPlans.length - 1].id);
+            } else if (allPlans.length > 0) {
+                setActivePlan(allPlans[allPlans.length - 1].id);
             }
         }
         renderPlanTabs();
@@ -1162,11 +1196,12 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function renderSingleCompareCard(plan, badgeLetter, badgeClass, label) {
         const hl = extractPlanHighlights(plan);
+        const isSaved = plan.isSaved || savedPlans.some(sp => sp.id === plan.id);
         return `
             <div class="compare-card card-${badgeLetter.toLowerCase()}">
                 <div class="compare-card-header">
                     <div>
-                        <span class="compare-card-tag ${badgeClass}">${label} · ${plan.shortTitle}</span>
+                        <span class="compare-card-tag ${badgeClass}">${label} · ${plan.shortTitle}${isSaved ? ' (📌 저장됨)' : ''}</span>
                         <h3 class="compare-card-title">${plan.dest} (${plan.dur})</h3>
                     </div>
                     <button type="button" class="btn-action-outline btn-view-single" data-id="${plan.id}" style="font-size:11px; padding:4px 9px;">
@@ -1230,8 +1265,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <thead>
                     <tr>
                         <th class="th-item">비교 항목</th>
-                        <th class="th-plan-a">계획 A: ${planA.shortTitle}</th>
-                        <th class="th-plan-b">계획 B: ${planB.shortTitle}</th>
+                        <th class="th-plan-a">계획 A: ${planA.shortTitle}${planA.isSaved ? ' (📌 저장됨)' : ''}</th>
+                        <th class="th-plan-b">계획 B: ${planB.shortTitle}${planB.isSaved ? ' (📌 저장됨)' : ''}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1322,21 +1357,24 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderComparisonView() {
         if (!planCompareDashboard) return;
 
-        // 셀렉트 박스 갱신
+        const allPlans = getAllPlansForComparison();
+
+        // 셀렉트 박스 갱신 (저장된 계획 및 생성된 계획 통합 옵션)
         if (compareSelectA && compareSelectB) {
-            const optionsHtml = generatedPlans.map((p) => `
-                <option value="${p.id}">${p.shortTitle} (${p.budget || ''})</option>
-            `).join("");
+            const optionsHtml = allPlans.map((p) => {
+                const isSaved = p.isSaved || savedPlans.some(sp => sp.id === p.id);
+                return `<option value="${p.id}">${isSaved ? '📌 [저장됨] ' : ''}${p.shortTitle} (${p.budget || ''})</option>`;
+            }).join("");
 
             compareSelectA.innerHTML = optionsHtml;
             compareSelectB.innerHTML = optionsHtml;
 
-            if (!comparePlanIdA || !generatedPlans.some(p => p.id === comparePlanIdA)) {
-                comparePlanIdA = generatedPlans[0]?.id || null;
+            if (!comparePlanIdA || !allPlans.some(p => p.id === comparePlanIdA)) {
+                comparePlanIdA = allPlans[0]?.id || null;
             }
-            if (!comparePlanIdB || !generatedPlans.some(p => p.id === comparePlanIdB)) {
-                if (generatedPlans.length >= 2) {
-                    comparePlanIdB = generatedPlans[1]?.id;
+            if (!comparePlanIdB || !allPlans.some(p => p.id === comparePlanIdB)) {
+                if (allPlans.length >= 2) {
+                    comparePlanIdB = allPlans[1]?.id;
                 } else {
                     comparePlanIdB = null;
                 }
@@ -1346,8 +1384,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (comparePlanIdB) compareSelectB.value = comparePlanIdB;
         }
 
-        const planA = generatedPlans.find(p => p.id === comparePlanIdA) || generatedPlans[0];
-        const planB = generatedPlans.find(p => p.id === comparePlanIdB);
+        const planA = allPlans.find(p => p.id === comparePlanIdA) || allPlans[0];
+        let planB = allPlans.find(p => p.id === comparePlanIdB);
+
+        // 만약 planB가 아직 없고, 다른 계획이나 저장된 계획이 있으면 자동으로 기본 선택
+        if (!planB && allPlans.length > 1) {
+            planB = allPlans.find(p => p.id !== planA?.id);
+            if (planB) {
+                comparePlanIdB = planB.id;
+                if (compareSelectB) compareSelectB.value = planB.id;
+            }
+        }
 
         // 1) 2열 비교 카드 렌더링
         if (compareGrid) {
@@ -1356,15 +1403,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (planB && planB.id !== planA?.id) {
                 cardBHtml = renderSingleCompareCard(planB, "B", "tag-plan-b", "계획 B");
-            } else if (planB && planB.id === planA?.id && generatedPlans.length > 1) {
-                const otherPlan = generatedPlans.find(p => p.id !== planA.id);
+            } else if (planB && planB.id === planA?.id && allPlans.length > 1) {
+                const otherPlan = allPlans.find(p => p.id !== planA.id);
                 if (otherPlan) {
                     comparePlanIdB = otherPlan.id;
                     if (compareSelectB) compareSelectB.value = otherPlan.id;
                     cardBHtml = renderSingleCompareCard(otherPlan, "B", "tag-plan-b", "계획 B");
                 }
             } else {
-                // 비교 대상(계획 B)이 없는 경우 안내 및 퀵 생성 버튼 제공
+                // 비교 대상(계획 B)이 없는 경우 안내 및 퀵 생성/저장된 플랜 비교 버튼 제공
+                const candidateSaved = savedPlans.find(sp => sp.id !== planA?.id);
                 cardBHtml = `
                     <div class="compare-card card-b">
                         <div class="compare-card-header">
@@ -1377,10 +1425,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="compare-empty-icon">💡</div>
                             <div class="compare-empty-title">비교할 두 번째 계획이 아직 없습니다</div>
                             <p class="compare-empty-desc">
-                                다른 예산이나 다른 여행 스타일로 즉시 계획을 생성하여<br>
+                                저장해둔 계획을 불러오거나 다른 조건으로 즉시 생성하여<br>
                                 가격과 활동을 1:1로 비교 분석해 보세요!
                             </p>
                             <div class="compare-quick-btns">
+                                ${candidateSaved ? `
+                                    <button type="button" class="btn-quick-compare btn-compare-saved" data-saved-id="${candidateSaved.id}" style="background-color:#eef2ff; border-color:#a5b4fc; color:#4338ca; font-weight:800;">
+                                        📌 저장된 [${candidateSaved.shortTitle || candidateSaved.title}]과 1:1 비교하기
+                                    </button>
+                                ` : ''}
                                 <button type="button" class="btn-quick-compare" data-style="⚡ 알찬 핵심 투어 / 주요 랜드마크 정복" data-mode="A">
                                     ⚡ 알찬 가성비 투어로 비교 계획 생성
                                 </button>
@@ -1406,8 +1459,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+            // 저장된 계획과 1:1 비교 버튼 이벤트
+            compareGrid.querySelectorAll(".btn-compare-saved").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const savedId = btn.dataset.savedId;
+                    comparePlanIdB = savedId;
+                    renderComparisonView();
+                });
+            });
+
             // 퀵 생성 버튼 이벤트
-            compareGrid.querySelectorAll(".btn-quick-compare").forEach((btn) => {
+            compareGrid.querySelectorAll(".btn-quick-compare:not(.btn-compare-saved)").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     const targetStyle = btn.dataset.style;
                     const targetMode = btn.dataset.mode || "A";
@@ -1423,7 +1485,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 compareTableResponsive.innerHTML = `
                     <div style="text-align: center; padding: 24px; color: #64748b; font-size: 14px;">
-                        ℹ️ 비교할 두 번째 계획을 상단 셀렉트 박스에서 선택하거나 새로 생성하면 상세 매트릭스 표가 자동으로 표시됩니다.
+                        ℹ️ 상단 셀렉트 박스에서 저장된 계획이나 비교할 두 번째 계획을 선택하면 상세 매트릭스 표가 자동으로 표시됩니다.
                     </div>
                 `;
             }
@@ -1492,6 +1554,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (generatedPlans.length >= 2) {
             comparePlanIdA = generatedPlans[generatedPlans.length - 2].id;
             comparePlanIdB = newPlan.id;
+        } else if (savedPlans.length > 0) {
+            comparePlanIdA = savedPlans[0].id;
+            comparePlanIdB = newPlan.id;
         } else {
             comparePlanIdA = newPlan.id;
             comparePlanIdB = null;
@@ -1556,6 +1621,81 @@ document.addEventListener("DOMContentLoaded", () => {
         cleanText = cleanText.replace(/\n{3,}/g, "\n\n").trim();
 
         return output + cleanText + "\n\n💡 *실시간 요금 및 운영시간은 방문 전 확인 필요*";
+    }
+
+    /**
+     * 11-0. '이 계획 저장하기' 버튼 동작
+     * (현재 보고 있는 여행 계획을 브라우저 로컬 저장소에 영구 저장하여 나중에 언제든 다른 계획과 1:1 비교 가능)
+     */
+    if (btnSaveCurrentPlan) {
+        btnSaveCurrentPlan.addEventListener("click", () => {
+            const allPlans = getAllPlansForComparison();
+            let plan = allPlans.find((p) => p.id === activePlanId);
+
+            // 혹시 generatedPlans에 아직 없는 경우 현재 폼과 마크다운으로 계획 객체 생성
+            if (!plan && currentPlanMarkdown) {
+                plan = {
+                    id: "plan_" + Date.now(),
+                    title: `${destinationInput.value.trim()} ${durationInput.value.trim()}`,
+                    shortTitle: `저장 계획: ${destinationInput.value.trim()}`,
+                    dest: destinationInput.value.trim(),
+                    dur: durationInput.value.trim(),
+                    budget: budgetInput.value.trim(),
+                    style: travelStyleInput.value.trim(),
+                    interests: interestsInput.value.trim(),
+                    companions: companionsInput.value.trim(),
+                    transportation: transportationInput.value.trim(),
+                    accommodation: accommodationInput.value.trim(),
+                    markdown: currentPlanMarkdown,
+                    model: "Gemini 2.5 Flash",
+                    elapsed: "5.0",
+                    createdAt: new Date().toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' }),
+                    isSaved: true
+                };
+                generatedPlans.push(plan);
+                activePlanId = plan.id;
+            }
+
+            if (!plan) {
+                alert("저장할 여행 계획 내용이 없습니다. 먼저 여행 일정을 생성해 주세요.");
+                return;
+            }
+
+            const isAlreadySaved = savedPlans.some(sp => sp.id === plan.id || (sp.title === plan.title && sp.dest === plan.dest && sp.dur === plan.dur));
+
+            if (isAlreadySaved) {
+                const wantRemove = confirm(`[${plan.title}] 계획이 이미 영구 저장 목록에 있습니다.\n\n이 계획을 보관함에서 삭제하시겠습니까?`);
+                if (wantRemove) {
+                    savedPlans = savedPlans.filter(sp => sp.id !== plan.id && !(sp.title === plan.title && sp.dest === plan.dest && sp.dur === plan.dur));
+                    plan.isSaved = false;
+                    localStorage.setItem("ai_travel_saved_plans", JSON.stringify(savedPlans));
+                    btnSaveCurrentPlan.innerHTML = '<span class="action-icon">📌</span> 이 계획 저장하기';
+                    btnSaveCurrentPlan.classList.remove("saved-active");
+                    renderPlanTabs();
+                    renderComparisonView();
+                }
+                return;
+            }
+
+            // 신규 영구 저장
+            plan.isSaved = true;
+            savedPlans.unshift(plan);
+            // 최대 20개까지 로컬 저장소 유지
+            localStorage.setItem("ai_travel_saved_plans", JSON.stringify(savedPlans.slice(0, 20)));
+
+            btnSaveCurrentPlan.innerHTML = '<span class="action-icon">✅</span> 저장된 계획 (비교 가능)';
+            btnSaveCurrentPlan.classList.add("saved-active");
+
+            // 탭 및 비교 뷰 동기화
+            renderPlanTabs();
+            renderComparisonView();
+
+            // 비교 모드 버튼 시각 효과 (사용자에게 비교 기능 활성화 안내)
+            if (btnToggleCompare) {
+                btnToggleCompare.classList.add("btn-pulse");
+                setTimeout(() => btnToggleCompare.classList.remove("btn-pulse"), 1800);
+            }
+        });
     }
 
     /**
@@ -1649,6 +1789,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // 14. 페이지 첫 진입 시 위시리스트 동기화 및 기본 선택 지역(제주) 필터링 1회 실행
     renderWishlistUI();
     filterProducts();
+
+    // 14-1. 이전에 브라우저에 저장해둔 여행 계획이 있다면 복원하여 즉시 비교 및 확인 가능
+    if (savedPlans && savedPlans.length > 0) {
+        renderPlanTabs();
+        if (!activePlanId) {
+            activePlanId = savedPlans[0].id;
+            setActivePlan(savedPlans[0].id);
+            resultWrapper.style.display = "block";
+        }
+    }
 
     /**
      * 15. 이미지 로드 실패 또는 미등록 시 '관련 사진 없음' 대체 UI 적용 (글자 삐죽 방지)

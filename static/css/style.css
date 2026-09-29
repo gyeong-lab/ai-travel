@@ -1447,6 +1447,36 @@ button {
     gap: 10px;
 }
 
+.btn-action-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4338ca;
+    background-color: #eef2ff;
+    border: 1px solid #c7d2fe;
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-action-save:hover {
+    background-color: #e0e7ff;
+    border-color: #a5b4fc;
+    color: #3730a3;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(67, 56, 202, 0.15);
+}
+
+.btn-action-save.saved-active {
+    background-color: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #059669;
+}
+
 .btn-action-chat {
     display: inline-flex;
     align-items: center;
