@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const accommodationInput = document.getElementById("accommodation");
     const travelStyleInput = document.getElementById("travelStyle");
     const travelModeInput = document.getElementById("travelMode");
+    const dietaryInput = document.getElementById("dietaryInfo");
+    const allergyChips = document.querySelectorAll(".btn-allergy-chip");
     const styleChips = document.querySelectorAll(".style-chip");
 
     // 상단 네비게이션 & 검색창
@@ -461,6 +463,8 @@ document.addEventListener("DOMContentLoaded", () => {
         companionsInput.value = "연인과 둘이서";
         transportationInput.value = "렌터카 (전기차)";
         accommodationInput.value = "서귀포 바다 전망 감성 숙소";
+        if (dietaryInput) dietaryInput.value = "";
+        allergyChips.forEach(c => c.classList.remove("active"));
         setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
 
         topSearchInput.value = "제주도";
@@ -960,6 +964,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 알레르기 안심 체크 빠른 칩 토글 이벤트
+     */
+    if (allergyChips.length > 0 && dietaryInput) {
+        allergyChips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                chip.classList.toggle("active");
+                const allergyName = chip.dataset.allergy;
+                let currentVal = dietaryInput.value.trim();
+                let items = currentVal ? currentVal.split(/[,，·]+/).map(s => s.trim()).filter(Boolean) : [];
+
+                if (chip.classList.contains("active")) {
+                    if (!items.includes(allergyName)) {
+                        items.push(allergyName);
+                    }
+                } else {
+                    items = items.filter(s => s !== allergyName);
+                }
+                dietaryInput.value = items.join(", ");
+            });
+        });
+
+        dietaryInput.addEventListener("input", () => {
+            const val = dietaryInput.value;
+            allergyChips.forEach((chip) => {
+                if (val.includes(chip.dataset.allergy)) {
+                    chip.classList.add("active");
+                } else {
+                    chip.classList.remove("active");
+                }
+            });
+        });
+    }
+
+    /**
      * 9-1. 카드 내 위시리스트 하트 토글 클릭 이벤트
      */
     wishlistButtons.forEach((btn) => {
@@ -1069,6 +1107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const accommodation = accommodationInput.value.trim();
         const mode = travelModeInput ? travelModeInput.value : (document.querySelector('input[name="mode"]:checked')?.value || "A");
         const travel_style = travelStyleInput ? travelStyleInput.value.trim() : "";
+        const dietary_info = dietaryInput ? dietaryInput.value.trim() : "";
 
         if (!destination || !duration || !budget || !interests) {
             showError("목적지, 여행 기간, 예산, 여행 테마는 필수 입력 항목입니다.");
@@ -1088,7 +1127,8 @@ document.addEventListener("DOMContentLoaded", () => {
             transportation,
             accommodation,
             mode,
-            travel_style
+            travel_style,
+            dietary_info
         };
 
         try {
@@ -2037,6 +2077,7 @@ document.addEventListener("DOMContentLoaded", () => {
             transportation: payload?.transportation || "",
             accommodation: payload?.accommodation || "",
             mode: payload?.mode || "A",
+            dietary_info: payload?.dietary_info || "",
             markdown: data.plan,
             model: data.model || "Gemini 2.5 Flash",
             elapsed: data.elapsed_seconds || "5.2",
@@ -2090,6 +2131,9 @@ document.addEventListener("DOMContentLoaded", () => {
         output += `🎯 핵심 활동: ${hl.activities.join(", ") || plan.interests}\n`;
         output += `🏨 추천 숙소: ${hl.accommodation}\n`;
         output += `🚗 이동 수단: ${hl.transport}\n`;
+        if (plan.dietary_info) {
+            output += `🍽️ 음식/알레르기: ${plan.dietary_info} (안심 대체식 안내)\n`;
+        }
         output += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
         // 마크다운 표 및 문법 기호를 모바일 채팅창에 알맞게 정제

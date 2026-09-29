@@ -277,6 +277,27 @@
                         <input type="text" id="accommodation" name="accommodation" value="서귀포 바다 전망 감성 숙소" placeholder="예: 가성비 호텔, 오션뷰 리조트">
                     </div>
 
+                    <!-- 음식 취향 & 알레르기 안심 체크 (선택 입력) -->
+                    <div class="form-group allergy-form-group">
+                        <div class="allergy-label-row">
+                            <label for="dietaryInfo" class="label-heading">
+                                🍽️ 음식 취향 &amp; 알레르기 안심 체크 <span class="badge-optional">(선택)</span>
+                            </label>
+                        </div>
+                        <div class="dietary-input-wrap">
+                            <input type="text" id="dietaryInfo" name="dietary_info" value="" placeholder="예: 갑각류 알레르기, 땅콩/견과류 제외, 날생선(회) 기피">
+                        </div>
+                        <div class="allergy-quick-chips" id="allergyQuickChips">
+                            <span class="allergy-chips-title">⚠️ 빠른 알레르기 제외 칩:</span>
+                            <button type="button" class="btn-allergy-chip" data-allergy="갑각류(새우/게)">🦐 갑각류</button>
+                            <button type="button" class="btn-allergy-chip" data-allergy="땅콩/견과류">🥜 땅콩/견과류</button>
+                            <button type="button" class="btn-allergy-chip" data-allergy="유제품(우유/치즈)">🥛 유제품</button>
+                            <button type="button" class="btn-allergy-chip" data-allergy="돼지고기">🥩 돼지고기</button>
+                            <button type="button" class="btn-allergy-chip" data-allergy="글루텐(밀가루)">🌾 글루텐</button>
+                            <button type="button" class="btn-allergy-chip" data-allergy="날생선(회)">🐟 날생선(회)</button>
+                        </div>
+                    </div>
+
                     <!-- 여행 기조 스타일 (직접 입력 + 추천 초이스 칩) -->
                     <div class="form-group">
                         <label for="travelStyle" class="label-heading">⚡ 여행 기조 &amp; 스타일 <span class="req-star">*</span></label>
