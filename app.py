@@ -1,5 +1,10 @@
 import os
+import sys
 import time
+import json
+import secrets
+import zlib
+import base64
 import logging
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -9,6 +14,8 @@ from google.genai.errors import APIError
 
 # .env 파일에서 환경변수 로드
 load_dotenv()
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 로깅 설정 (시간, 로그 레벨, 메시지 포맷)
 logging.basicConfig(
@@ -21,6 +28,39 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY", "ai-travel-secret-key-7777-v1")
 app.permanent_session_lifetime = timedelta(days=30)
+
+# 공유 계획 인메모리 및 파일 캐시 스토리지
+SHARED_PLANS_CACHE = {}
+SHARED_PLANS_DIR = os.path.join(ROOT_DIR, "data", "shared_plans")
+os.makedirs(SHARED_PLANS_DIR, exist_ok=True)
+TMP_SHARED_PLANS_DIR = "/tmp/shared_plans"
+try:
+    os.makedirs(TMP_SHARED_PLANS_DIR, exist_ok=True)
+except Exception:
+    pass
+
+def compress_plan(plan_data: dict) -> str:
+    """계획 데이터를 zlib + base64url로 초경량 압축합니다."""
+    try:
+        raw = json.dumps(plan_data, ensure_ascii=False).encode("utf-8")
+        comp = zlib.compress(raw, level=9)
+        return base64.urlsafe_b64encode(comp).decode("utf-8").rstrip("=")
+    except Exception as e:
+        logger.warning(f"[계획 압축 실패] {e}")
+        return ""
+
+def decompress_plan(token: str) -> dict:
+    """압축 토큰을 복원하여 계획 객체로 반환합니다."""
+    try:
+        if not token:
+            return None
+        pad = "=" * ((4 - len(token) % 4) % 4)
+        raw_comp = base64.urlsafe_b64decode((token + pad).encode("utf-8"))
+        decomp = zlib.decompress(raw_comp)
+        return json.loads(decomp.decode("utf-8"))
+    except Exception as e:
+        logger.warning(f"[계획 복원 실패] {e}")
+        return None
 
 def is_authenticated() -> bool:
     """사이트 접속 비밀번호 인증 여부를 확인합니다."""
@@ -436,21 +476,26 @@ def index():
             return jsonify({"success": False, "error": "접속 비밀번호 인증이 필요합니다."}), 401
         return generate_plan()
 
-    # GET 요청: 미인증 시 로그인 화면
+    # GET 요청: 미인증 시 로그인 화면 (공유 링크 여부 파악)
     if not is_authenticated():
-        return render_template("login.html")
+        is_shared = bool(request.args.get("share") or request.args.get("d"))
+        return render_template("login.html", is_shared=is_shared)
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """비밀번호 직접 입력 폼 처리 및 로그인 화면 제공"""
     if is_authenticated():
-        return redirect("/")
+        target = "/"
+        if request.query_string:
+            target += f"?{request.query_string.decode('utf-8')}"
+        return redirect(target)
 
     if request.method == "POST":
         return verify_password()
 
-    return render_template("login.html")
+    is_shared = bool(request.args.get("share") or request.args.get("d"))
+    return render_template("login.html", is_shared=is_shared)
 
 @app.route("/api/verify-password", methods=["POST"])
 @app.route("/verify-password", methods=["POST"])
@@ -466,12 +511,103 @@ def verify_password():
         logger.info("[인증 성공] 비밀번호 일치 (7777)")
         if request.is_json:
             return jsonify({"success": True, "message": "인증되었습니다."}), 200
-        return redirect("/")
+        
+        target = "/"
+        if request.query_string:
+            target += f"?{request.query_string.decode('utf-8')}"
+        return redirect(target)
     else:
         logger.warning("[인증 실패] 비밀번호 불일치")
         if request.is_json:
             return jsonify({"success": False, "error": "비밀번호가 올바르지 않습니다. 다시 입력해주세요."}), 401
-        return render_template("login.html", error="비밀번호가 올바르지 않습니다. 다시 입력해주세요.")
+        is_shared = bool(request.args.get("share") or request.args.get("d"))
+        return render_template("login.html", error="비밀번호가 올바르지 않습니다. 다시 입력해주세요.", is_shared=is_shared)
+
+@app.route("/api/share", methods=["POST"])
+def create_share_link():
+    """현재 계획을 공유 가능한 고유 링크와 압축 토큰으로 생성합니다."""
+    data = request.get_json(silent=True) or {}
+    plan = data.get("plan")
+    if not plan:
+        return jsonify({"success": False, "error": "공유할 계획 데이터가 없습니다."}), 400
+
+    share_id = f"s_{secrets.token_hex(4)}"
+    token = compress_plan(plan)
+
+    # 1. 인메모리 캐시 저장
+    SHARED_PLANS_CACHE[share_id] = plan
+
+    # 2. 로컬 /tmp 파일 저장
+    for s_dir in [SHARED_PLANS_DIR, TMP_SHARED_PLANS_DIR]:
+        try:
+            p_path = os.path.join(s_dir, f"{share_id}.json")
+            with open(p_path, "w", encoding="utf-8") as f:
+                json.dump(plan, f, ensure_ascii=False)
+        except Exception:
+            pass
+
+    # 프로토콜 및 호스트 보정 (Vercel 배포 시 https 보장)
+    host_url = request.host_url.rstrip("/")
+    if "vercel.app" in host_url and host_url.startswith("http://"):
+        host_url = "https://" + host_url[7:]
+
+    share_url = f"{host_url}/?share={share_id}&d={token}"
+
+    return jsonify({
+        "success": True,
+        "share_id": share_id,
+        "token": token,
+        "share_url": share_url
+    }), 200
+
+@app.route("/api/share/<share_id>", methods=["GET"])
+def get_shared_plan(share_id):
+    """공유 ID 또는 압축 토큰을 통해 원본 여행 계획을 반환합니다."""
+    # 1. 인메모리 캐시 확인
+    if share_id in SHARED_PLANS_CACHE:
+        return jsonify({"success": True, "plan": SHARED_PLANS_CACHE[share_id]}), 200
+
+    # 2. 파일 스토리지 확인
+    for s_dir in [SHARED_PLANS_DIR, TMP_SHARED_PLANS_DIR]:
+        p_path = os.path.join(s_dir, f"{share_id}.json")
+        if os.path.exists(p_path):
+            try:
+                with open(p_path, "r", encoding="utf-8") as f:
+                    plan = json.load(f)
+                    SHARED_PLANS_CACHE[share_id] = plan
+                    return jsonify({"success": True, "plan": plan}), 200
+            except Exception:
+                pass
+
+    # 3. 쿼리 파라미터 d (압축 토큰)로 무손실 복원
+    token = request.args.get("d") or ""
+    if token:
+        plan = decompress_plan(token)
+        if plan:
+            SHARED_PLANS_CACHE[share_id] = plan
+            return jsonify({"success": True, "plan": plan}), 200
+
+    return jsonify({"success": False, "error": "공유된 여행 계획을 찾을 수 없습니다."}), 404
+
+@app.route("/api/share/decode", methods=["GET", "POST"])
+def decode_shared_token():
+    """압축 토큰을 디코딩하여 원본 계획으로 복원합니다."""
+    token = request.args.get("d") or (request.get_json(silent=True) or {}).get("token") or ""
+    if not token:
+        return jsonify({"success": False, "error": "토큰이 필요합니다."}), 400
+    plan = decompress_plan(token)
+    if plan:
+        return jsonify({"success": True, "plan": plan}), 200
+    return jsonify({"success": False, "error": "복원에 실패했습니다."}), 400
+
+@app.route("/share/<share_id>")
+def redirect_share(share_id):
+    """/share/<share_id> 접속 시 메인 페이지 공유 링크로 리다이렉트합니다."""
+    qs = request.query_string.decode("utf-8") if request.query_string else ""
+    target = f"/?share={share_id}"
+    if qs:
+        target += f"&{qs}"
+    return redirect(target)
 
 @app.route("/logout")
 def logout():

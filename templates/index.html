@@ -1777,6 +1777,16 @@
 
                 <!-- 결과 출력 컨테이너 -->
                 <div class="plan-card-result" id="resultWrapper" style="display: none;">
+                    <!-- 친구가 공유한 여행 계획 알림 배너 -->
+                    <div class="shared-plan-banner" id="sharedPlanBanner" style="display: none;">
+                        <div class="shared-banner-icon">📬</div>
+                        <div class="shared-banner-content">
+                            <strong class="shared-banner-title">친구가 공유한 맞춤 여행 계획입니다!</strong>
+                            <p class="shared-banner-desc">보낸 사람이 설계한 일정표, 이동 동선 지도, 추천 숙소 정보를 그대로 확인하실 수 있습니다. 상단 <strong>[📌 계획 저장]</strong>을 누르면 내 브라우저 보관함에 영구 저장됩니다.</p>
+                        </div>
+                        <button type="button" class="btn-banner-close" id="btnCloseSharedBanner" title="닫기">✕</button>
+                    </div>
+
                     <!-- 1. 생성된 계획 탭 바 & 비교 모드 버튼 -->
                     <div class="plan-tabs-bar" id="planTabsBar">
                         <div class="plan-tabs-scroll" id="planTabsScroll">
@@ -1840,6 +1850,9 @@
                             <div class="result-actions">
                                 <button type="button" id="btnSaveCurrentPlan" class="btn-action-save" title="이 여행 계획을 영구 저장하여 다른 계획과 언제든 1:1 비교">
                                     <span class="action-icon">📌</span> <span class="btn-lbl">계획 저장</span>
+                                </button>
+                                <button type="button" id="btnShareLink" class="btn-action-outline" title="웹에서 바로 볼 수 있는 전용 공유 링크 복사">
+                                    <span class="action-icon">🔗</span> <span class="btn-lbl">링크 복사</span>
                                 </button>
                                 <button type="button" id="copyChatBtn" class="btn-action-chat" title="카톡 및 채팅방에 깔끔하게 공유할 수 있는 포맷으로 복사">
                                     <span class="action-icon">💬</span> <span class="btn-lbl">카톡 복사</span>

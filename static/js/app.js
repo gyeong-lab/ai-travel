@@ -94,6 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const linkAirbnbPortal = document.getElementById("linkAirbnbPortal");
     const linkGoogleMapsPortal = document.getElementById("linkGoogleMapsPortal");
     const famousHotelsGrid = document.getElementById("famousHotelsGrid");
+    const btnShareLink = document.getElementById("btnShareLink");
+    const sharedPlanBanner = document.getElementById("sharedPlanBanner");
+    const btnCloseSharedBanner = document.getElementById("btnCloseSharedBanner");
 
     // 상태 관리 변수
     let currentPlanMarkdown = "";
@@ -3345,17 +3348,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * 11. 카카오톡 등 모바일 메신저/채팅 앱 공유에 최적화된 포맷 생성
-     * (맨 처음에 장소, 가격, 핵심 활동을 일목요연하게 요약하고, 1일차 2일차 상세 일정을 깔끔하게 연결)
+     * (맨 처음에 장소, 가격, 핵심 활동을 일목요연하게 요약하고, 웹 바로가기 링크 및 비밀번호 안내 포함)
      */
-    function formatPlanForChat(plan) {
+    function formatPlanForChat(plan, shareUrl = "") {
         if (!plan) return "";
         const hl = extractPlanHighlights(plan);
         const md = plan.markdown || "";
 
-        let output = `✈️ [${plan.dest} ${plan.dur} 맞춤 여행 가이드]\n`;
+        let output = `✈️ [${plan.dest} ${plan.dur} 맞춤 여행 일정표]\n`;
+        if (shareUrl) {
+            output += `📱 [웹에서 인터랙티브 지도 & 전체 일정 보기]\n`;
+            output += `👉 ${shareUrl}\n`;
+            output += `🔑 접속 비밀번호: 7777 (입력 시 바로 열립니다)\n`;
+        }
         output += `━━━━━━━━━━━━━━━━━━━━\n`;
         output += `📍 여행 장소: ${plan.dest}\n`;
-        output += `💰 예상 가격: ${hl.totalCost}\n`;
+        if (plan.startDate && plan.endDate) {
+            output += `📅 여행 기간: ${plan.startDate} ~ ${plan.endDate} (${plan.dur})\n`;
+        }
+        if (plan.entryTransport || plan.exitTransport) {
+            output += `🛫 출도착 거점: ${plan.entryTransport || '출발'} ➜ ${plan.exitTransport || '귀국'}\n`;
+        }
+        output += `💰 총 예상 가격: ${hl.totalCost}\n`;
         output += `🎯 핵심 활동: ${hl.activities.join(", ") || plan.interests}\n`;
         output += `🏨 추천 숙소: ${hl.accommodation}\n`;
         output += `🚗 이동 수단: ${hl.transport}\n`;
@@ -3375,7 +3389,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cleanText = cleanText.replace(/^####\s*/gm, "\n■ ");
         cleanText = cleanText.replace(/^###\s*/gm, "\n▶ ");
         cleanText = cleanText.replace(/^##\s*/gm, "\n【 ");
-        cleanText = cleanText.replace(/^#\s+[^\r\n]+/gm, ""); // 헤더 제목은 위 요약으로 대체
+        cleanText = cleanText.replace(/^#\s+[^\r\n]+/gm, "");
 
         // 볼드/이탤릭 기호 제거
         cleanText = cleanText.replace(/\*\*([^*]+)\*\*/g, "$1");
@@ -3391,7 +3405,38 @@ document.addEventListener("DOMContentLoaded", () => {
         cleanText = cleanText.replace(/[ \t]+/g, " ");
         cleanText = cleanText.replace(/\n{3,}/g, "\n\n").trim();
 
-        return output + cleanText + "\n\n💡 *실시간 요금 및 운영시간은 방문 전 확인 필요*";
+        output += cleanText;
+
+        if (shareUrl) {
+            output += `\n\n━━━━━━━━━━━━━━━━━━━━\n`;
+            output += `👉 [웹에서 인터랙티브 동선 지도 & 숙소 예약 바로가기]\n`;
+            output += `${shareUrl}\n`;
+            output += `🔑 접속 비밀번호: 7777 (입력 시 바로 열립니다)`;
+        }
+
+        return output + "\n\n💡 *실시간 요금 및 운영시간은 방문 전 확인 필요*";
+    }
+
+    async function createShareUrl(plan) {
+        if (!plan) return window.location.href;
+        try {
+            const res = await fetch("/api/share", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ plan })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success && data.share_url) {
+                    return data.share_url;
+                }
+            }
+        } catch (e) {
+            console.warn("서버 공유 링크 생성 실패:", e);
+        }
+
+        const host = window.location.origin;
+        return `${host}/?share=${encodeURIComponent(plan.id || "plan")}`;
     }
 
     /**
@@ -3470,37 +3515,171 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * 11-1. 카톡/채팅 공유용 복사 버튼
+     * 11-1. 카톡/채팅 공유용 복사 버튼 (웹 링크 자동 생성 및 포함)
      */
     if (copyChatBtn) {
         copyChatBtn.addEventListener("click", async () => {
             const plan = generatedPlans.find((p) => p.id === activePlanId) || {
-                dest: destinationInput.value.trim() || "여행지",
-                dur: durationInput.value.trim() || "일정",
-                budget: budgetInput.value.trim() || "",
-                interests: interestsInput.value.trim() || "",
-                accommodation: accommodationInput.value.trim() || "",
-                transportation: transportationInput.value.trim() || "",
+                dest: destinationInput?.value.trim() || "여행지",
+                dur: durationInput?.value.trim() || "2박 3일",
+                startDate: startDateInput?.value || "",
+                endDate: endDateInput?.value || "",
+                entryTransport: entryTransportSelect?.value || "",
+                exitTransport: exitTransportSelect?.value || "",
+                budget: budgetInput?.value.trim() || "",
+                interests: interestsInput?.value.trim() || "",
+                accommodation: accommodationInput?.value.trim() || "",
+                transportation: transportationInput?.value.trim() || "",
                 markdown: currentPlanMarkdown
             };
 
-            const chatText = formatPlanForChat(plan);
-            if (!chatText) return;
+            const originalHtml = copyChatBtn.innerHTML;
+            copyChatBtn.innerHTML = "<span>🔗 웹 링크 생성 중...</span>";
 
             try {
+                const shareUrl = await createShareUrl(plan);
+                const chatText = formatPlanForChat(plan, shareUrl);
+                if (!chatText) return;
+
                 await navigator.clipboard.writeText(chatText);
-                const originalHtml = copyChatBtn.innerHTML;
-                copyChatBtn.innerHTML = "<span>✅ 카톡용 복사 완료!</span>";
+                copyChatBtn.innerHTML = "<span>✅ 카톡 복사 완료! (웹 링크 포함)</span>";
                 copyChatBtn.style.backgroundColor = "#e6ca00";
 
                 setTimeout(() => {
                     copyChatBtn.innerHTML = originalHtml;
                     copyChatBtn.style.backgroundColor = "";
-                }, 2000);
+                }, 2200);
             } catch (err) {
                 alert("클립보드 접근 권한이 필요합니다. 내용을 직접 복사해 주세요.");
+                copyChatBtn.innerHTML = originalHtml;
             }
         });
+    }
+
+    /**
+     * 11-1-2. 웹 전용 공유 링크 복사 버튼
+     */
+    if (btnShareLink) {
+        btnShareLink.addEventListener("click", async () => {
+            const plan = generatedPlans.find((p) => p.id === activePlanId) || {
+                dest: destinationInput?.value.trim() || "여행지",
+                dur: durationInput?.value.trim() || "2박 3일",
+                startDate: startDateInput?.value || "",
+                endDate: endDateInput?.value || "",
+                entryTransport: entryTransportSelect?.value || "",
+                exitTransport: exitTransportSelect?.value || "",
+                budget: budgetInput?.value.trim() || "",
+                interests: interestsInput?.value.trim() || "",
+                accommodation: accommodationInput?.value.trim() || "",
+                transportation: transportationInput?.value.trim() || "",
+                markdown: currentPlanMarkdown
+            };
+
+            const origHtml = btnShareLink.innerHTML;
+            btnShareLink.innerHTML = "<span>🔗 링크 생성 중...</span>";
+
+            try {
+                const shareUrl = await createShareUrl(plan);
+                await navigator.clipboard.writeText(shareUrl);
+                btnShareLink.innerHTML = "<span>✅ 링크 복사 완료!</span>";
+                btnShareLink.style.borderColor = "var(--agoda-blue)";
+                btnShareLink.style.color = "var(--agoda-blue)";
+                alert(`🔗 친구에게 보낼 여행 계획 웹 링크가 복사되었습니다!\n\n${shareUrl}\n\n(카톡이나 문자로 친구에게 보내면, 친구도 이 계획과 지도, 추천 숙소를 그대로 볼 수 있습니다)`);
+                setTimeout(() => {
+                    btnShareLink.innerHTML = origHtml;
+                    btnShareLink.style.borderColor = "";
+                    btnShareLink.style.color = "";
+                }, 2500);
+            } catch (err) {
+                alert("링크 복사 실패: 클립보드 권한을 확인해 주세요.");
+                btnShareLink.innerHTML = origHtml;
+            }
+        });
+    }
+
+    if (btnCloseSharedBanner) {
+        btnCloseSharedBanner.addEventListener("click", () => {
+            if (sharedPlanBanner) sharedPlanBanner.style.display = "none";
+        });
+    }
+
+    /**
+     * 11-4. 공유 링크 감지 시 원본 여행 계획 자동 복원 및 렌더링
+     */
+    async function checkAndLoadSharedPlan() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const shareId = urlParams.get("share");
+        const token = urlParams.get("d");
+
+        if (!shareId && !token) return;
+
+        try {
+            showLoading();
+            if (loadingTip) {
+                loadingTip.textContent = "친구가 공유한 맞춤 여행 계획을 불러오는 중입니다...";
+            }
+
+            let sharedPlan = null;
+            if (shareId) {
+                try {
+                    const res = await fetch(`/api/share/${encodeURIComponent(shareId)}${token ? `?d=${encodeURIComponent(token)}` : ''}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.success && data.plan) {
+                            sharedPlan = data.plan;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("공유 계획 API 호출 실패:", e);
+                }
+            }
+
+            if (!sharedPlan && token) {
+                try {
+                    const res2 = await fetch(`/api/share/decode?d=${encodeURIComponent(token)}`);
+                    if (res2.ok) {
+                        const data2 = await res2.json();
+                        if (data2.success && data2.plan) {
+                            sharedPlan = data2.plan;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("공유 계획 디코드 실패:", e);
+                }
+            }
+
+            if (sharedPlan) {
+                if (destinationInput && sharedPlan.dest) destinationInput.value = sharedPlan.dest;
+                if (durationInput && sharedPlan.dur) durationInput.value = sharedPlan.dur;
+                if (startDateInput && sharedPlan.startDate) startDateInput.value = sharedPlan.startDate;
+                if (endDateInput && sharedPlan.endDate) endDateInput.value = sharedPlan.endDate;
+                if (entryTransportSelect && sharedPlan.entryTransport) entryTransportSelect.value = sharedPlan.entryTransport;
+                if (exitTransportSelect && sharedPlan.exitTransport) exitTransportSelect.value = sharedPlan.exitTransport;
+                if (budgetInput && sharedPlan.budget) budgetInput.value = sharedPlan.budget;
+                if (interestsInput && sharedPlan.interests) interestsInput.value = sharedPlan.interests;
+                if (companionsInput && sharedPlan.companions) companionsInput.value = sharedPlan.companions;
+                if (transportationInput && sharedPlan.transportation) transportationInput.value = sharedPlan.transportation;
+                if (accommodationInput && sharedPlan.accommodation) accommodationInput.value = sharedPlan.accommodation;
+
+                updateDurationFromDates();
+                updateHubChipsActiveState();
+
+                currentPlanMarkdown = sharedPlan.markdown;
+                renderResult({
+                    plan: sharedPlan.markdown,
+                    model: sharedPlan.model || "Gemini 3.5 Flash",
+                    elapsed_seconds: sharedPlan.elapsed || "4.8"
+                }, sharedPlan.dest, sharedPlan.dur, sharedPlan);
+
+                if (sharedPlanBanner) {
+                    sharedPlanBanner.style.display = "flex";
+                }
+            }
+        } catch (err) {
+            console.error("공유 계획 복원 중 오류:", err);
+        } finally {
+            hideLoading();
+        }
     }
 
     /**
@@ -3724,4 +3903,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initDatePickers();
     initPwaInstall();
+    checkAndLoadSharedPlan();
 });

@@ -4747,4 +4747,79 @@ button {
     }
 }
 
+/* ==========================================================================
+   📬 친구 공유 여행 계획 알림 배너 스타일
+   ========================================================================== */
+.shared-plan-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1.5px solid #86efac;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+    animation: fadeIn 0.4s ease;
+}
+
+.shared-banner-icon {
+    font-size: 26px;
+    flex-shrink: 0;
+}
+
+.shared-banner-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.shared-banner-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #14532d;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.shared-banner-desc {
+    font-size: 13px;
+    color: #166534;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.shared-banner-desc strong {
+    color: #052e16;
+}
+
+.btn-banner-close {
+    background: transparent;
+    border: none;
+    color: #15803d;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+}
+
+.btn-banner-close:hover {
+    background: rgba(22, 101, 52, 0.1);
+}
+
+@media (max-width: 768px) {
+    .shared-plan-banner {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+    .shared-banner-title {
+        font-size: 14px;
+    }
+    .shared-banner-desc {
+        font-size: 12px;
+    }
+}
+
 

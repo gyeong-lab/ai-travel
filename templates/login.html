@@ -272,8 +272,14 @@
     <main class="login-card" id="loginCard">
         <div class="lock-icon-wrap">🔒</div>
         <h2 class="login-title">비공개 여행 플래너</h2>
+        
+        <div class="shared-incoming-alert" id="sharedIncomingAlert" style="display:none; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:12px; padding:12px 14px; margin-bottom:18px; font-size:13px; color:#065f46; text-align:left; line-height:1.45;">
+            📬 <strong>친구가 공유한 맞춤 여행 계획</strong>이 도착했습니다!<br>
+            비밀번호를 입력하시면 보낸 사람의 여행 계획이 즉시 열립니다.
+        </div>
+
         <p class="login-desc">
-            본 서비스는 인증된 사용자만 접속 가능한 프라이빗 서비스입니다. 관리자가 지정한 접속 비밀번호를 입력해주세요.
+            본 서비스는 인증된 사용자만 접속 가능한 프라이빗 서비스입니다. 안내받으신 접속 비밀번호를 입력해주세요.
         </p>
 
         <form class="login-form" id="loginForm" method="POST" action="/login">
@@ -325,6 +331,16 @@
         const btnSubmit = document.getElementById("btnSubmit");
         const errorMsg = document.getElementById("errorMsg");
         const loginCard = document.getElementById("loginCard");
+        const sharedIncomingAlert = document.getElementById("sharedIncomingAlert");
+
+        // 공유 링크 감지 시 배너 노출
+        const hasShareParam = window.location.search.includes("share") || window.location.search.includes("d=") || {{ 'true' if is_shared else 'false' }};
+        if (hasShareParam && sharedIncomingAlert) {
+            sharedIncomingAlert.style.display = "block";
+            if (loginForm) {
+                loginForm.action = "/login" + window.location.search;
+            }
+        }
 
         // 비밀번호 표시 / 숨기기 토글
         btnTogglePw.addEventListener("click", () => {
@@ -359,13 +375,17 @@
                 if (res.ok && data.success) {
                     btnSubmit.innerHTML = `<span>✅ 인증 성공! 이동 중...</span>`;
                     setTimeout(() => {
-                        window.location.href = "/";
+                        const targetUrl = "/" + window.location.search + window.location.hash;
+                        window.location.href = targetUrl;
                     }, 400);
                 } else {
                     showError(data.error || "비밀번호가 올바르지 않습니다.");
                 }
             } catch (err) {
                 // AJAX 실패 시 일반 Form POST로 폴백 제출
+                if (window.location.search) {
+                    loginForm.action = "/login" + window.location.search;
+                }
                 loginForm.submit();
             } finally {
                 btnSubmit.classList.remove("loading");
