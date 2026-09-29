@@ -1934,27 +1934,50 @@ document.addEventListener("DOMContentLoaded", () => {
                     btn.classList.add("active");
                     currentMapDayFilter = btn.dataset.day;
                     drawMapLayers(places, currentMapDayFilter, plan.dest, plan.transportation);
+                    renderSummaryChips(currentMapDayFilter);
                 });
             });
         }
 
         drawMapLayers(places, currentMapDayFilter, plan.dest, plan.transportation);
 
-        const summaryEl = document.getElementById("mapPlacesSummary");
-        if (summaryEl) {
+        // 주요 방문지 가로 스크롤 트랙 렌더링 (일차 필터 연동 & 세로 늘어짐 방지)
+        function renderSummaryChips(dayFilter = "all") {
+            const summaryEl = document.getElementById("mapPlacesSummary");
+            if (!summaryEl) return;
+
             const isTransit = (plan.transportation || "").includes("대중교통") || (plan.transportation || "").includes("버스") || (plan.transportation || "").includes("지하철");
-            let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 ${isTransit ? '대중교통 길찾기' : '카카오맵 바로가기'}:</span>`;
-            places.forEach((p, idx) => {
+            const filterLabel = dayFilter === "all" ? "전체 일정" : `${dayFilter}일차`;
+
+            const filteredPlaces = dayFilter === "all"
+                ? places
+                : places.filter(p => String(p.day) === String(dayFilter));
+
+            let chipsTrackHtml = "";
+            filteredPlaces.forEach(p => {
+                const globalIdx = places.indexOf(p);
                 const color = DAY_COLOR_MAP[p.day] || "#6366f1";
                 const dayClass = `chip-day-${Math.min(4, p.day)}`;
-                chipsHtml += `
-                    <button type="button" class="map-place-chip ${dayClass}" data-idx="${idx}">
+                chipsTrackHtml += `
+                    <button type="button" class="map-place-chip ${dayClass}" data-idx="${globalIdx}" title="${p.name} (지도 이동 및 상세 보기)">
                         <span class="chip-dot" style="background-color: ${color};"></span>
                         <span>[Day ${p.day}] ${p.name}</span>
                     </button>
                 `;
             });
-            summaryEl.innerHTML = chipsHtml;
+
+            summaryEl.innerHTML = `
+                <div class="map-places-summary-header">
+                    <span class="map-places-title">
+                        📍 주요 방문지 클릭 시 ${isTransit ? '대중교통 길찾기' : '카카오맵 바로가기'}
+                        <strong class="map-places-badge">(${filterLabel} ${filteredPlaces.length}곳)</strong>
+                    </span>
+                    <span class="map-places-hint">👉 좌우로 스크롤하여 이동</span>
+                </div>
+                <div class="map-places-scroll-track" id="mapPlacesTrack">
+                    ${chipsTrackHtml || '<span style="font-size:12px; color:#94a3b8; padding:6px 0;">해당 일차의 방문지가 없습니다.</span>'}
+                </div>
+            `;
 
             summaryEl.querySelectorAll(".map-place-chip").forEach(chip => {
                 chip.addEventListener("click", () => {
@@ -1971,6 +1994,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
         }
+
+        renderSummaryChips(currentMapDayFilter);
+
 
         setTimeout(() => {
             if (leafletMap) leafletMap.invalidateSize();
