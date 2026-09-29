@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let loadingInterval = null;
     let currentCityKey = "제주";
     let currentCategory = "all";
+    let wishlist = JSON.parse(localStorage.getItem("ai_travel_wishlist") || "[]");
 
     // 10대 인기 여행지 프리셋 데이터
     const presets = {
@@ -208,19 +209,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /**
-     * 2. 지역 및 카테고리 교차 필터링 핵심 함수 (2차원 동시 필터링)
+     * 2. 지역 및 카테고리 교차 필터링 핵심 함수 (2차원 동시 필터링 + 찜 목록 지원)
      */
     function filterProducts() {
         const emptyNotice = document.getElementById("productEmptyNotice");
         const emptyNoticeTitle = document.getElementById("emptyNoticeTitle");
+        const emptyNoticeSub = document.getElementById("emptyNoticeSub");
         let visibleCount = 0;
 
         productCards.forEach((card) => {
             const cardDest = card.dataset.dest || "";
             const cardCat = card.dataset.category || "";
+            const cardTitle = card.querySelector(".card-title")?.textContent.trim() || "";
+            const isWishlisted = wishlist.some((item) => item.title === cardTitle);
 
-            const matchCity = (!currentCityKey || currentCityKey === "all") || cardDest.includes(currentCityKey);
-            const matchCat = (currentCategory === "all") || (cardCat === currentCategory);
+            let matchCity = (!currentCityKey || currentCityKey === "all") || cardDest.includes(currentCityKey);
+            let matchCat = false;
+
+            if (currentCategory === "wishlist") {
+                // 저장한 여행지 탭: 하트를 누른 모든 여행지 노출
+                matchCat = isWishlisted;
+                matchCity = true;
+            } else {
+                matchCat = (currentCategory === "all") || (cardCat === currentCategory);
+            }
 
             if (matchCity && matchCat) {
                 card.style.display = "flex";
@@ -234,10 +246,20 @@ document.addEventListener("DOMContentLoaded", () => {
             if (visibleCount === 0) {
                 emptyNotice.style.display = "flex";
                 if (emptyNoticeTitle) {
-                    const catBtn = document.querySelector(`.cat-item[data-category="${currentCategory}"] .cat-label`);
-                    const catLabel = catBtn ? catBtn.textContent.trim() : "해당 테마";
-                    const displayCity = currentCityKey === "all" ? "선택하신 지역" : currentCityKey;
-                    emptyNoticeTitle.textContent = `${displayCity}의 '${catLabel}' 추천 코스를 준비 중입니다`;
+                    if (currentCategory === "wishlist") {
+                        emptyNoticeTitle.textContent = "아직 저장한 여행지가 없습니다";
+                        if (emptyNoticeSub) {
+                            emptyNoticeSub.textContent = "마음에 드는 여행지 카드의 하트(♡)를 누르면 이곳에서 한눈에 모아서 확인할 수 있습니다.";
+                        }
+                    } else {
+                        const catBtn = document.querySelector(`.cat-item[data-category="${currentCategory}"] .cat-label`);
+                        const catLabel = catBtn ? catBtn.textContent.trim() : "해당 테마";
+                        const displayCity = currentCityKey === "all" ? "선택하신 지역" : currentCityKey;
+                        emptyNoticeTitle.textContent = `${displayCity}의 '${catLabel}' 추천 코스를 준비 중입니다`;
+                        if (emptyNoticeSub) {
+                            emptyNoticeSub.textContent = "선택하신 지역과 테마의 상품을 준비 중입니다. 대신 Gemini AI에게 이 조건으로 맞춤 여행 일정을 바로 만들어 달라고 요청해보세요!";
+                        }
+                    }
                 }
             } else {
                 emptyNotice.style.display = "none";
@@ -516,21 +538,198 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /**
-     * 9. 위시리스트 하트 토글
+     * 9. 저장한 여행지 (위시리스트) UI 동기화 및 렌더링 함수
+     */
+    function renderWishlistUI() {
+        const topCount = document.getElementById("topWishlistCount");
+        const sidebarCount = document.getElementById("sidebarWishlistCount");
+        const miniList = document.getElementById("wishlistMiniItems");
+        const emptyMsg = document.getElementById("wishlistEmptyMsg");
+        const footer = document.getElementById("wishlistSidebarFooter");
+        const count = wishlist.length;
+
+        // 1) 상단 배지 동기화
+        if (topCount) {
+            topCount.textContent = count;
+            if (count > 0) {
+                topCount.classList.add("visible");
+            } else {
+                topCount.classList.remove("visible");
+            }
+        }
+
+        // 2) 사이드바 카운트 배지 동기화
+        if (sidebarCount) {
+            sidebarCount.textContent = count;
+        }
+
+        // 3) 페이지 내 모든 상품 카드의 하트 버튼 상태 동기화
+        document.querySelectorAll(".agoda-card").forEach((card) => {
+            const title = card.querySelector(".card-title")?.textContent.trim() || "";
+            const heartBtn = card.querySelector(".card-wishlist");
+            if (heartBtn && title) {
+                const isSaved = wishlist.some((item) => item.title === title);
+                if (isSaved) {
+                    heartBtn.classList.add("active");
+                    heartBtn.textContent = "❤️";
+                    heartBtn.style.color = "var(--agoda-red)";
+                } else {
+                    heartBtn.classList.remove("active");
+                    heartBtn.textContent = "♡";
+                    heartBtn.style.color = "";
+                }
+            }
+        });
+
+        // 4) 사이드바 미니 리스트 렌더링
+        if (miniList && emptyMsg && footer) {
+            if (count === 0) {
+                emptyMsg.style.display = "flex";
+                miniList.style.display = "none";
+                footer.style.display = "none";
+                miniList.innerHTML = "";
+            } else {
+                emptyMsg.style.display = "none";
+                miniList.style.display = "flex";
+                footer.style.display = "block";
+                miniList.innerHTML = wishlist.map((item, idx) => `
+                    <div class="wishlist-mini-item" data-index="${idx}">
+                        <img src="${item.img || ''}" alt="" class="wishlist-mini-thumb" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80'">
+                        <div class="wishlist-mini-info">
+                            <div class="wishlist-mini-title">${item.title}</div>
+                            <div class="wishlist-mini-meta">
+                                <span>📍 ${item.dest || '추천지'}</span>
+                                <span class="wishlist-mini-price">₩ ${item.price || ''}</span>
+                            </div>
+                        </div>
+                        <button type="button" class="wishlist-mini-remove" data-title="${encodeURIComponent(item.title)}" title="삭제">✕</button>
+                    </div>
+                `).join("");
+
+                // 미니 아이템 클릭 시 폼에 해당 코스 자동 반영
+                miniList.querySelectorAll(".wishlist-mini-item").forEach((el) => {
+                    el.addEventListener("click", (e) => {
+                        if (e.target.closest(".wishlist-mini-remove")) return;
+                        const idx = parseInt(el.dataset.index, 10);
+                        const item = wishlist[idx];
+                        if (item) {
+                            if (item.dest) destinationInput.value = item.dest;
+                            if (item.dur) durationInput.value = item.dur;
+                            if (item.budget) {
+                                budgetInput.value = item.budget;
+                                syncSliderFromText(item.budget);
+                            }
+                            if (item.transport) transportationInput.value = item.transport;
+                            if (item.theme) interestsInput.value = item.theme;
+
+                            travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
+                            travelForm.classList.add("form-focus-pulse");
+                            setTimeout(() => travelForm.classList.remove("form-focus-pulse"), 1000);
+                        }
+                    });
+                });
+
+                // 미니 아이템 삭제(✕) 버튼 클릭
+                miniList.querySelectorAll(".wishlist-mini-remove").forEach((rmBtn) => {
+                    rmBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const title = decodeURIComponent(rmBtn.dataset.title);
+                        wishlist = wishlist.filter((w) => w.title !== title);
+                        localStorage.setItem("ai_travel_wishlist", JSON.stringify(wishlist));
+                        renderWishlistUI();
+                        if (currentCategory === "wishlist") {
+                            filterProducts();
+                        }
+                    });
+                });
+            }
+        }
+    }
+
+    /**
+     * 9-1. 카드 내 위시리스트 하트 토글 클릭 이벤트
      */
     wishlistButtons.forEach((btn) => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
-            btn.classList.toggle("active");
-            if (btn.classList.contains("active")) {
+            const card = btn.closest(".agoda-card");
+            if (!card) return;
+
+            const title = card.querySelector(".card-title")?.textContent.trim() || "";
+            const img = card.querySelector(".card-img")?.getAttribute("src") || "";
+            const price = card.querySelector(".card-price-area .amount")?.textContent.trim() || "";
+            const dest = card.dataset.dest || "";
+            const dur = card.dataset.dur || "";
+            const budget = card.dataset.budget || "";
+            const transport = card.dataset.transport || "";
+            const theme = card.dataset.theme || "";
+
+            const isAlreadySaved = wishlist.some((w) => w.title === title);
+            if (!isAlreadySaved) {
+                wishlist.push({ title, img, price, dest, dur, budget, transport, theme });
+                btn.classList.add("active");
                 btn.textContent = "❤️";
                 btn.style.color = "var(--agoda-red)";
             } else {
+                wishlist = wishlist.filter((w) => w.title !== title);
+                btn.classList.remove("active");
                 btn.textContent = "♡";
                 btn.style.color = "";
             }
+
+            localStorage.setItem("ai_travel_wishlist", JSON.stringify(wishlist));
+            renderWishlistUI();
+
+            if (currentCategory === "wishlist") {
+                filterProducts();
+            }
         });
     });
+
+    /**
+     * 9-2. 좌측 사이드바 '찜 모아보기' 버튼 클릭 시 바로 찜 탭 활성화
+     */
+    const btnViewWishlistOnly = document.getElementById("btnViewWishlistOnly");
+    if (btnViewWishlistOnly) {
+        btnViewWishlistOnly.addEventListener("click", () => {
+            currentCategory = "wishlist";
+            categoryButtons.forEach((b) => b.classList.remove("active"));
+            const catWishlistTab = document.getElementById("catWishlistTab");
+            if (catWishlistTab) catWishlistTab.classList.add("active");
+
+            if (chipCategory) {
+                const textEl = chipCategory.querySelector(".chip-text");
+                if (textEl) textEl.textContent = "저장한 여행지";
+                chipCategory.style.display = "inline-flex";
+            }
+
+            filterProducts();
+            document.getElementById("productsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }
+
+    /**
+     * 9-3. '✨ 찜한 코스로 일정 채우기' 버튼 클릭 시 폼에 일괄 자동 완성
+     */
+    const btnPlanWithWishlist = document.getElementById("btnPlanWithWishlist");
+    if (btnPlanWithWishlist) {
+        btnPlanWithWishlist.addEventListener("click", () => {
+            if (wishlist.length === 0) return;
+            const uniqueDests = [...new Set(wishlist.map((w) => w.dest).filter(Boolean))].join(" & ");
+            const themes = wishlist.map((w) => w.theme).filter(Boolean).slice(0, 3).join(", ");
+
+            if (uniqueDests) destinationInput.value = uniqueDests;
+            if (themes) interestsInput.value = `[저장한 추천 코스] ${themes}`;
+
+            travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            travelForm.classList.add("form-focus-pulse");
+            submitBtn.classList.add("btn-pulse");
+            setTimeout(() => {
+                travelForm.classList.remove("form-focus-pulse");
+                submitBtn.classList.remove("btn-pulse");
+            }, 1200);
+        });
+    }
 
     /**
      * 10. AI 여행 일정표 생성 요청
@@ -691,7 +890,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 14. 페이지 첫 진입 시 기본 선택 지역(제주) 및 카테고리(전체) 교차 필터링 1회 실행
+    // 14. 페이지 첫 진입 시 위시리스트 동기화 및 기본 선택 지역(제주) 필터링 1회 실행
+    renderWishlistUI();
     filterProducts();
 
     /**

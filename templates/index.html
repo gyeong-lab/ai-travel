@@ -108,6 +108,14 @@
                 </div>
                 <span class="cat-label">쇼핑 &amp; 핫플레이스</span>
             </button>
+            <button type="button" class="cat-item wishlist-tab" data-category="wishlist" id="catWishlistTab">
+                <div class="cat-icon">
+                    <span>❤️</span>
+                    <span class="cat-check-badge">✓</span>
+                    <span class="wishlist-count-badge" id="topWishlistCount">0</span>
+                </div>
+                <span class="cat-label">저장한 여행지</span>
+            </button>
         </div>
     </section>
 
@@ -145,7 +153,31 @@
                 </div>
             </div>
 
-            <!-- 3. AI 맞춤 여행 조건 설정 폼 -->
+            <!-- 3. 저장한 여행지 (찜 목록) 사이드바 박스 -->
+            <div class="filter-box wishlist-sidebar-box" id="wishlistSidebarBox">
+                <div class="filter-box-header">
+                    <h3 class="filter-title">
+                        ❤️ 저장한 여행지 <span class="badge-count" id="sidebarWishlistCount">0</span>
+                    </h3>
+                    <button type="button" id="btnViewWishlistOnly" class="link-blue-btn">찜 모아보기</button>
+                </div>
+                <div class="wishlist-sidebar-content" id="wishlistSidebarList">
+                    <!-- 찜이 없을 때 안내 -->
+                    <div class="wishlist-empty-msg" id="wishlistEmptyMsg">
+                        <span>♡ 카드의 하트를 누르면</span>
+                        <span>이곳에 여행지가 보관됩니다</span>
+                    </div>
+                    <!-- 찜 목록 아이템들이 JS로 동적 렌더링됨 -->
+                    <div class="wishlist-mini-items" id="wishlistMiniItems" style="display: none;"></div>
+                </div>
+                <div class="wishlist-sidebar-footer" id="wishlistSidebarFooter" style="display: none;">
+                    <button type="button" class="btn-wishlist-plan" id="btnPlanWithWishlist">
+                        ✨ 찜한 코스로 일정 채우기
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. AI 맞춤 여행 조건 설정 폼 -->
             <div class="filter-box ai-planner-box">
                 <div class="ai-box-badge">
                     <span class="sparkle-icon">✨</span> Gemini AI 스마트 플래너

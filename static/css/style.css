@@ -384,6 +384,189 @@ button {
     display: flex; /* 선택된 탭에만 파란 동그라미 체크(✓) 표시 */
 }
 
+/* 찜한 여행지 탭 배지 & 사이드바 위시리스트 스타일 */
+.wishlist-count-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: var(--agoda-red);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    min-width: 17px;
+    height: 17px;
+    line-height: 14px;
+    text-align: center;
+    border-radius: var(--radius-full);
+    border: 1.5px solid #ffffff;
+    padding: 0 4px;
+    box-sizing: border-box;
+    display: none;
+    z-index: 3;
+}
+
+.wishlist-count-badge.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cat-item.active .wishlist-count-badge {
+    right: 8px; /* 체크 배지와 겹치지 않게 */
+}
+
+.wishlist-sidebar-box {
+    background: #ffffff;
+    border-left: 3px solid var(--agoda-red);
+}
+
+.badge-count {
+    display: inline-block;
+    background-color: #fee2e2;
+    color: #ef4444;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: var(--radius-full);
+    margin-left: 4px;
+}
+
+.link-blue-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--agoda-blue);
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.link-blue-btn:hover {
+    color: var(--agoda-blue-hover);
+}
+
+.wishlist-sidebar-content {
+    margin-top: 10px;
+}
+
+.wishlist-empty-msg {
+    font-size: 12px;
+    color: #9ca3af;
+    background: #f9fafb;
+    border: 1px dashed #e5e7eb;
+    border-radius: var(--radius-md);
+    padding: 14px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.wishlist-mini-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.wishlist-mini-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 6px 8px;
+    position: relative;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.wishlist-mini-item:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.wishlist-mini-thumb {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.wishlist-mini-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.wishlist-mini-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wishlist-mini-meta {
+    font-size: 11px;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.wishlist-mini-price {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.wishlist-mini-remove {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.wishlist-mini-remove:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
+.wishlist-sidebar-footer {
+    margin-top: 10px;
+}
+
+.btn-wishlist-plan {
+    width: 100%;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+
+.btn-wishlist-plan:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
 /* 필터 결과가 없을 때 안내 카드 */
 .product-empty-box {
     grid-column: 1 / -1;
