@@ -4379,10 +4379,7 @@ button {
         padding: 4px 8px !important;
         font-size: 11px !important;
     }
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
-    }
+    /* .product-grid는 상단/하단 가로 스크롤 트랙 규칙 사용 */
     .agoda-card {
         border-radius: 10px !important;
     }
@@ -5498,7 +5495,7 @@ html, body {
 /* 20개 도시 프리셋 버튼 가로 스크롤 & 호버 인터랙션 */
 .quick-preset-chips {
     gap: 8px !important;
-    padding: 6px 2px 12px 2px !important;
+    padding: 6px 4px 12px 4px !important;
     width: 100% !important;
     scroll-behavior: smooth;
 }
@@ -5676,7 +5673,33 @@ html, body {
     font-size: 13px !important;
 }
 
-/* 4. 상품 카드 그리드 반응형 (4열 -> 3열 -> 2열 -> 1열 자동 최적화) */
+/* 4. 추천 상품 카드 영역: 데스크톱 다열 그리드 & 모바일 부드러운 가로 스와이프 캐러셀 지원 */
+.section-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mobile-swipe-guide-badge {
+    display: none;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 3px 9px;
+    border-radius: 9999px;
+    letter-spacing: -0.2px;
+}
+
 .product-grid {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
@@ -5700,19 +5723,73 @@ html, body {
     }
 }
 
-@media (max-width: 580px) {
+/* 모바일 화면 (< 768px): 추천 여행지 카드가 짤리지 않고 좌우로 자연스럽게 스와이프되도록 가로 넘김 트랙 활성화 */
+@media (max-width: 768px) {
+    .mobile-swipe-guide-badge {
+        display: inline-flex !important;
+        align-items: center;
+    }
+
+    .products-section {
+        overflow: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
     .product-grid {
-        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scroll-snap-type: x mandatory !important;
         gap: 12px !important;
+        padding: 4px 6px 14px 6px !important;
+        margin-left: -6px !important;
+        margin-right: -6px !important;
+        width: calc(100% + 12px) !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+    .product-grid::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .agoda-card {
+        flex: 0 0 240px !important;
+        width: 240px !important;
+        max-width: 78vw !important;
+        min-width: 220px !important;
+        scroll-snap-align: start !important;
+        scroll-snap-stop: normal !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .agoda-card {
+        flex: 0 0 215px !important;
+        width: 215px !important;
+        max-width: 75vw !important;
+        min-width: 200px !important;
     }
 }
 
 .agoda-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.agoda-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
 .agoda-card .card-body {
@@ -5720,12 +5797,46 @@ html, body {
     width: 100% !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    padding: 12px !important;
 }
 
 .agoda-card .card-title {
     overflow-wrap: break-word !important;
     word-break: keep-all !important;
     line-height: 1.4 !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    height: 38px !important;
+    margin-bottom: 6px !important;
+}
+
+.agoda-card .card-badges-green {
+    font-size: 10.5px !important;
+    color: #059669 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin-bottom: 6px !important;
+}
+
+.agoda-card .card-price-area {
+    margin-top: auto !important;
+    display: flex !important;
+    align-items: baseline !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+}
+
+.agoda-card .price-current {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
 }
 
 /* 5. 맨 하단 숙소 예약 포털 및 추천 숙소 칸 브라우저/모바일 완벽 맞춤 */
@@ -5736,6 +5847,32 @@ html, body {
     overflow: hidden !important;
 }
 
+.booking-section-header {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 18px !important;
+}
+
+.booking-title-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+}
+
+.booking-section-title {
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+    line-height: 1.35 !important;
+}
+
+.booking-section-sub {
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+    line-height: 1.5 !important;
+}
+
 .booking-quick-portals {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
@@ -5743,6 +5880,7 @@ html, body {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    margin-top: 14px !important;
 }
 
 @media (max-width: 860px) {
@@ -5759,6 +5897,7 @@ html, body {
     min-width: 0 !important;
     display: flex !important;
     align-items: center !important;
+    padding: 12px 14px !important;
 }
 
 .portal-texts {
@@ -5767,22 +5906,54 @@ html, body {
     overflow: hidden !important;
 }
 
-.portal-texts strong,
+.portal-texts strong {
+    display: block !important;
+    font-size: 13.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
 .portal-texts small {
-    overflow-wrap: break-word !important;
-    word-break: keep-all !important;
+    display: block !important;
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .famous-hotels-container {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
+    padding: 18px 16px !important;
+    margin-top: 16px !important;
+}
+
+.famous-hotels-head {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+}
+
+.famous-hotels-title {
+    font-size: 15.5px !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+    line-height: 1.35 !important;
 }
 
 .famous-hotels-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-    gap: 16px !important;
+    gap: 14px !important;
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
@@ -5800,7 +5971,59 @@ html, body {
     max-width: 100% !important;
     box-sizing: border-box !important;
     min-width: 0 !important;
+    padding: 14px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
 }
+
+.hotel-name {
+    font-size: 14.5px !important;
+    font-weight: 800 !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+    line-height: 1.35 !important;
+}
+
+.hotel-loc {
+    font-size: 12px !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+}
+
+.hotel-features {
+    padding-left: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.hotel-feature-item {
+    font-size: 11.5px !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+    line-height: 1.35 !important;
+}
+
+.hotel-price-row {
+    padding-top: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+.hotel-btn-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+}
+
+.btn-hotel-link {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 11px !important;
+    padding: 7px 10px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
 
 
 
