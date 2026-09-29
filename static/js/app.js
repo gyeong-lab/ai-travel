@@ -2180,22 +2180,56 @@ document.addEventListener("DOMContentLoaded", () => {
             targetAirport = { name: `${destination} 공항/역 (출발)`, lat: center.lat + 0.02, lng: center.lng - 0.02 };
         }
 
-        // 1일차 장소 목록 중 공항이 이미 있는지 확인
+        // 1. [1일차 첫 출발지 공항 보장]
         const hasDay1Airport = places.some(p => p.day === 1 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("역")));
         const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
         if (!hasDay1Airport) {
             // 맨 앞에 1일차 출발지(공항) 삽입
             places.unshift({
                 day: 1,
-                order: 1,
-                name: targetAirport.name,
-                desc: isTransit ? "공항 도착 및 대중교통(급행/간선/지하철) 탑승 / 여정 시작" : "공항 도착 및 렌터카 픽업 / 여정 시작",
+                order: 0,
+                name: `${targetAirport.name} (출발)`,
+                desc: isTransit ? "공항/역 도착 및 대중교통(급행/간선/지하철) 탑승 / 여정 시작" : "공항/역 도착 및 렌터카 픽업 / 여정 시작",
                 lat: targetAirport.lat,
                 lng: targetAirport.lng
             });
         }
 
-        // 각 Day별 order 번호 1부터 순차 재정렬
+        // 2. [마지막 날 최종 목적지 공항/역 귀국 보장]
+        const uniqueDays = Array.from(new Set(places.map(p => p.day))).sort((a, b) => a - b);
+        const lastDayNum = uniqueDays.length > 0 ? uniqueDays[uniqueDays.length - 1] : 1;
+
+        // 마지막 날의 공항: 1일차 출발 공항(idx 0) 외에 마지막 날에 도착/귀국 공항이 있는지 확인
+        const hasLastDayAirport = places.some((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("터미널")));
+        if (!hasLastDayAirport) {
+            places.push({
+                day: lastDayNum,
+                order: 999,
+                name: `${targetAirport.name} (귀국)`,
+                desc: isTransit ? "일정 마무리 및 공항/역 이동, 대중교통/항공편 탑승 수속 및 귀국" : "일정 마무리 및 렌터카 반납, 공항/역 이동 후 탑승 수속 및 귀국",
+                lat: targetAirport.lat,
+                lng: targetAirport.lng
+            });
+        } else {
+            // 마지막 날에 이미 공항이 있으면, 맨 뒤로 이동시켜 최종 목적지로 확정
+            const endAirportIdx = places.findIndex((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("터미널")));
+            if (endAirportIdx !== -1) {
+                const item = places.splice(endAirportIdx, 1)[0];
+                if (!item.name.includes("귀국") && !item.name.includes("출발")) {
+                    item.name = `${targetAirport.name} (귀국)`;
+                }
+                item.order = 999;
+                places.push(item);
+            }
+        }
+
+        // 3. 전체 일정 Day 및 Order 순으로 엄격 정렬 후 1, 2, 3, 4 순차 번호 재부여
+        places.sort((a, b) => {
+            const dayDiff = (Number(a.day) || 1) - (Number(b.day) || 1);
+            if (dayDiff !== 0) return dayDiff;
+            return (Number(a.order) || 1) - (Number(b.order) || 1);
+        });
+
         const dayCounts = {};
         places.forEach(p => {
             dayCounts[p.day] = (dayCounts[p.day] || 0) + 1;
@@ -2204,10 +2238,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (places.length === 0) {
             places.push(
-                { day: 1, order: 1, name: targetAirport.name, desc: "공항 도착 및 첫날 일정 시작", lat: targetAirport.lat, lng: targetAirport.lng },
+                { day: 1, order: 1, name: `${targetAirport.name} (출발)`, desc: "공항 도착 및 첫날 일정 시작", lat: targetAirport.lat, lng: targetAirport.lng },
                 { day: 1, order: 2, name: `${destination} 대표 감성 명소`, desc: "첫날 오후 시그니처 랜드마크", lat: center.lat - 0.02, lng: center.lng - 0.04 },
                 { day: 2, order: 1, name: `${destination} 자연 & 힐링 코스`, desc: "둘째날 메인 힐링 투어", lat: center.lat - 0.05, lng: center.lng + 0.03 },
-                { day: 2, order: 2, name: `${destination} 로컬 찐맛집 탐방`, desc: "둘째날 저녁 미식 및 야경 명소", lat: center.lat + 0.01, lng: center.lng + 0.04 }
+                { day: 2, order: 2, name: `${targetAirport.name} (귀국)`, desc: "일정 마무리 및 공항 이동, 탑승 수속", lat: targetAirport.lat, lng: targetAirport.lng }
             );
         }
 
@@ -2260,8 +2294,15 @@ document.addEventListener("DOMContentLoaded", () => {
         mapMarkerLayerGroup.clearLayers();
         mapPolylineLayerGroup.clearLayers();
 
-        const filtered = filterDay === "all" ? places : places.filter(p => String(p.day) === String(filterDay));
+        const filtered = filterDay === "all" ? places.slice() : places.filter(p => String(p.day) === String(filterDay));
         if (filtered.length === 0) return;
+
+        // Day 및 Order 순으로 엄격하게 정렬 (지도 핀 번호 및 경로 선 1->2->3->4 순환 보장)
+        filtered.sort((a, b) => {
+            const dayDiff = (Number(a.day) || 1) - (Number(b.day) || 1);
+            if (dayDiff !== 0) return dayDiff;
+            return (Number(a.order) || 1) - (Number(b.order) || 1);
+        });
 
         const bounds = [];
         // 국내 6개 도시 외에는 모두 해외 지역으로 판별하여 구글 지도로 최적화
