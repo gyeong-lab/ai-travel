@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
             interests: "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링",
             companions: "연인과 둘이서",
             transportation: "렌터카 (전기차)",
-            accommodation: "서귀포 바다 전망 감성 숙소",
+            accommodation: "동선에 맞춘 오션뷰 감성 숙소",
             mode: "B",
             travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
         },
@@ -462,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
         interestsInput.value = "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링";
         companionsInput.value = "연인과 둘이서";
         transportationInput.value = "렌터카 (전기차)";
-        accommodationInput.value = "서귀포 바다 전망 감성 숙소";
+        accommodationInput.value = "동선에 맞춘 오션뷰 감성 숙소";
         if (dietaryInput) dietaryInput.value = "";
         allergyChips.forEach(c => c.classList.remove("active"));
         setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
