@@ -1748,36 +1748,180 @@ button {
     font-weight: 800;
 }
 
-.markdown-article h1 { font-size: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
-.markdown-article h2 { font-size: 18px; color: var(--agoda-blue); }
-.markdown-article h3 { font-size: 16px; background-color: #f8fafc; padding: 6px 12px; border-left: 4px solid var(--agoda-blue); border-radius: 4px; }
+.markdown-article h1 { font-size: 21px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+.markdown-article h2 { font-size: 19px; color: var(--agoda-blue); }
+
+/* 일반 대분류 H3 */
+.markdown-article h3 {
+    font-size: 17px;
+    background-color: #f8fafc;
+    padding: 10px 16px;
+    border-left: 5px solid var(--agoda-blue);
+    border-radius: 8px;
+    margin-top: 28px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+/* 🌟 일자별 메인 헤더 카드 (Day 1, Day 2, Day 3...) */
+.markdown-article .day-card-header,
+.markdown-article h3.day-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 900;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-top: 36px;
+    margin-bottom: 14px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.day-header-1 {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border-left: 6px solid #2563eb !important;
+    color: #1e3a8a !important;
+}
+
+.day-header-2 {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+    border-left: 6px solid #059669 !important;
+    color: #064e3b !important;
+}
+
+.day-header-3 {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important;
+    border-left: 6px solid #7c3aed !important;
+    color: #4c1d95 !important;
+}
+
+.day-header-4 {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important;
+    border-left: 6px solid #ea580c !important;
+    color: #7c2d12 !important;
+}
+
+/* 일차별 동선 요약 인용구 블록 */
+.markdown-article blockquote {
+    border-left: 4px solid var(--agoda-blue);
+    background-color: #f8fafc;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin: 12px 0 18px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #4f46e5;
+}
+
+.markdown-article blockquote strong {
+    color: #0f172a;
+}
+
+/* 🕒 시간대별 (오전/점심/오후/저녁/숙소) 헤더 카드 */
+.markdown-article h4 {
+    font-size: 15px;
+    font-weight: 800;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.markdown-article h4.time-morning {
+    background: #fefce8;
+    border-left: 4px solid #eab308;
+    color: #854d0e;
+}
+
+.markdown-article h4.time-lunch {
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    color: #9a3412;
+}
+
+.markdown-article h4.time-afternoon {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+}
+
+.markdown-article h4.time-dinner {
+    background: #faf5ff;
+    border-left: 4px solid #a855f7;
+    color: #6b21a8;
+}
+
+.markdown-article h4.time-hotel {
+    background: #f0fdf4;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+}
 
 .markdown-article p {
     margin-bottom: 12px;
 }
 
+/* 타임라인 스타일 리스트 */
 .markdown-article ul,
 .markdown-article ol {
-    margin-left: 20px;
-    margin-bottom: 16px;
+    margin-left: 4px;
+    padding-left: 16px;
+    border-left: 2px dashed #cbd5e1;
+    margin-bottom: 18px;
 }
 
 .markdown-article li {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    list-style: none;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-left: 4px;
+}
+
+.markdown-article li::before {
+    content: "•";
+    color: #6366f1;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+    width: 14px;
+    margin-left: -14px;
+}
+
+.markdown-article li strong {
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.markdown-article hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+    margin: 36px 0;
 }
 
 .markdown-article table {
     width: 100%;
     border-collapse: collapse;
-    margin: 16px 0;
+    margin: 18px 0;
     font-size: 14px;
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .markdown-article th,
 .markdown-article td {
-    padding: 10px 14px;
+    padding: 11px 15px;
     border: 1px solid #e5e7eb;
     text-align: left;
 }
@@ -1790,16 +1934,6 @@ button {
 
 .markdown-article tr:nth-child(even) {
     background-color: #f9fafb;
-}
-
-.markdown-article blockquote {
-    border-left: 4px solid var(--agoda-blue);
-    background-color: var(--agoda-blue-light);
-    padding: 10px 14px;
-    border-radius: 4px;
-    margin: 14px 0;
-    font-size: 14px;
-    color: #1e3a8a;
 }
 
 /* ==========================================================

@@ -1295,18 +1295,20 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        const daySections = markdown.split(/(?=####\s*■\s*\d+일차|####\s*■\s*Day\s*\d+|###\s*■\s*\d+일차)/gi);
+        // 일자별 구분 정규식 (### 🌟 [Day 1], #### ■ 1일차, ### Day 1 등 모두 유연하게 지원)
+        const daySections = markdown.split(/(?=###\s*🌟?\s*\[?Day\s*\d+|####\s*■\s*\d+일차|####\s*■\s*Day\s*\d+|###\s*■?\s*\d+일차)/gi);
         let dayIndex = 1;
 
         daySections.forEach((sec) => {
-            const dayMatch = sec.match(/(?:■\s*)?(\d+)일차|(?:Day\s*)(\d+)/i);
+            const dayMatch = sec.match(/(?:Day\s*|■\s*)(\d+)|(\d+)일차/i);
             const currentDay = dayMatch ? parseInt(dayMatch[1] || dayMatch[2], 10) : dayIndex;
 
             const lines = sec.split('\n');
             let orderInDay = 1;
 
             lines.forEach((line) => {
-                const timeMatch = line.match(/[-*]\s*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소)[^:]*:\s*([^\r\n]+)/);
+                // 시간대별 불릿 또는 h4 하위 불릿 매칭
+                const timeMatch = line.match(/(?:[-*]\s*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소|방문 장소|추천 미식|핵심 관광)[^:]*:\s*|####\s*[\d\.\s]*(?:[🌅🍴🎯🌙🏨]|오전|점심|오후|저녁|숙소)[^)]*\)\s*)([^\r\n]+)/i);
                 if (timeMatch) {
                     const rawContent = timeMatch[1].trim();
                     const cleanCandidate = rawContent.replace(/[\*\(\)\[\]]/g, " ").trim();
@@ -1650,6 +1652,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 일자별(Day 1, 2, 3) 및 시간대별(오전/점심/오후/저녁/숙소) 일정 카드 시각적 가독성 강화
+     */
+     function enhanceDailyPlanLayout(container) {
+         if (!container) return;
+
+         // 1) H3 태그 중 Day 1, Day 2, Day 3... 또는 1일차, 2일차 감지하여 카드 헤더 스타일 적용
+         container.querySelectorAll("h3").forEach((h3) => {
+             const txt = h3.textContent || "";
+             const m = txt.match(/Day\s*(\d+)|(\d+)일차/i);
+             if (m) {
+                 const dayNum = parseInt(m[1] || m[2], 10);
+                 const colorIndex = Math.min(4, Math.max(1, dayNum));
+                 h3.classList.add("day-card-header", `day-header-${colorIndex}`);
+             }
+         });
+
+         // 2) H4 태그 중 시간대(오전, 점심, 오후, 저녁, 숙소) 감지하여 시간 블록 스타일 적용
+         container.querySelectorAll("h4").forEach((h4) => {
+             const txt = h4.textContent || "";
+             if (txt.includes("오전") || txt.includes("🌅")) {
+                 h4.classList.add("time-morning");
+             } else if (txt.includes("점심") || txt.includes("🍴")) {
+                 h4.classList.add("time-lunch");
+             } else if (txt.includes("오후") || txt.includes("🎯")) {
+                 h4.classList.add("time-afternoon");
+             } else if (txt.includes("저녁") || txt.includes("야경") || txt.includes("🌙")) {
+                 h4.classList.add("time-dinner");
+             } else if (txt.includes("숙소") || txt.includes("휴식") || txt.includes("🏨")) {
+                 h4.classList.add("time-hotel");
+             }
+         });
+     }
+
+    /**
      * 특정 플랜을 활성화하여 상세 보기 렌더링
      */
     function setActivePlan(id) {
@@ -1671,6 +1707,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (window.marked && planOutput) {
             planOutput.innerHTML = window.marked.parse(plan.markdown);
+            enhanceDailyPlanLayout(planOutput);
         } else if (planOutput) {
             planOutput.textContent = plan.markdown;
         }
