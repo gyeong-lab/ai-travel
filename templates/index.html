@@ -254,10 +254,88 @@
                         <input type="text" id="destination" name="destination" value="제주도 서귀포 & 애월" placeholder="예: 제주도, 오사카, 파리, 방콕" required>
                     </div>
 
-                    <!-- 여행 기간 -->
-                    <div class="form-group">
-                        <label for="duration">⏱️ 여행 기간 <span class="req-star">*</span></label>
-                        <input type="text" id="duration" name="duration" value="2박 3일" placeholder="예: 2박 3일, 4박 5일" required>
+                    <!-- 여행 날짜 및 기간 설정 (날씨·옷차림·축제 연동) -->
+                    <div class="form-group date-duration-group">
+                        <div class="date-label-row">
+                            <label class="label-heading">
+                                📅 여행 날짜 &amp; 기간 <span class="req-star">*</span>
+                            </label>
+                            <span class="badge-accent-tag">🌤️ 날씨·옷차림·축제 분석</span>
+                        </div>
+                        
+                        <!-- 출발일(입국) & 귀국일(출국) 날짜 선택 2열 -->
+                        <div class="date-picker-row">
+                            <div class="date-picker-col">
+                                <label for="startDate" class="date-sub-label">🛫 출발(입국)일</label>
+                                <input type="date" id="startDate" name="start_date" class="input-date" required>
+                            </div>
+                            <span class="date-sep-arrow">➔</span>
+                            <div class="date-picker-col">
+                                <label for="endDate" class="date-sub-label">🛬 귀국(출국)일</label>
+                                <input type="date" id="endDate" name="end_date" class="input-date" required>
+                            </div>
+                        </div>
+
+                        <!-- 계산된 기간 및 표시 바 -->
+                        <div class="duration-display-bar">
+                            <span class="calc-icon">⏱️</span>
+                            <span class="calc-label">선택 기간:</span>
+                            <strong id="durationDisplay" class="calc-val">2박 3일</strong>
+                            <span class="season-badge" id="seasonDisplay">가을 여행</span>
+                            <input type="hidden" id="duration" name="duration" value="2박 3일" required>
+                        </div>
+                        
+                        <!-- 빠른 일정 프리셋 칩 -->
+                        <div class="quick-duration-chips" id="quickDurationChips">
+                            <span class="quick-chips-lbl">빠른 설정:</span>
+                            <button type="button" class="btn-duration-chip" data-days="1">당일</button>
+                            <button type="button" class="btn-duration-chip" data-days="2">1박 2일</button>
+                            <button type="button" class="btn-duration-chip active" data-days="3">2박 3일</button>
+                            <button type="button" class="btn-duration-chip" data-days="4">3박 4일</button>
+                            <button type="button" class="btn-duration-chip" data-days="5">4박 5일</button>
+                            <button type="button" class="btn-duration-chip" data-days="7">6박 7일</button>
+                        </div>
+                    </div>
+
+                    <!-- 첫날(입국) & 마지막날(귀국) 교통 거점 선택 -->
+                    <div class="form-group transport-hub-group">
+                        <div class="hub-label-row">
+                            <label class="label-heading">
+                                🛫 입국 &amp; 귀국 교통 거점 <span class="req-star">*</span>
+                            </label>
+                            <span class="hub-sub-desc">첫날/마지막날 동선 거점</span>
+                        </div>
+                        
+                        <div class="hub-selectors-grid">
+                            <div class="hub-select-card">
+                                <span class="hub-card-tag entry-tag">🚩 첫날 (입국/도착)</span>
+                                <select id="entryTransport" name="entry_transport" class="select-hub">
+                                    <option value="✈️ 공항 (항공편 도착)" selected>✈️ 공항 (비행기 도착)</option>
+                                    <option value="🚢 항구 / 여객터미널 (선박 도착)">🚢 항구 / 여객터미널 (배/페리 도착)</option>
+                                    <option value="🚄 KTX / 기차역 (열차 도착)">🚄 KTX / 기차역 도착</option>
+                                    <option value="🚌 고속버스터미널 / 자차 도착">🚌 고속버스터미널 / 자차 도착</option>
+                                </select>
+                            </div>
+                            <div class="hub-select-card">
+                                <span class="hub-card-tag exit-tag">🏁 마지막날 (귀국/출발)</span>
+                                <select id="exitTransport" name="exit_transport" class="select-hub">
+                                    <option value="✈️ 공항 (항공편 출발)" selected>✈️ 공항 (비행기 귀국)</option>
+                                    <option value="🚢 항구 / 여객터미널 (선박 출발)">🚢 항구 / 여객터미널 (배/페리 귀국)</option>
+                                    <option value="🚄 KTX / 기차역 (열차 출발)">🚄 KTX / 기차역 귀국</option>
+                                    <option value="🚌 고속버스터미널 / 자차 귀국">🚌 고속버스터미널 / 자차 귀국</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 1-클릭 왕복 세팅 칩 -->
+                        <div class="hub-quick-chips">
+                            <button type="button" class="btn-hub-chip active" id="btnHubRoundFlight" data-entry="✈️ 공항 (항공편 도착)" data-exit="✈️ 공항 (항공편 출발)">
+                                ✈️ 왕복 비행기 (공항 ↔ 공항)
+                            </button>
+                            <button type="button" class="btn-hub-chip" id="btnHubRoundShip" data-entry="🚢 항구 / 여객터미널 (선박 도착)" data-exit="🚢 항구 / 여객터미널 (선박 출발)">
+                                🚢 왕복 선박 (항구 ↔ 항구)
+                            </button>
+                        </div>
                     </div>
 
                     <!-- 예상 예산 (2인 기준 표기 및 인원수 변경 컨트롤) -->

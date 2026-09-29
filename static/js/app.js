@@ -26,6 +26,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const allergyChips = document.querySelectorAll(".btn-allergy-chip");
     const styleChips = document.querySelectorAll(".style-chip");
 
+    // 여행 날짜 및 교통 거점 선택 요소
+    const startDateInput = document.getElementById("startDate");
+    const endDateInput = document.getElementById("endDate");
+    const durationDisplay = document.getElementById("durationDisplay");
+    const seasonDisplay = document.getElementById("seasonDisplay");
+    const quickDurationChips = document.querySelectorAll(".btn-duration-chip");
+    const entryTransportSelect = document.getElementById("entryTransport");
+    const exitTransportSelect = document.getElementById("exitTransport");
+    const btnHubRoundFlight = document.getElementById("btnHubRoundFlight");
+    const btnHubRoundShip = document.getElementById("btnHubRoundShip");
+    const hubQuickChips = document.querySelectorAll(".btn-hub-chip");
+
     // 상단 네비게이션 & 검색창
     const headerResetBtn = document.getElementById("headerResetBtn");
     const topSearchInput = document.getElementById("topSearchInput");
@@ -467,6 +479,15 @@ document.addEventListener("DOMContentLoaded", () => {
         allergyChips.forEach(c => c.classList.remove("active"));
         setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
 
+        if (typeof initDatePickers === "function") {
+            initDatePickers();
+        }
+        if (entryTransportSelect) entryTransportSelect.value = "✈️ 공항 (항공편 도착)";
+        if (exitTransportSelect) exitTransportSelect.value = "✈️ 공항 (항공편 출발)";
+        if (typeof updateHubChipsActiveState === "function") {
+            updateHubChipsActiveState();
+        }
+
         topSearchInput.value = "제주도";
         priceRange.value = 1200000;
         priceMax.textContent = "₩ 1,200,000";
@@ -698,6 +719,200 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 6-1. 여행 날짜(달력) & 기간 계산 & 교통 거점 컨트롤러
+     */
+    function formatYMD(date) {
+        if (!date || isNaN(date.getTime())) return "";
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
+    function parseYMD(str) {
+        if (!str || typeof str !== "string") return null;
+        const parts = str.split("-");
+        if (parts.length !== 3) return null;
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10) - 1;
+        const d = parseInt(parts[2], 10);
+        const dt = new Date(y, m, d);
+        return isNaN(dt.getTime()) ? null : dt;
+    }
+
+    function calculateSeason(month) {
+        if (month >= 3 && month <= 5) return "🌸 봄 여행";
+        if (month >= 6 && month <= 8) return "☀️ 여름 여행";
+        if (month >= 9 && month <= 11) return "🍁 가을 여행";
+        return "❄️ 겨울 여행";
+    }
+
+    function updateDurationFromDates(syncDurationField = true) {
+        if (!startDateInput || !endDateInput) return;
+        const sVal = startDateInput.value;
+        const eVal = endDateInput.value;
+        if (!sVal || !eVal) return;
+
+        let s = parseYMD(sVal);
+        let e = parseYMD(eVal);
+        if (!s || !e) return;
+
+        if (e < s) {
+            e = new Date(s);
+            endDateInput.value = formatYMD(e);
+        }
+
+        const diffTime = e.getTime() - s.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+        let durationText = "";
+        if (diffDays <= 1) {
+            durationText = "당일치기";
+        } else {
+            durationText = `${diffDays - 1}박 ${diffDays}일`;
+        }
+
+        if (durationDisplay) {
+            durationDisplay.textContent = durationText;
+        }
+        if (durationInput && syncDurationField) {
+            durationInput.value = durationText;
+        }
+
+        const seasonText = calculateSeason(s.getMonth() + 1);
+        if (seasonDisplay) {
+            seasonDisplay.textContent = seasonText;
+        }
+
+        quickDurationChips.forEach(chip => {
+            const chipDays = parseInt(chip.dataset.days, 10);
+            if (chipDays === diffDays) {
+                chip.classList.add("active");
+            } else {
+                chip.classList.remove("active");
+            }
+        });
+    }
+
+    function setDurationFromDays(days) {
+        days = parseInt(days, 10) || 1;
+        let s = parseYMD(startDateInput ? startDateInput.value : "");
+        if (!s) {
+            s = new Date();
+            s.setDate(s.getDate() + 7);
+            if (startDateInput) startDateInput.value = formatYMD(s);
+        }
+        const e = new Date(s);
+        e.setDate(s.getDate() + (days - 1));
+        if (endDateInput) {
+            endDateInput.value = formatYMD(e);
+        }
+        updateDurationFromDates();
+    }
+
+    function setDatesFromDurationText(durationText) {
+        if (!durationText || typeof durationText !== "string") return;
+        const matchDays = durationText.match(/(\d+)\s*일/);
+        const matchNights = durationText.match(/(\d+)\s*박/);
+        if (matchDays) {
+            setDurationFromDays(parseInt(matchDays[1], 10));
+        } else if (matchNights) {
+            setDurationFromDays(parseInt(matchNights[1], 10) + 1);
+        } else if (durationText.includes("당일")) {
+            setDurationFromDays(1);
+        }
+    }
+
+    function initDatePickers() {
+        if (!startDateInput || !endDateInput) return;
+        const today = new Date();
+        const start = new Date(today);
+        start.setDate(today.getDate() + 7);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 2);
+
+        const todayStr = formatYMD(today);
+        startDateInput.min = todayStr;
+        endDateInput.min = todayStr;
+
+        if (!startDateInput.value) startDateInput.value = formatYMD(start);
+        if (!endDateInput.value) endDateInput.value = formatYMD(end);
+
+        updateDurationFromDates();
+    }
+
+    if (startDateInput) {
+        startDateInput.addEventListener("change", () => {
+            if (endDateInput && startDateInput.value) {
+                endDateInput.min = startDateInput.value;
+                if (endDateInput.value && endDateInput.value < startDateInput.value) {
+                    endDateInput.value = startDateInput.value;
+                }
+            }
+            updateDurationFromDates();
+        });
+    }
+
+    if (endDateInput) {
+        endDateInput.addEventListener("change", () => {
+            if (startDateInput && endDateInput.value && startDateInput.value) {
+                if (endDateInput.value < startDateInput.value) {
+                    startDateInput.value = endDateInput.value;
+                }
+            }
+            updateDurationFromDates();
+        });
+    }
+
+    quickDurationChips.forEach(chip => {
+        chip.addEventListener("click", () => {
+            const days = parseInt(chip.dataset.days, 10);
+            if (!isNaN(days)) {
+                setDurationFromDays(days);
+            }
+        });
+    });
+
+    function updateHubChipsActiveState() {
+        if (!entryTransportSelect || !exitTransportSelect) return;
+        const entryVal = entryTransportSelect.value || "";
+        const exitVal = exitTransportSelect.value || "";
+
+        const isFlight = entryVal.includes("공항") && exitVal.includes("공항");
+        const isShip = entryVal.includes("항구") && exitVal.includes("항구");
+
+        if (btnHubRoundFlight) {
+            btnHubRoundFlight.classList.toggle("active", isFlight);
+        }
+        if (btnHubRoundShip) {
+            btnHubRoundShip.classList.toggle("active", isShip);
+        }
+    }
+
+    if (btnHubRoundFlight) {
+        btnHubRoundFlight.addEventListener("click", () => {
+            if (entryTransportSelect) entryTransportSelect.value = "✈️ 공항 (항공편 도착)";
+            if (exitTransportSelect) exitTransportSelect.value = "✈️ 공항 (항공편 출발)";
+            updateHubChipsActiveState();
+        });
+    }
+
+    if (btnHubRoundShip) {
+        btnHubRoundShip.addEventListener("click", () => {
+            if (entryTransportSelect) entryTransportSelect.value = "🚢 항구 / 여객터미널 (선박 도착)";
+            if (exitTransportSelect) exitTransportSelect.value = "🚢 항구 / 여객터미널 (선박 출발)";
+            updateHubChipsActiveState();
+        });
+    }
+
+    if (entryTransportSelect) {
+        entryTransportSelect.addEventListener("change", updateHubChipsActiveState);
+    }
+    if (exitTransportSelect) {
+        exitTransportSelect.addEventListener("change", updateHubChipsActiveState);
+    }
+
+    /**
      * 7. 빠른 도시 프리셋 버튼
      */
     presetButtons.forEach((btn) => {
@@ -710,6 +925,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data) {
                 destinationInput.value = data.destination;
                 durationInput.value = data.duration;
+                setDatesFromDurationText(data.duration);
                 budgetInput.value = data.budget;
                 syncSliderFromText(data.budget);
                 const matchPresetPeople = (data.budget || "").match(/(\d+)\s*인/);
@@ -756,7 +972,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const theme = card.dataset.theme;
 
             if (dest) destinationInput.value = dest;
-            if (dur) durationInput.value = dur;
+            if (dur) {
+                durationInput.value = dur;
+                setDatesFromDurationText(dur);
+            }
             if (budget) {
                 budgetInput.value = budget;
                 syncSliderFromText(budget);
@@ -869,7 +1088,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         const item = wishlist[idx];
                         if (item) {
                             if (item.dest) destinationInput.value = item.dest;
-                            if (item.dur) durationInput.value = item.dur;
+                            if (item.dur) {
+                                durationInput.value = item.dur;
+                                setDatesFromDurationText(item.dur);
+                            }
                             if (item.transport) transportationInput.value = item.transport;
                             if (item.theme) interestsInput.value = item.theme;
 
@@ -1113,6 +1335,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const destination = destinationInput.value.trim();
         const duration = durationInput.value.trim();
+        const startDate = startDateInput ? startDateInput.value.trim() : "";
+        const endDate = endDateInput ? endDateInput.value.trim() : "";
+        const entryTransport = entryTransportSelect ? entryTransportSelect.value.trim() : "";
+        const exitTransport = exitTransportSelect ? exitTransportSelect.value.trim() : "";
         const budget = budgetInput.value.trim();
         const interests = interestsInput.value.trim();
         const companions = companionsInput.value.trim();
@@ -1134,6 +1360,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const payload = {
             destination,
             duration,
+            start_date: startDate,
+            end_date: endDate,
+            entry_transport: entryTransport,
+            exit_transport: exitTransport,
             budget,
             interests,
             companions,
@@ -2574,6 +2804,10 @@ document.addEventListener("DOMContentLoaded", () => {
             accommodation: payload?.accommodation || "",
             mode: payload?.mode || "A",
             dietary_info: payload?.dietary_info || "",
+            startDate: payload?.start_date || "",
+            endDate: payload?.end_date || "",
+            entryTransport: payload?.entry_transport || "",
+            exitTransport: payload?.exit_transport || "",
             markdown: data.plan,
             model: data.model ? (data.model.includes("3.5") ? "Gemini 3.5 Flash" : (data.model.startsWith("gemini") ? data.model.replace("gemini-", "Gemini ") : data.model)) : "Gemini 3.5 Flash",
             elapsed: data.elapsed_seconds || "5.2",
@@ -2990,5 +3224,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 600);
     }
 
+    initDatePickers();
     initPwaInstall();
 });
