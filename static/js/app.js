@@ -131,6 +131,58 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: "B",
             travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
         },
+        busan: {
+            keyword: "부산",
+            shortName: "부산",
+            destination: "부산 해운대 & 광안리 & 영도",
+            duration: "2박 3일",
+            budget: "2인 총 95만원",
+            interests: "해운대 블루라인파크 해변열차, 광안대교 오션뷰 카페, 영도 흰여울문화마을, 자갈치 꼼장어 & 밀면 투어",
+            companions: "친구 또는 연인",
+            transportation: "KTX (부산역) & 지하철/택시",
+            accommodation: "광안리 해변 1열 정면 오션뷰 호텔",
+            mode: "A",
+            travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
+        },
+        gangneung: {
+            keyword: "강릉",
+            shortName: "강릉/속초",
+            destination: "강원도 강릉 & 속초",
+            duration: "2박 3일",
+            budget: "2인 총 85만원",
+            interests: "안목해변 커피거리, 초당순두부 짬뽕, 속초 중앙시장 만석닭강정, 설악산 권금성 케이블카, 아르떼뮤지엄",
+            companions: "가족 또는 연인",
+            transportation: "KTX 강릉선 & 렌터카",
+            accommodation: "경포대/강문해변 인피니티풀 오션뷰 호텔",
+            mode: "B",
+            travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
+        },
+        gyeongju: {
+            keyword: "경주",
+            shortName: "경주",
+            destination: "경주 황리단길 & 보문단지",
+            duration: "1박 2일",
+            budget: "2인 총 60만원",
+            interests: "황리단길 감성 한옥 카페 & 십원빵, 대릉원 포토존, 동궁과 월지 야경, 첨성대, 불국사 산책",
+            companions: "연인과 둘이서",
+            transportation: "KTX 신경주역 & 시내버스/택시",
+            accommodation: "황리단길 중심 전통 프라이빗 한옥 스테이",
+            mode: "B",
+            travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
+        },
+        yeosu: {
+            keyword: "여수",
+            shortName: "여수",
+            destination: "여수 돌산도 & 오동도",
+            duration: "2박 3일",
+            budget: "2인 총 88만원",
+            interests: "여수 해상케이블카, 오동도 동백열차, 낭만포차 거리 돌문어해물삼합, 하멜등대 야경, 예술의섬 장도",
+            companions: "연인 또는 친구",
+            transportation: "KTX 여수엑스포역 & 렌터카",
+            accommodation: "돌산대교 야경 뷰 오션 테라스 리조트",
+            mode: "A",
+            travel_style: "🍽️ 웨이팅 필수 현지 찐맛집 & 미식 탐방"
+        },
         osaka: {
             keyword: "오사카",
             shortName: "오사카",
@@ -169,6 +221,19 @@ document.addEventListener("DOMContentLoaded", () => {
             accommodation: "유후인 전통 온천 료칸 (가이세키 석식)",
             mode: "B",
             travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
+        },
+        sapporo: {
+            keyword: "삿포로",
+            shortName: "삿포로",
+            destination: "일본 삿포로 & 오타루 & 비에이",
+            duration: "4박 5일",
+            budget: "1인당 145만원",
+            interests: "비에이 청의 호수 & 흰그림자 투어, 오타루 운하 오르골당, 삿포로 맥주박물관 & 징기스칸 양고기, 스스키노 미소라멘",
+            companions: "친구 또는 연인",
+            transportation: "JR 홋카이도 레일패스 & 비에이 일일 투어버스",
+            accommodation: "스스키노역 천연온천 대욕장 호텔",
+            mode: "A",
+            travel_style: "🍽️ 웨이팅 필수 현지 찐맛집 & 미식 탐방"
         },
         bangkok: {
             keyword: "방콕",
@@ -209,6 +274,45 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: "A",
             travel_style: "🍽️ 웨이팅 필수 현지 찐맛집 & 미식 탐방"
         },
+        singapore: {
+            keyword: "싱가포르",
+            shortName: "싱가포르",
+            destination: "싱가포르 마리나베이 & 센토사",
+            duration: "3박 5일",
+            budget: "1인당 155만원",
+            interests: "마리나베이샌즈 스카이파크 & 분수쇼, 가든스바이더베이 슈퍼트리쇼, 유니버설스튜디오 싱가포르, 점보씨푸드 칠리크랩",
+            companions: "가족 또는 친구",
+            transportation: "싱가포르 지하철 (MRT) 및 그랩",
+            accommodation: "마리나베이 도보권 모던 4~5성급 호텔",
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
+        },
+        bali: {
+            keyword: "발리",
+            shortName: "발리",
+            destination: "인도네시아 발리 (우붓 & 짱구)",
+            duration: "5박 7일",
+            budget: "1인당 175만원",
+            interests: "우붓 뜨갈랄랑 계단식 논 & 발리스윙, 짱구 비치클럽 선셋 파티, 울루와투 절벽사원 케착댄스, 플로팅 조식",
+            companions: "연인과 함께",
+            transportation: "전용 기사 차량 렌트 & 그랩",
+            accommodation: "우붓 정글 프라이빗 풀빌라",
+            mode: "B",
+            travel_style: "🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행"
+        },
+        guam: {
+            keyword: "괌",
+            shortName: "괌",
+            destination: "미국 괌 투몬 비치",
+            duration: "3박 5일",
+            budget: "1인당 135만원",
+            interests: "투몬비치 에메랄드 스노클링, 돌핀 워칭 크루즈, 사랑의 절벽 선셋, 괌 T갤러리아 면세 쇼핑, 남부 렌터카 드라이브",
+            companions: "가족 (아이 동반) 또는 연인",
+            transportation: "오픈카 렌터카 & 트롤리 버스",
+            accommodation: "투몬비치 전용 프라이빗 비치 보유 오션프론트 리조트",
+            mode: "B",
+            travel_style: "👨‍👩‍👧‍👦 부모님/아이 배려 편안한 이동 & 무리 없는 동선"
+        },
         paris: {
             keyword: "파리",
             shortName: "파리",
@@ -222,16 +326,29 @@ document.addEventListener("DOMContentLoaded", () => {
             mode: "B",
             travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
         },
-        newyork: {
-            keyword: "뉴욕",
-            shortName: "뉴욕",
-            destination: "미국 뉴욕 맨해튼",
-            duration: "6박 8일",
-            budget: "1인당 400만원",
-            interests: "타임스퀘어 브로드웨이 뮤지컬, 센트럴파크, 탑오브더락 전망대, 소호 쇼핑",
-            companions: "연인과 함께",
-            transportation: "뉴욕 지하철 (MTA)",
-            accommodation: "맨해튼 미드타운 4성급 호텔",
+        london: {
+            keyword: "런던",
+            shortName: "런던",
+            destination: "영국 런던 템스강 & 소호",
+            duration: "5박 7일",
+            budget: "1인당 320만원",
+            interests: "빅벤 & 런던아이 야경, 대영박물관 & 내셔널갤러리, 웨스트엔드 뮤지컬, 버로우 마켓 미식 투어, 타워브리지",
+            companions: "친구 또는 나홀로 여행",
+            transportation: "런던 언더그라운드 (지하철)",
+            accommodation: "소호/코벤트가든 중심 부티크 호텔",
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
+        },
+        rome: {
+            keyword: "로마",
+            shortName: "로마",
+            destination: "이탈리아 로마 & 바티칸",
+            duration: "4박 6일",
+            budget: "1인당 260만원",
+            interests: "콜로세움 & 포로 로마노, 바티칸 미술관 패스트트랙 투어, 트레비 분수 & 스페인광장 젤라또, 판테온 신전",
+            companions: "친구와 둘이서",
+            transportation: "로마 메트로 & 도보",
+            accommodation: "테르미니역 도보 5분 4성급 호텔",
             mode: "A",
             travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
         },
@@ -247,6 +364,19 @@ document.addEventListener("DOMContentLoaded", () => {
             accommodation: "람블라스 거리 근처 감성 호텔",
             mode: "B",
             travel_style: "📸 감성 인생샷 & 인스타 핫플 카페 투어"
+        },
+        newyork: {
+            keyword: "뉴욕",
+            shortName: "뉴욕",
+            destination: "미국 뉴욕 맨해튼",
+            duration: "6박 8일",
+            budget: "1인당 400만원",
+            interests: "타임스퀘어 브로드웨이 뮤지컬, 센트럴파크, 탑오브더락 전망대, 소호 쇼핑",
+            companions: "연인과 함께",
+            transportation: "뉴욕 지하철 (MTA)",
+            accommodation: "맨해튼 미드타운 4성급 호텔",
+            mode: "A",
+            travel_style: "⚡ 알찬 핵심 투어 / 주요 랜드마크 정복"
         }
     };
 
