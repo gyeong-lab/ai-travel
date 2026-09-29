@@ -42,8 +42,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Gemini 생성 API(/generate) 및 비-GET 요청은 네트워크 전용
-  if (event.request.method !== 'GET' || url.pathname.startsWith('/generate')) {
+  // Gemini 생성 API(/generate), 로그아웃 및 비-GET 요청은 네트워크 전용
+  if (event.request.method !== 'GET' || url.pathname.startsWith('/generate') || url.pathname.startsWith('/logout') || url.searchParams.has('action')) {
     event.respondWith(fetch(event.request));
     return;
   }

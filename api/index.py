@@ -29,14 +29,14 @@ class VercelWSGIWrapper:
                 del params["__vercel_path__"]
                 environ["QUERY_STRING"] = urlencode(params, doseq=True)
 
-        # 2. Vercel 원본 요청 헤더 확인 (x-matched-path, x-vercel-original-path 등)
+        # 2. Vercel 원본 요청 헤더 확인 (x-vercel-original-path, REQUEST_URI 등 실제 사용자 요청 경로 우선)
         header_path = (
-            environ.get("HTTP_X_MATCHED_PATH")
-            or environ.get("HTTP_X_VERCEL_ORIGINAL_PATH")
-            or environ.get("HTTP_X_FORWARDED_URI")
-            or environ.get("HTTP_X_ORIGINAL_URI")
+            environ.get("HTTP_X_VERCEL_ORIGINAL_PATH")
             or environ.get("REQUEST_URI")
             or environ.get("RAW_URI")
+            or environ.get("HTTP_X_FORWARDED_URI")
+            or environ.get("HTTP_X_ORIGINAL_URI")
+            or environ.get("HTTP_X_MATCHED_PATH")
         )
 
         target_path = extracted_path or header_path or environ.get("PATH_INFO", "")

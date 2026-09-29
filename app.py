@@ -349,7 +349,11 @@ def build_prompt(data: dict) -> str:
 @app.route("/api/index", methods=["GET", "POST"])
 @app.route("/api/index.py", methods=["GET", "POST"])
 def index():
-    """메인 페이지를 렌더링하거나, 비밀번호 검증/일정 생성을 처리합니다."""
+    """메인 페이지를 렌더링하거나, 로그아웃/비밀번호 검증/일정 생성을 처리합니다."""
+    # 0. 로그아웃 요청 처리 (?action=logout 또는 ?logout=true)
+    if request.args.get("action") == "logout" or request.args.get("logout") == "true":
+        return logout()
+
     if request.method == "POST":
         data = request.get_json(silent=True) or {}
         # 비밀번호 검증 요청인 경우 즉시 verify_password로 분기
@@ -400,10 +404,14 @@ def verify_password():
 
 @app.route("/logout")
 def logout():
-    """세션을 해제하고 로그인 화면으로 리다이렉트합니다."""
+    """세션을 완전히 삭제하고 로그인 화면으로 리다이렉트합니다."""
+    session.clear()
     session.pop("authenticated", None)
-    logger.info("[로그아웃] 세션 해제 완료")
-    return redirect("/")
+    logger.info("[로그아웃] 세션 및 쿠키 초기화")
+    response = redirect("/")
+    response.delete_cookie(app.config.get("SESSION_COOKIE_NAME", "session"))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
 
 @app.route("/debug-env")
 def debug_env():

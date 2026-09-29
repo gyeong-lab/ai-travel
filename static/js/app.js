@@ -500,6 +500,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (headerResetBtn) headerResetBtn.addEventListener("click", resetAll);
     if (resetFiltersBtn) resetFiltersBtn.addEventListener("click", resetAll);
 
+    const headerLockBtn = document.getElementById("headerLockBtn");
+    if (headerLockBtn) {
+        headerLockBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            if ('caches' in window) {
+                caches.keys().then((names) => {
+                    names.forEach((name) => caches.delete(name));
+                });
+            }
+            window.location.replace("/?action=logout&t=" + Date.now());
+        });
+    }
+
     /**
      * 6. 예산 슬라이더와 AI 맞춤 조건 폼 양방향 실시간 연동
      */
