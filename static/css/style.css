@@ -1539,7 +1539,7 @@ button {
 
 .quick-preset-chips {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-top: 4px;
 }
@@ -5510,7 +5510,6 @@ html, body {
     -ms-overflow-style: none !important;
 }
 
-.quick-preset-chips::-webkit-scrollbar,
 .category-nav::-webkit-scrollbar,
 .plan-tabs-bar::-webkit-scrollbar,
 .map-places-scroll-track::-webkit-scrollbar,
@@ -5518,12 +5517,88 @@ html, body {
     display: none !important;
 }
 
-/* 20개 도시 프리셋 버튼 가로 스크롤 & 호버 인터랙션 */
-.quick-preset-chips {
-    gap: 8px !important;
-    padding: 6px 4px 12px 4px !important;
+/* 20개 도시 프리셋 버튼 가로 스크롤 & 화살표 컨트롤러 */
+.quick-preset-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
     width: 100% !important;
-    scroll-behavior: smooth;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin-bottom: 16px !important;
+    gap: 6px !important;
+}
+
+.quick-preset-chips {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding: 6px 4px 10px 4px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #cbd5e1 #f8fafc !important;
+}
+
+/* PC 마우스 사용자를 위한 깔끔한 가로 스크롤바 */
+.quick-preset-chips::-webkit-scrollbar {
+    height: 6px !important;
+    display: block !important;
+}
+
+.quick-preset-chips::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+    border-radius: 9999px !important;
+}
+
+.quick-preset-chips::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+    border-radius: 9999px !important;
+    transition: background-color 0.2s ease;
+}
+
+.quick-preset-chips::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8 !important;
+}
+
+/* 좌우 스크롤 내비게이션 화살표 버튼 */
+.preset-scroll-arrow {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 34px !important;
+    height: 34px !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
+    user-select: none !important;
+    z-index: 5 !important;
+}
+
+.preset-scroll-arrow:hover {
+    background: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2) !important;
+}
+
+.preset-scroll-arrow:active {
+    transform: scale(0.95) !important;
 }
 
 .preset-btn {

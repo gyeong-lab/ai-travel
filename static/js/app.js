@@ -1148,6 +1148,48 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /**
+     * 7-1. 빠른 도시 프리셋 가로 스크롤 컨트롤러 (좌우 화살표 버튼 & 마우스 휠 지원)
+     */
+    const quickPresetChipsContainer = document.getElementById("quickPresetChips");
+    const btnPresetScrollLeft = document.getElementById("btnPresetScrollLeft");
+    const btnPresetScrollRight = document.getElementById("btnPresetScrollRight");
+
+    if (quickPresetChipsContainer) {
+        // 좌측 이동 버튼
+        if (btnPresetScrollLeft) {
+            btnPresetScrollLeft.addEventListener("click", () => {
+                quickPresetChipsContainer.scrollBy({ left: -280, behavior: "smooth" });
+            });
+        }
+
+        // 우측 이동 버튼
+        if (btnPresetScrollRight) {
+            btnPresetScrollRight.addEventListener("click", () => {
+                quickPresetChipsContainer.scrollBy({ left: 280, behavior: "smooth" });
+            });
+        }
+
+        // 데스크톱 마우스 휠 스크롤 지원 (Shift 키 없이 휠만 굴려도 좌우 스크롤)
+        quickPresetChipsContainer.addEventListener("wheel", (e) => {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                quickPresetChipsContainer.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
+    }
+
+    // 상단 카테고리 캐러셀도 마우스 휠로 가로 스크롤 가능하도록 지원
+    const categoryCarouselContainer = document.querySelector(".category-carousel");
+    if (categoryCarouselContainer) {
+        categoryCarouselContainer.addEventListener("wheel", (e) => {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                categoryCarouselContainer.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
+    }
+
+    /**
      * 8. 상품 카드 클릭 시 폼에 상세 정보 자동 완성
      */
     productCards.forEach((card) => {

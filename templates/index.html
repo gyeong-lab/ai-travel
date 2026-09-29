@@ -482,8 +482,12 @@
                         </div>
                         <p class="section-subtitle">카드를 클릭하면 왼쪽 플래너에 여행지가 바로 채워지며, 하트(♡)를 눌러 보관할 수 있습니다.</p>
                     </div>
-                    <!-- 동작하는 빠른 도시 프리셋 버튼들 (국내 5곳 + 아시아 8곳 + 미주/유럽 7곳 = 총 20개 지역) -->
-                    <div class="quick-preset-chips">
+                </div>
+
+                <!-- 동작하는 빠른 도시 프리셋 버튼들 (국내 5곳 + 아시아 8곳 + 미주/유럽 7곳 = 총 20개 지역 좌우 스크롤 & 화살표 버튼) -->
+                <div class="quick-preset-wrapper">
+                    <button type="button" class="preset-scroll-arrow arrow-left" id="btnPresetScrollLeft" aria-label="이전 추천 여행지 보기">‹</button>
+                    <div class="quick-preset-chips" id="quickPresetChips">
                         <button type="button" class="preset-btn active" data-preset="jeju">🍊 제주도</button>
                         <button type="button" class="preset-btn" data-preset="busan">🌊 부산</button>
                         <button type="button" class="preset-btn" data-preset="gangneung">☕ 강릉/속초</button>
@@ -505,6 +509,7 @@
                         <button type="button" class="preset-btn" data-preset="barcelona">🇪🇸 바르셀로나</button>
                         <button type="button" class="preset-btn" data-preset="newyork">🗽 뉴욕</button>
                     </div>
+                    <button type="button" class="preset-scroll-arrow arrow-right" id="btnPresetScrollRight" aria-label="다음 추천 여행지 보기">›</button>
                 </div>
 
                 <!-- 4열 카드 그리드 -->
