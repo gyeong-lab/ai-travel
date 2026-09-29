@@ -599,6 +599,7 @@ def decode_shared_token():
         return jsonify({"success": True, "plan": plan}), 200
     return jsonify({"success": False, "error": "복원에 실패했습니다."}), 400
 
+
 @app.route("/share/<share_id>")
 def redirect_share(share_id):
     """/share/<share_id> 접속 시 메인 페이지 공유 링크로 리다이렉트합니다."""

@@ -19,7 +19,14 @@ class VercelWSGIWrapper:
 
     def __call__(self, environ, start_response):
         query_string = environ.get("QUERY_STRING", "")
+        if "test-env" in query_string or "test-env" in environ.get("PATH_INFO", ""):
+            import json
+            data = {k: str(v) for k, v in environ.items() if not k.startswith("wsgi.input")}
+            body = json.dumps(data, indent=2).encode("utf-8")
+            start_response("200 OK", [("Content-Type", "application/json"), ("Content-Length", str(len(body)))])
+            return [body]
         extracted_path = None
+
 
         # 1. vercel.json rewrite에서 전달된 __vercel_path__ 추출
         if "__vercel_path__=" in query_string:
