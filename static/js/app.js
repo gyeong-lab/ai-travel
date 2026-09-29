@@ -10,6 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const destinationInput = document.getElementById("destination");
     const durationInput = document.getElementById("duration");
     const budgetInput = document.getElementById("budget");
+    const budgetPersonBadge = document.getElementById("budgetPersonBadge");
+    const btnPeopleMinus = document.getElementById("btnPeopleMinus");
+    const btnPeoplePlus = document.getElementById("btnPeoplePlus");
+    const peopleCountDisplay = document.getElementById("peopleCountDisplay");
+    const peopleSelect = document.getElementById("peopleSelect");
+    const budgetPerPersonText = document.getElementById("budgetPerPersonText");
     const interestsInput = document.getElementById("interests");
     const companionsInput = document.getElementById("companions");
     const transportationInput = document.getElementById("transportation");
@@ -450,6 +456,7 @@ document.addEventListener("DOMContentLoaded", () => {
         destinationInput.value = "제주도 서귀포 & 애월";
         durationInput.value = "2박 3일";
         budgetInput.value = "2인 총 120만원";
+        updatePeopleCount(2, false);
         interestsInput.value = "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링";
         companionsInput.value = "연인과 둘이서";
         transportationInput.value = "렌터카 (전기차)";
@@ -501,6 +508,111 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${man}만 ${rest.toLocaleString("ko-KR")}원`;
     }
 
+    // 인원수 및 예산 연동 상태 (기본 2인 기준)
+    let currentPeopleCount = 2;
+
+    function parseTotalBudgetWon(text) {
+        if (!text) return 1200000;
+        const matchMan = text.match(/(\d+)\s*만/);
+        if (matchMan) {
+            return parseInt(matchMan[1], 10) * 10000;
+        }
+        const digits = text.replace(/[^0-9]/g, "");
+        if (digits) {
+            const num = parseInt(digits, 10);
+            return num > 10000 ? num : num * 10000;
+        }
+        return 1200000;
+    }
+
+    function updatePerPersonDisplay() {
+        if (!budgetPerPersonText || !budgetInput) return;
+        const totalWon = parseTotalBudgetWon(budgetInput.value);
+        const people = Math.max(1, currentPeopleCount || 1);
+        const perPersonWon = Math.round(totalWon / people);
+        const perPersonMan = (perPersonWon / 10000).toFixed(perPersonWon % 10000 === 0 ? 0 : 1);
+        const totalMan = Math.round(totalWon / 10000);
+        budgetPerPersonText.textContent = `1인당 약 ${perPersonMan}만원 기준 (총 ${totalMan}만원)`;
+    }
+
+    function updatePeopleCount(newCount, autoAdjustBudget = true) {
+        newCount = Math.max(1, Math.min(20, parseInt(newCount, 10) || 1));
+        const prevCount = Math.max(1, currentPeopleCount || 2);
+
+        let currentTotalWon = parseTotalBudgetWon(budgetInput ? budgetInput.value : "");
+        let perPersonWon = Math.round(currentTotalWon / prevCount);
+        if (perPersonWon < 50000) perPersonWon = 600000; // 지나치게 작으면 기본 60만원/인 기준
+
+        currentPeopleCount = newCount;
+
+        if (autoAdjustBudget && budgetInput) {
+            const newTotalWon = perPersonWon * newCount;
+            const newTotalMan = Math.round(newTotalWon / 10000);
+            budgetInput.value = `${newCount}인 총 ${newTotalMan}만원`;
+            syncSliderFromText(budgetInput.value);
+        }
+
+        // 뱃지 및 스텝퍼 표시 동기화
+        if (budgetPersonBadge) {
+            budgetPersonBadge.textContent = `(${newCount}인 기준)`;
+            budgetPersonBadge.classList.add("badge-updated");
+            setTimeout(() => budgetPersonBadge.classList.remove("badge-updated"), 350);
+        }
+        if (peopleCountDisplay) {
+            peopleCountDisplay.textContent = `${newCount}인`;
+        }
+        if (peopleSelect) {
+            const hasOption = Array.from(peopleSelect.options).some(opt => opt.value == newCount);
+            if (hasOption) {
+                peopleSelect.value = String(newCount);
+            }
+        }
+
+        updatePerPersonDisplay();
+
+        // 동행자(companions) 입력창 스마트 자동 추천 동기화
+        if (companionsInput) {
+            const cur = companionsInput.value.trim();
+            if (newCount === 1) {
+                companionsInput.value = "혼자서 (1인 자유여행)";
+            } else if (newCount === 2 && (cur.includes("1인") || cur.includes("혼자") || cur.includes("3인") || cur.includes("4인"))) {
+                companionsInput.value = "연인과 둘이서";
+            } else if (newCount === 3) {
+                companionsInput.value = "친구들과 3인";
+            } else if (newCount === 4) {
+                companionsInput.value = "가족과 4인";
+            } else if (newCount >= 5) {
+                companionsInput.value = `${newCount}인 소모임/단체`;
+            }
+        }
+
+        renderWishlistUI();
+        if (typeof checkBudgetOver === "function") {
+            checkBudgetOver();
+        }
+    }
+
+    // 인원수 증감 스텝퍼 이벤트
+    if (btnPeopleMinus) {
+        btnPeopleMinus.addEventListener("click", () => {
+            updatePeopleCount(currentPeopleCount - 1, true);
+        });
+    }
+
+    if (btnPeoplePlus) {
+        btnPeoplePlus.addEventListener("click", () => {
+            updatePeopleCount(currentPeopleCount + 1, true);
+        });
+    }
+
+    // 인원수 셀렉트 드롭다운 이벤트
+    if (peopleSelect) {
+        peopleSelect.addEventListener("change", (e) => {
+            const val = parseInt(e.target.value, 10);
+            if (val) updatePeopleCount(val, true);
+        });
+    }
+
     function syncBudgetFromSlider() {
         if (!priceRange || !budgetInput) return;
         const val = parseInt(priceRange.value, 10);
@@ -511,15 +623,14 @@ document.addEventListener("DOMContentLoaded", () => {
             priceMax.textContent = `₩ ${formattedWon}`;
         }
 
-        // 기존에 "2인", "1인당" 등 수식어가 붙어있으면 자연스럽게 보존하여 연동
-        const currentText = budgetInput.value.trim();
-        if (currentText.includes("2인")) {
-            budgetInput.value = `2인 총 ${koreanText}`;
-        } else if (currentText.includes("1인당") || currentText.includes("1인")) {
-            budgetInput.value = `1인당 ${koreanText}`;
+        // 현재 설정된 인원수를 반영하여 예산 텍스트 갱신
+        if (currentPeopleCount > 1) {
+            budgetInput.value = `${currentPeopleCount}인 총 ${koreanText}`;
         } else {
-            budgetInput.value = `총 ${koreanText}`;
+            budgetInput.value = `1인 총 ${koreanText}`;
         }
+
+        updatePerPersonDisplay();
 
         // 시각적 강조 애니메이션 (파란색 테두리 하이라이트)
         budgetInput.classList.add("input-synced");
@@ -530,6 +641,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 예산 슬라이더 변경 시 저장된 여행지들의 예산 초과 배지 상태 실시간 동기화
         renderWishlistUI();
+        if (typeof checkBudgetOver === "function") {
+            checkBudgetOver();
+        }
     }
 
     function syncSliderFromText(budgetText) {
@@ -552,6 +666,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (budgetInput) {
         budgetInput.addEventListener("input", () => {
             syncSliderFromText(budgetInput.value);
+
+            // 텍스트 내에서 'N인' 감지 시 인원수 동기화 (예산 텍스트는 덮어쓰지 않고 인원수/배지만 동기화)
+            const matchPeople = budgetInput.value.match(/(\d+)\s*인/);
+            if (matchPeople) {
+                const detectedCount = parseInt(matchPeople[1], 10);
+                if (detectedCount > 0 && detectedCount !== currentPeopleCount) {
+                    updatePeopleCount(detectedCount, false);
+                    return;
+                }
+            }
+            updatePerPersonDisplay();
         });
     }
 
@@ -570,6 +695,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 durationInput.value = data.duration;
                 budgetInput.value = data.budget;
                 syncSliderFromText(data.budget);
+                const matchPresetPeople = (data.budget || "").match(/(\d+)\s*인/);
+                if (matchPresetPeople) {
+                    updatePeopleCount(parseInt(matchPresetPeople[1], 10), false);
+                } else {
+                    updatePerPersonDisplay();
+                }
                 interestsInput.value = data.interests;
                 companionsInput.value = data.companions;
                 transportationInput.value = data.transportation;
@@ -612,6 +743,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (budget) {
                 budgetInput.value = budget;
                 syncSliderFromText(budget);
+                const matchCardPeople = budget.match(/(\d+)\s*인/);
+                if (matchCardPeople) {
+                    updatePeopleCount(parseInt(matchCardPeople[1], 10), false);
+                } else {
+                    updatePerPersonDisplay();
+                }
             }
             if (transport) transportationInput.value = transport;
             if (theme) interestsInput.value = theme;
@@ -1789,6 +1926,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 14. 페이지 첫 진입 시 위시리스트 동기화 및 기본 선택 지역(제주) 필터링 1회 실행
     renderWishlistUI();
     filterProducts();
+    updatePerPersonDisplay();
 
     // 14-1. 이전에 브라우저에 저장해둔 여행 계획이 있다면 복원하여 즉시 비교 및 확인 가능
     if (savedPlans && savedPlans.length > 0) {

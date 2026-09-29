@@ -216,10 +216,38 @@
                         <input type="text" id="duration" name="duration" value="2박 3일" placeholder="예: 2박 3일, 4박 5일" required>
                     </div>
 
-                    <!-- 예상 예산 -->
-                    <div class="form-group">
-                        <label for="budget">💰 예상 예산 <span class="req-star">*</span></label>
-                        <input type="text" id="budget" name="budget" value="2인 총 120만원" placeholder="예: 1인 80만원, 총 120만원" required>
+                    <!-- 예상 예산 (2인 기준 표기 및 인원수 변경 컨트롤) -->
+                    <div class="form-group budget-form-group">
+                        <div class="budget-label-row">
+                            <label for="budget" class="budget-label-main">
+                                💰 예상 예산 <span class="budget-person-badge" id="budgetPersonBadge">(2인 기준)</span> <span class="req-star">*</span>
+                            </label>
+                            <div class="people-control-wrap">
+                                <span class="people-control-title">👥 인원:</span>
+                                <div class="people-stepper">
+                                    <button type="button" class="btn-stepper" id="btnPeopleMinus" title="인원 1명 감소" aria-label="1명 감소">−</button>
+                                    <span class="stepper-count" id="peopleCountDisplay">2인</span>
+                                    <button type="button" class="btn-stepper" id="btnPeoplePlus" title="인원 1명 증가" aria-label="1명 증가">＋</button>
+                                </div>
+                                <select id="peopleSelect" class="people-quick-select" title="인원수 바로 선택">
+                                    <option value="1">1인 (나홀로)</option>
+                                    <option value="2" selected>2인 (기본)</option>
+                                    <option value="3">3인</option>
+                                    <option value="4">4인 (가족/친구)</option>
+                                    <option value="5">5인</option>
+                                    <option value="6">6인 단체</option>
+                                    <option value="8">8인 단체</option>
+                                    <option value="10">10인 단체</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="budget-input-wrapper">
+                            <input type="text" id="budget" name="budget" value="2인 총 120만원" placeholder="예: 2인 총 120만원, 1인 60만원" required>
+                            <div class="budget-calc-sub" id="budgetCalcSub">
+                                <span class="calc-icon">💡</span>
+                                <span class="calc-text" id="budgetPerPersonText">1인당 약 60만원 기준</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 여행 테마 / 관심사 -->
