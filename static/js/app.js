@@ -2364,7 +2364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         drawMapLayers(places, currentMapDayFilter, plan.dest, plan.transportation);
 
-        // 주요 방문지 가로 스크롤 트랙 렌더링 (일차 필터 연동 & 세로 늘어짐 방지)
+        // 주요 방문지 가로 스크롤 트랙 렌더링 (일차 필터 연동, 1/2/3/4 순차 정렬, 좌우 넘김 버튼 & 마우스 휠 지원)
         function renderSummaryChips(dayFilter = "all") {
             const summaryEl = document.getElementById("mapPlacesSummary");
             if (!summaryEl) return;
@@ -2378,15 +2378,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? places
                 : places.filter(p => String(p.day) === String(dayFilter));
 
+            // Day 및 방문 순서(order: 1, 2, 3, 4...)대로 정확히 순차 정렬
+            const sortedPlaces = filteredPlaces.slice().sort((a, b) => {
+                const dayA = Number(a.day) || 1;
+                const dayB = Number(b.day) || 1;
+                if (dayA !== dayB) return dayA - dayB;
+                const orderA = Number(a.order) || 1;
+                const orderB = Number(b.order) || 1;
+                return orderA - orderB;
+            });
+
             let chipsTrackHtml = "";
-            filteredPlaces.forEach(p => {
+            sortedPlaces.forEach(p => {
                 const globalIdx = places.indexOf(p);
                 const color = DAY_COLOR_MAP[p.day] || "#6366f1";
                 const dayClass = `chip-day-${Math.min(4, p.day)}`;
                 chipsTrackHtml += `
-                    <button type="button" class="map-place-chip ${dayClass}" data-idx="${globalIdx}" title="${p.name} (지도 이동 및 상세 보기)">
-                        <span class="chip-dot" style="background-color: ${color};"></span>
-                        <span>[Day ${p.day}] ${p.name}</span>
+                    <button type="button" class="map-place-chip ${dayClass}" data-idx="${globalIdx}" title="${p.name} (클릭 시 지도 이동 및 길찾기 안내)">
+                        <span class="chip-order-badge" style="background-color: ${color};">${p.order}</span>
+                        <span class="chip-label-text"><strong class="chip-day-tag">[Day ${p.day}]</strong> ${p.name}</span>
                     </button>
                 `;
             });
@@ -2399,15 +2409,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="map-places-summary-header">
                     <span class="map-places-title">
                         📍 주요 방문지 클릭 시 ${linkServiceLabel}
-                        <strong class="map-places-badge">(${filterLabel} ${filteredPlaces.length}곳)</strong>
+                        <strong class="map-places-badge">(${filterLabel} ${sortedPlaces.length}곳)</strong>
                     </span>
-                    <span class="map-places-hint">👉 좌우로 스크롤하여 이동</span>
+                    <span class="map-places-hint">👉 좌우 화살표 또는 스크롤로 이동</span>
                 </div>
-                <div class="map-places-scroll-track" id="mapPlacesTrack">
-                    ${chipsTrackHtml || '<span style="font-size:12px; color:#94a3b8; padding:6px 0;">해당 일차의 방문지가 없습니다.</span>'}
+                <div class="map-places-track-wrapper">
+                    <button type="button" class="places-scroll-arrow arrow-left" id="btnPlacesScrollLeft" aria-label="이전 주요 방문지 보기">‹</button>
+                    <div class="map-places-scroll-track" id="mapPlacesTrack">
+                        ${chipsTrackHtml || '<span style="font-size:12px; color:#94a3b8; padding:6px 0;">해당 일차의 방문지가 없습니다.</span>'}
+                    </div>
+                    <button type="button" class="places-scroll-arrow arrow-right" id="btnPlacesScrollRight" aria-label="다음 주요 방문지 보기">›</button>
                 </div>
             `;
 
+            // 칩 클릭 시 지도 중심 이동 및 마커 팝업 오픈
             summaryEl.querySelectorAll(".map-place-chip").forEach(chip => {
                 chip.addEventListener("click", () => {
                     const idx = parseInt(chip.dataset.idx, 10);
@@ -2422,6 +2437,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
             });
+
+            // 좌우 넘김 버튼 및 마우스 휠 스크롤 인터랙션
+            const btnPlacesScrollLeft = summaryEl.querySelector("#btnPlacesScrollLeft");
+            const btnPlacesScrollRight = summaryEl.querySelector("#btnPlacesScrollRight");
+            const placesTrack = summaryEl.querySelector("#mapPlacesTrack");
+
+            if (btnPlacesScrollLeft && placesTrack) {
+                btnPlacesScrollLeft.addEventListener("click", () => {
+                    placesTrack.scrollBy({ left: -240, behavior: "smooth" });
+                });
+            }
+            if (btnPlacesScrollRight && placesTrack) {
+                btnPlacesScrollRight.addEventListener("click", () => {
+                    placesTrack.scrollBy({ left: 240, behavior: "smooth" });
+                });
+            }
+            if (placesTrack) {
+                placesTrack.addEventListener("wheel", (e) => {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        placesTrack.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+            }
         }
 
         renderSummaryChips(currentMapDayFilter);

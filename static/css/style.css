@@ -5499,7 +5499,6 @@ html, body {
 .quick-preset-chips,
 .category-nav,
 .plan-tabs-bar,
-.map-places-scroll-track,
 #mapDayFilters {
     display: flex !important;
     flex-wrap: nowrap !important;
@@ -5512,7 +5511,6 @@ html, body {
 
 .category-nav::-webkit-scrollbar,
 .plan-tabs-bar::-webkit-scrollbar,
-.map-places-scroll-track::-webkit-scrollbar,
 #mapDayFilters::-webkit-scrollbar {
     display: none !important;
 }
@@ -5645,17 +5643,145 @@ html, body {
     word-break: keep-all !important;
 }
 
-/* 주요 방문지 카카오맵 바로가기 가로 칩 트랙 */
+/* 주요 방문지 카카오맵/구글맵 바로가기 가로 칩 트랙 & 좌우 스크롤 화살표 컨트롤러 */
+.map-places-track-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    gap: 6px !important;
+    margin-top: 4px !important;
+}
+
+.places-scroll-arrow {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    font-size: 19px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s ease !important;
+    user-select: none !important;
+    z-index: 5 !important;
+}
+
+.places-scroll-arrow:hover {
+    background: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2) !important;
+}
+
+.places-scroll-arrow:active {
+    transform: scale(0.95) !important;
+}
+
 .map-places-scroll-track {
+    display: flex !important;
+    align-items: center !important;
     gap: 8px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
     padding: 4px 2px 8px 2px !important;
     width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #cbd5e1 #f8fafc !important;
+}
+
+.map-places-scroll-track::-webkit-scrollbar {
+    height: 5px !important;
+    display: block !important;
+}
+
+.map-places-scroll-track::-webkit-scrollbar-track {
+    background: #f1f5f9 !important;
+    border-radius: 9999px !important;
+}
+
+.map-places-scroll-track::-webkit-scrollbar-thumb {
+    background: #cbd5e1 !important;
+    border-radius: 9999px !important;
+    transition: background-color 0.2s ease;
+}
+
+.map-places-scroll-track::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8 !important;
 }
 
 .map-place-chip {
     flex-shrink: 0 !important;
     white-space: nowrap !important;
     word-break: keep-all !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 9999px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.map-place-chip:hover {
+    background: #f8fafc !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12) !important;
+}
+
+.map-place-chip:active {
+    transform: translateY(0) !important;
+}
+
+.chip-order-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 4px !important;
+    border-radius: 9999px !important;
+    color: #ffffff !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+}
+
+.chip-label-text {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.chip-day-tag {
+    font-size: 11px !important;
+    color: #64748b !important;
 }
 
 /* 3. AI 맞춤 여행 계획 렌더링 영역 (글자 넘침/잘림 100% 방지) */
