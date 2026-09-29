@@ -1314,7 +1314,7 @@ document.addEventListener("DOMContentLoaded", () => {
         4: "#ea580c"
     };
 
-    function extractPlacesFromPlan(markdown, destination) {
+    function extractPlacesFromPlan(markdown, destination, transportType) {
         if (!markdown) return [];
         const places = [];
 
@@ -1424,13 +1424,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 1일차 장소 목록 중 공항이 이미 있는지 확인
         const hasDay1Airport = places.some(p => p.day === 1 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("역")));
+        const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
         if (!hasDay1Airport) {
             // 맨 앞에 1일차 출발지(공항) 삽입
             places.unshift({
                 day: 1,
                 order: 1,
                 name: targetAirport.name,
-                desc: "공항 도착 및 렌터카 픽업 / 여정 시작",
+                desc: isTransit ? "공항 도착 및 대중교통(급행/간선/지하철) 탑승 / 여정 시작" : "공항 도착 및 렌터카 픽업 / 여정 시작",
                 lat: targetAirport.lat,
                 lng: targetAirport.lng
             });
@@ -1455,7 +1456,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return places;
     }
 
-    function drawMapLayers(places, filterDay, destName) {
+    function drawMapLayers(places, filterDay, destName, transportType) {
         if (!leafletMap || !mapMarkerLayerGroup || !mapPolylineLayerGroup) return;
 
         mapMarkerLayerGroup.clearLayers();
@@ -1466,6 +1467,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const bounds = [];
         const isDomestic = !["오사카", "도쿄", "후쿠오카", "방콕", "다낭", "타이베이", "파리", "뉴욕", "바르셀로나"].some(c => destName.includes(c));
+        const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
 
         filtered.forEach((p) => {
             bounds.push([p.lat, p.lng]);
@@ -1484,9 +1486,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 `
             });
 
+            // 대중교통 선택 시: 카카오맵 대중교통 최적화 경로(target=transit)로 연결
+            const kakaoTransitUrl = `https://map.kakao.com/?eName=${encodeURIComponent(p.name)}&ep=${p.lat},${p.lng}&target=transit`;
             const kakaoNavUrl = `https://map.kakao.com/link/to/${encodeURIComponent(p.name)},${p.lat},${p.lng}`;
             const kakaoSearchUrl = `https://map.kakao.com/link/search/${encodeURIComponent(p.name)}`;
-            const googleNavUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+            const googleNavUrl = isTransit
+                ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name)}&travelmode=transit`
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`;
+
+            const targetNavUrl = isDomestic
+                ? (isTransit ? kakaoTransitUrl : kakaoNavUrl)
+                : googleNavUrl;
+            const navBtnText = isDomestic
+                ? (isTransit ? '🚌 카카오맵 대중교통 길찾기' : '🚗 카카오맵 내비/길찾기')
+                : (isTransit ? '🌐 구글맵 대중교통 길찾기' : '🌐 구글맵 길찾기');
 
             const popupContent = `
                 <div class="kakao-map-popup">
@@ -1494,8 +1507,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h4 class="popup-title">${p.name}</h4>
                     <p class="popup-desc">${p.desc || ''}</p>
                     <div class="popup-actions">
-                        <a href="${isDomestic ? kakaoNavUrl : googleNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-nav">
-                            <span>${isDomestic ? '🚗 카카오맵 길찾기' : '🌐 구글맵 길찾기'}</span>
+                        <a href="${targetNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-nav ${isTransit ? 'btn-transit-mode' : ''}">
+                            <span>${navBtnText}</span>
                         </a>
                         <a href="${isDomestic ? kakaoSearchUrl : googleNavUrl}" target="_blank" rel="noopener noreferrer" class="btn-kakao-search">
                             <span>${isDomestic ? '📍 카카오맵에서 상세 검색' : '📍 지도에서 위치 보기'}</span>
@@ -1538,7 +1551,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const mapCanvas = document.getElementById("planInteractiveMap");
         if (!mapSection || !mapCanvas || !window.L) return;
 
-        const places = extractPlacesFromPlan(plan.markdown, plan.dest);
+        const places = extractPlacesFromPlan(plan.markdown, plan.dest, plan.transportation);
         if (places.length === 0) {
             mapSection.style.display = "none";
             return;
@@ -1611,16 +1624,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     mapDayFilters.querySelectorAll(".btn-map-filter").forEach(b => b.classList.remove("active"));
                     btn.classList.add("active");
                     currentMapDayFilter = btn.dataset.day;
-                    drawMapLayers(places, currentMapDayFilter, plan.dest);
+                    drawMapLayers(places, currentMapDayFilter, plan.dest, plan.transportation);
                 });
             });
         }
 
-        drawMapLayers(places, currentMapDayFilter, plan.dest);
+        drawMapLayers(places, currentMapDayFilter, plan.dest, plan.transportation);
 
         const summaryEl = document.getElementById("mapPlacesSummary");
         if (summaryEl) {
-            let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 카카오맵 바로가기:</span>`;
+            const isTransit = (plan.transportation || "").includes("대중교통") || (plan.transportation || "").includes("버스") || (plan.transportation || "").includes("지하철");
+            let chipsHtml = `<span style="font-size:12px; font-weight:700; color:#64748b;">📍 주요 방문지 클릭 시 ${isTransit ? '대중교통 길찾기' : '카카오맵 바로가기'}:</span>`;
             places.forEach((p, idx) => {
                 const color = DAY_COLOR_MAP[p.day] || "#6366f1";
                 const dayClass = `chip-day-${Math.min(4, p.day)}`;
