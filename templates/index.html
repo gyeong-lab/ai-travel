@@ -53,38 +53,59 @@
     <section class="category-carousel-section">
         <div class="category-carousel">
             <button type="button" class="cat-item active" data-category="all">
-                <div class="cat-icon">🌟</div>
+                <div class="cat-icon">
+                    <span>🌟</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">전체 추천</span>
             </button>
             <button type="button" class="cat-item" data-category="transport">
-                <div class="cat-icon icon-with-check">
-                    🚗
+                <div class="cat-icon">
+                    <span>🚗</span>
                     <span class="cat-check-badge">✓</span>
                 </div>
                 <span class="cat-label">교통편 &amp; 렌터카</span>
             </button>
             <button type="button" class="cat-item" data-category="tour">
-                <div class="cat-icon">🏯</div>
+                <div class="cat-icon">
+                    <span>🏯</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">관광 명소 &amp; 투어</span>
             </button>
             <button type="button" class="cat-item" data-category="healing">
-                <div class="cat-icon">🌿</div>
+                <div class="cat-icon">
+                    <span>🌿</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">자연 &amp; 힐링 산책</span>
             </button>
             <button type="button" class="cat-item" data-category="food">
-                <div class="cat-icon">🍴</div>
+                <div class="cat-icon">
+                    <span>🍴</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">미식 &amp; 카페 투어</span>
             </button>
             <button type="button" class="cat-item" data-category="activity">
-                <div class="cat-icon">🎡</div>
+                <div class="cat-icon">
+                    <span>🎡</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">테마파크 &amp; 액티비티</span>
             </button>
             <button type="button" class="cat-item" data-category="hotel">
-                <div class="cat-icon">🏨</div>
+                <div class="cat-icon">
+                    <span>🏨</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">호캉스 &amp; 리조트</span>
             </button>
             <button type="button" class="cat-item" data-category="shopping">
-                <div class="cat-icon">🛍️</div>
+                <div class="cat-icon">
+                    <span>🛍️</span>
+                    <span class="cat-check-badge">✓</span>
+                </div>
                 <span class="cat-label">쇼핑 &amp; 핫플레이스</span>
             </button>
         </div>
@@ -233,17 +254,15 @@
 
                 <!-- 4열 카드 그리드 -->
                 <div class="product-grid" id="productGrid">
-                    <!-- 1. 제주 공항 차량 서비스 -->
                     <article class="agoda-card" data-category="transport" data-dest="제주도" data-dur="2박 3일" data-budget="2인 총 100만원" data-transport="전용 차량 및 택시" data-theme="제주 시내 & 공항 전용 차량 편안한 힐링 투어">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80" alt="제주 시내 공항 왕복 차량 서비스" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80" alt="제주 시내 공항 왕복 전용 차량 서비스" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">제주 시내 공항 왕복 전용 차량 서비스</h3>
-                            <div class="card-badges-green">
-                                <span>예약 즉시 확정</span> <span class="badge-dot-sep">•</span> <span>무료 취소 가능</span>
-                            </div>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(142)</span></div>
+                            <div class="card-badges-green"><span>예약 즉시 확정</span> • <span>무료 취소 가능</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 27,185</span><span class="discount-percent">-11%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">24,303</span></div>
@@ -251,15 +270,15 @@
                         </div>
                     </article>
 
-                    <!-- 2. SOCAR 렌터카 -->
                     <article class="agoda-card" data-category="transport" data-dest="제주도 서귀포 & 애월" data-dur="2박 3일" data-budget="2인 총 120만원" data-transport="렌터카 (전기차)" data-theme="SOCAR 렌터카 애월 해안도로 & 서귀포 드라이브">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=600&q=80" alt="SOCAR 렌터카 제주" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=600&q=80" alt="[최대 50% 할인] 한국 | SOCAR 렌터카 | 제주 전지역" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">[최대 50% 할인] 한국 | SOCAR 렌터카 | 제주 전지역</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(27)</span></div>
+                            <div class="card-badges-green"><span>보험 포함</span> • <span>완전 자차</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 55,607</span><span class="discount-percent">-11%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">49,713</span></div>
@@ -267,14 +286,61 @@
                         </div>
                     </article>
 
-                    <!-- 3. 제주 카멜리아힐 & 사려니숲길 -->
-                    <article class="agoda-card" data-category="healing" data-dest="제주도 서귀포" data-dur="2박 3일" data-budget="2인 총 110만원" data-transport="렌터카" data-theme="카멜리아힐 & 사려니숲길 힐링 피톤치드 산책">
+                    <article class="agoda-card" data-category="transport" data-dest="제주도 애월 & 한림" data-dur="2박 3일" data-budget="2인 총 110만원" data-transport="서부 셔틀버스 및 렌터카" data-theme="제주 서부 주요 감성 스팟 자유 셔틀 & 핫플 투어">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1538669715315-155098f9fb17?auto=format&fit=crop&w=600&q=80" alt="제주 카멜리아힐" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=600&q=80" alt="제주 서부 감성 해안도로 셔틀 투어 패스" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">제주 카멜리아힐 &amp; 사려니숲길 힐링 입장권</h3>
+                            <h3 class="card-title">제주 서부 감성 해안도로 셔틀 투어 패스</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(88)</span></div>
+                            <div class="card-badges-green"><span>자유 승하차</span> • <span>한국어 안내</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 32,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">27,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="제주도 성산 & 우도" data-dur="2박 3일" data-budget="2인 총 115만원" data-transport="일일 투어버스 & 페리" data-theme="성산일출봉 일출 & 우도 땅콩아이스크림 감성 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="제주 동부 유네스코 성산일출봉 & 우도 1일 버스투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 동부 유네스코 성산일출봉 & 우도 1일 버스투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,240)</span></div>
+                            <div class="card-badges-green"><span>페리 티켓 포함</span> • <span>전문 가이드</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 48,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">42,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="제주도 애월 & 안덕" data-dur="2박 3일" data-budget="2인 총 125만원" data-transport="렌터카" data-theme="한담해변 산책로 & 오설록 녹차밭 인생샷 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=600&q=80" alt="제주 서부 애월 한담해변 & 오설록 티뮤지엄 감성 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 서부 애월 한담해변 & 오설록 티뮤지엄 감성 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(860)</span></div>
+                            <div class="card-badges-green"><span>시음 바우처 포함</span> • <span>포토존 안내</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 38,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">34,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="healing" data-dest="제주도 서귀포" data-dur="2박 3일" data-budget="2인 총 110만원" data-transport="렌터카" data-theme="카멜리아힐 & 사려니숲길 힐링 피톤치드 산책">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1538669715315-155098f9fb17?auto=format&fit=crop&w=600&q=80" alt="제주 카멜리아힐 & 사려니숲길 힐링 입장권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 카멜리아힐 & 사려니숲길 힐링 입장권</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(340)</span></div>
                             <div class="card-badges-green"><span>모바일 바우처 즉시 사용</span></div>
                             <div class="card-price-area">
@@ -284,16 +350,31 @@
                         </div>
                     </article>
 
-                    <!-- 4. 제주 흑돼지 & 해산물 미식 바우처 -->
-                    <article class="agoda-card" data-category="food" data-dest="제주도" data-dur="2박 3일" data-budget="2인 총 130만원" data-transport="렌터카" data-theme="제주 애월 흑돼지 구이 & 해물라면 미식 투어">
+                    <article class="agoda-card" data-category="healing" data-dest="제주도 구좌 & 비자림" data-dur="3박 4일" data-budget="2인 총 130만원" data-transport="렌터카" data-theme="신비로운 곶자왈 숲과 천년의 비자림 힐링 워킹">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="제주 미식" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80" alt="제주 비자림 천년 숲길 & 곶자왈 도립공원 에코 힐링" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">제주 흑돼지 &amp; 신선 해산물 로컬 맛집 식사권</h3>
+                            <h3 class="card-title">제주 비자림 천년 숲길 & 곶자왈 도립공원 에코 힐링</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(520)</span></div>
+                            <div class="card-badges-green"><span>피톤치드 힐링</span> • <span>해설사 동행</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 22,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">19,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="제주도" data-dur="2박 3일" data-budget="2인 총 130만원" data-transport="렌터카" data-theme="제주 애월 흑돼지 구이 & 해물라면 미식 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="제주 흑돼지 & 신선 해산물 로컬 맛집 식사권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 흑돼지 & 신선 해산물 로컬 맛집 식사권</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,120)</span></div>
-                            <div class="card-badges-green"><span>당일 예약 가능</span></div>
+                            <div class="card-badges-green"><span>당일 예약 가능</span> • <span>음료 서비스</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 60,000</span><span class="discount-percent">-15%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">51,000</span></div>
@@ -301,16 +382,95 @@
                         </div>
                     </article>
 
-                    <!-- 5. 오사카 난바 라피트 -->
-                    <article class="agoda-card" data-category="transport" data-dest="일본 오사카 & 교토" data-dur="3박 4일" data-budget="1인 100만원" data-transport="간사이 라피트 & 지하철" data-theme="오사카 난바 도톤보리 & 라피트 미식 투어">
+                    <article class="agoda-card" data-category="food" data-dest="제주도 애월 & 조천" data-dur="2박 3일" data-budget="2인 총 105만원" data-transport="렌터카" data-theme="애월 바다 전망 카페거리 & 제주 감귤 디저트 카페 투어">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1590559899731-a372a1464730?auto=format&fit=crop&w=600&q=80" alt="오사카 난바 라피트" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80" alt="애월 오션뷰 베이커리 카페 패스 & 감귤 디저트 세트" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">애월 오션뷰 베이커리 카페 패스 & 감귤 디저트 세트</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(430)</span></div>
+                            <div class="card-badges-green"><span>오션뷰 명당석</span> • <span>아메리카노 증정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 25,000</span><span class="discount-percent">-16%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">21,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="제주도 애월" data-dur="2박 3일" data-budget="2인 총 120만원" data-transport="렌터카" data-theme="한라산 뷰 무동력 카트 레이싱 & 그래비티 어드벤처">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80" alt="제주 9.81파크 그래비티 무동력 레이싱 풀패키지" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 9.81파크 그래비티 무동력 레이싱 풀패키지</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,150)</span></div>
+                            <div class="card-badges-green"><span>기록 영상 무료제공</span> • <span>스릴 만점</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 49,500</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">44,550</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="제주도 한림 & 협재" data-dur="2박 3일" data-budget="2인 총 115만원" data-transport="렌터카" data-theme="에메랄드빛 협재 바다 투명 카약 & 패들보드(SUP) 체험">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80" alt="제주 협재 바다 투명카약 & 패들보드 레저 이용권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 협재 바다 투명카약 & 패들보드 레저 이용권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(780)</span></div>
+                            <div class="card-badges-green"><span>안전 장비 포함</span> • <span>초보자 강습</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 35,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">29,750</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="제주도 중문" data-dur="2박 3일" data-budget="2인 총 240만원" data-transport="호텔 리무진" data-theme="중문 5성급 럭셔리 인피니티풀 호캉스 & 조식 뷔페">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="제주 중문 5성급 특급 호텔 오션뷰 룸 1박 바우처" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 중문 5성급 특급 호텔 오션뷰 룸 1박 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(920)</span></div>
+                            <div class="card-badges-green"><span>온수풀 무료</span> • <span>조식 2인 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 380,000</span><span class="discount-percent">-20%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">304,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="제주도 시내" data-dur="2박 3일" data-budget="2인 총 95만원" data-transport="대중교통 & 도보" data-theme="동문 야시장 딱새우회 & 감귤 기념품 소품샵 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80" alt="제주 동문시장 야시장 먹거리 투어 & 감성 기념품 패스" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">제주 동문시장 야시장 먹거리 투어 & 감성 기념품 패스</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(610)</span></div>
+                            <div class="card-badges-green"><span>할인 쿠폰북 증정</span> • <span>인기 소품샵 제휴</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 20,000</span><span class="discount-percent">-25%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">15,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="일본 오사카 & 교토" data-dur="3박 4일" data-budget="1인당 100만원" data-transport="간사이 라피트 & 지하철" data-theme="오사카 난바 도톤보리 & 라피트 미식 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1590559899731-a372a1464730?auto=format&fit=crop&w=600&q=80" alt="오사카 간사이 공항 - 난바 특급 라피트 왕복권" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">오사카 간사이 공항 - 난바 특급 라피트 왕복권</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,842)</span></div>
-                            <div class="card-badges-green"><span>즉시 확정</span> <span class="badge-dot-sep">•</span> <span>QR 승차</span></div>
+                            <div class="card-badges-green"><span>즉시 확정</span> • <span>QR 승차</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 28,000</span><span class="discount-percent">-15%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">23,800</span></div>
@@ -318,17 +478,95 @@
                         </div>
                     </article>
 
-                    <!-- 6. 오사카 USJ -->
-                    <article class="agoda-card" data-category="activity" data-dest="일본 오사카" data-dur="3박 4일" data-budget="1인 130만원" data-transport="지하철 (JR)" data-theme="유니버셜 스튜디오 재팬 (USJ) 슈퍼 닌텐도 월드 투어">
+                    <article class="agoda-card" data-category="transport" data-dest="일본 오사카 & 교토" data-dur="3박 4일" data-budget="1인당 110만원" data-transport="간사이 쓰루패스" data-theme="오사카-교토-고베 자유 이동 전철 여행">
                         <div class="card-img-wrap">
-                            <span class="ribbon-banner">오사카 액티비티 1위</span>
-                            <img src="https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?auto=format&fit=crop&w=600&q=80" alt="오사카 USJ" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80" alt="간사이 쓰루패스 2일권 / 3일권 (오사카·교토 지하철 무제한)" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">간사이 쓰루패스 2일권 / 3일권 (오사카·교토 지하철 무제한)</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(3,410)</span></div>
+                            <div class="card-badges-green"><span>무제한 탑승</span> • <span>관광지 할인</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 46,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">41,400</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="일본 오사카" data-dur="3박 4일" data-budget="1인당 95만원" data-transport="오사카 메트로" data-theme="역사적인 오사카성과 우메다 스카이 파노라마 야경">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&w=600&q=80" alt="오사카성 천수각 & 우메다 공중정원 전망대 콤보 티켓" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">오사카성 천수각 & 우메다 공중정원 전망대 콤보 티켓</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,890)</span></div>
+                            <div class="card-badges-green"><span>모바일 즉시 입장</span> • <span>한국어 가이드북</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 32,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">28,160</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="일본 오사카 & 교토" data-dur="3박 4일" data-budget="1인당 115만원" data-transport="교토 일일 전용 버스" data-theme="교토 대나무숲 치쿠린 & 금각사 전통 감성 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80" alt="교토 아라시야마 대나무숲 & 금각사·청수사 일일 버스투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">교토 아라시야마 대나무숲 & 금각사·청수사 일일 버스투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(4,120)</span></div>
+                            <div class="card-badges-green"><span>한국인 가이드 동행</span> • <span>전용 리무진 버스</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 65,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">55,250</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="healing" data-dest="일본 오사카" data-dur="3박 4일" data-budget="1인당 105만원" data-transport="지하철" data-theme="도심 속 유카타 입고 즐기는 루프탑 온천 족욕 힐링">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="오사카 소라니와 온천 테마파크 입장권 & 유카타 대여" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">오사카 소라니와 온천 테마파크 입장권 & 유카타 대여</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(1,150)</span></div>
+                            <div class="card-badges-green"><span>노천 족욕탕</span> • <span>인생샷 스팟</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 26,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">23,400</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="일본 오사카 난바" data-dur="3박 4일" data-budget="1인당 90만원" data-transport="도보 & 메트로" data-theme="글리코상 앞 도톤보리 길거리 먹방 & 쿠시카츠">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1554502078-ef0fc409efce?auto=format&fit=crop&w=600&q=80" alt="도톤보리 원조 타코야키 & 쿠시카츠 맛집 식사 바우처" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">도톤보리 원조 타코야키 & 쿠시카츠 맛집 식사 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,400)</span></div>
+                            <div class="card-badges-green"><span>웨이팅 단축</span> • <span>생맥주 1잔 무료</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 35,000</span><span class="discount-percent">-14%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">30,100</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="일본 오사카" data-dur="3박 4일" data-budget="1인당 130만원" data-transport="지하철 (JR)" data-theme="유니버셜 스튜디오 재팬 (USJ) 슈퍼 닌텐도 월드 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?auto=format&fit=crop&w=600&q=80" alt="유니버셜 스튜디오 재팬 (USJ) 1일 스튜디오 패스" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">유니버셜 스튜디오 재팬 (USJ) 1일 스튜디오 패스</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(5,420)</span></div>
-                            <div class="card-badges-green"><span>공식 파트너 예매</span></div>
+                            <div class="card-badges-green"><span>공식 파트너 예매</span> • <span>확약권 패키지</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 95,000</span><span class="discount-percent">-8%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">87,400</span></div>
@@ -336,16 +574,63 @@
                         </div>
                     </article>
 
-                    <!-- 7. 도쿄 시부야 스카이 -->
-                    <article class="agoda-card" data-category="tour" data-dest="일본 도쿄" data-dur="3박 4일" data-budget="1인 120만원" data-transport="도쿄 메트로 패스" data-theme="시부야 스카이 전망대 & 신주쿠 야경 탐방">
+                    <article class="agoda-card" data-category="hotel" data-dest="일본 오사카 난바" data-dur="3박 4일" data-budget="1인당 120만원" data-transport="지하철 도보 1분" data-theme="난바역 직결 최고의 접근성 호캉스 & 조식">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="도쿄 시부야 스카이" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="오사카 난바역 직결 4성급 시티뷰 모던 호텔 1박권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">오사카 난바역 직결 4성급 시티뷰 모던 호텔 1박권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(1,340)</span></div>
+                            <div class="card-badges-green"><span>도톤보리 도보 5분</span> • <span>대욕장 완비</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 160,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">136,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="일본 오사카 신사이바시" data-dur="3박 4일" data-budget="1인당 140만원" data-transport="지하철" data-theme="신사이바시 쇼핑 스트리트 & 명품 면세 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="신사이바시 다이마루 백화점 & 린쿠 아울렛 쇼핑 바우처" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">신사이바시 다이마루 백화점 & 린쿠 아울렛 쇼핑 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(790)</span></div>
+                            <div class="card-badges-green"><span>추가 5% 할인쿠폰</span> • <span>VIP 라운지</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 25,000</span><span class="discount-percent">-20%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">20,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="일본 도쿄" data-dur="3박 4일" data-budget="1인당 110만원" data-transport="도쿄 메트로 72시간 패스" data-theme="도쿄 전 노선 자유 탑승 스마트 도심 탐방">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=600&q=80" alt="도쿄 지하철 무제한 패스 (Tokyo Subway Ticket 72시간권)" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">도쿄 지하철 무제한 패스 (Tokyo Subway Ticket 72시간권)</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(6,150)</span></div>
+                            <div class="card-badges-green"><span>도쿄 전 노선 이용</span> • <span>QR 티켓 발권</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 16,500</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">14,850</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="일본 도쿄 시부야" data-dur="3박 4일" data-budget="1인당 120만원" data-transport="도쿄 메트로 패스" data-theme="시부야 스카이 전망대 & 신주쿠 야경 탐방">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="도쿄 시부야 스카이 전망대 전자 티켓 (일몰 시간대 추천)" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">도쿄 시부야 스카이 전망대 전자 티켓 (일몰 시간대 추천)</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,310)</span></div>
-                            <div class="card-badges-green"><span>실시간 확정</span></div>
+                            <div class="card-badges-green"><span>실시간 확정</span> • <span>루프탑 파노라마</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 25,000</span><span class="discount-percent">-12%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">22,000</span></div>
@@ -353,16 +638,79 @@
                         </div>
                     </article>
 
-                    <!-- 8. 도쿄 긴자 & 오모테산도 쇼핑 투어 -->
-                    <article class="agoda-card" data-category="shopping" data-dest="일본 도쿄" data-dur="4박 5일" data-budget="1인 150만원" data-transport="도쿄 메트로" data-theme="긴자 명품거리 & 오모테산도 감성 편집샵 쇼핑">
+                    <article class="agoda-card" data-category="healing" data-dest="일본 도쿄 하라주쿠" data-dur="3박 4일" data-budget="1인당 100만원" data-transport="도보 & JR 야마노테선" data-theme="도심 속 울창한 피톤치드 숲길과 고즈넉한 일본 정원">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=600&q=80" alt="도쿄 긴자 쇼핑" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=600&q=80" alt="신주쿠 교엔 정원 & 메이지신궁 숲길 프라이빗 힐링 워킹" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">도쿄 긴자·오모테산도 핫플레이스 쇼핑 &amp; 카페 투어</h3>
+                            <h3 class="card-title">신주쿠 교엔 정원 & 메이지신궁 숲길 프라이빗 힐링 워킹</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(920)</span></div>
+                            <div class="card-badges-green"><span>계절 꽃놀이 명소</span> • <span>모바일 티켓</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 18,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">15,300</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="일본 도쿄 긴자" data-dur="3박 4일" data-budget="1인당 130만원" data-transport="도쿄 메트로" data-theme="아침 츠키지 시장 최고급 참치 덮밥 & 타마고야키">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80" alt="츠키지 장외시장 신선 참치 스시 & 해산물 덮밥 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">츠키지 장외시장 신선 참치 스시 & 해산물 덮밥 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,450)</span></div>
+                            <div class="card-badges-green"><span>미식 가이드 팁</span> • <span>줄 서지 않는 예약</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 55,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">49,500</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="일본 도쿄 마이하마" data-dur="4박 5일" data-budget="1인당 140만원" data-transport="JR 케이요선" data-theme="도쿄 디즈니 판타지 스프링스 & 어트랙션 올데이">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1513477447267-eaab640c6636?auto=format&fit=crop&w=600&q=80" alt="도쿄 디즈니랜드 / 디즈니씨 1일 전자 입장권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">도쿄 디즈니랜드 / 디즈니씨 1일 전자 입장권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(8,200)</span></div>
+                            <div class="card-badges-green"><span>디즈니 공식 승인</span> • <span>QR 즉시 입장</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 98,000</span><span class="discount-percent">-6%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">92,120</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="일본 도쿄 신주쿠" data-dur="3박 4일" data-budget="1인당 160만원" data-transport="신주쿠역 도보" data-theme="신주쿠 고층 룸 야경과 럭셔리 스카이 라운지">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="도쿄 신주쿠 도심 파노라마 스카이라인 4성급 호텔 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">도쿄 신주쿠 도심 파노라마 스카이라인 4성급 호텔 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(980)</span></div>
+                            <div class="card-badges-green"><span>신주쿠역 인접</span> • <span>도쿄타워 전망</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 210,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">184,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="일본 도쿄 긴자" data-dur="4박 5일" data-budget="1인당 150만원" data-transport="도쿄 메트로" data-theme="긴자 명품거리 & 오모테산도 감성 편집샵 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=600&q=80" alt="도쿄 긴자·오모테산도 핫플레이스 쇼핑 & 카페 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">도쿄 긴자·오모테산도 핫플레이스 쇼핑 & 카페 투어</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(410)</span></div>
-                            <div class="card-badges-green"><span>한국어 가이드 팁 포함</span></div>
+                            <div class="card-badges-green"><span>한국어 가이드 팁</span> • <span>택스프리 안내</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 40,000</span><span class="discount-percent">-10%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">36,000</span></div>
@@ -370,16 +718,47 @@
                         </div>
                     </article>
 
-                    <!-- 9. 후쿠오카 유후인 & 벳푸 온천 투어 -->
-                    <article class="agoda-card" data-category="healing" data-dest="일본 후쿠오카 & 유후인" data-dur="2박 3일" data-budget="1인 85만원" data-transport="투어 버스 & 신칸센" data-theme="유후인 긴린코 호수 & 벳푸 지옥온천 힐링 당일치기">
+                    <article class="agoda-card" data-category="transport" data-dest="일본 후쿠오카" data-dur="2박 3일" data-budget="1인당 75만원" data-transport="후쿠오카 지하철" data-theme="공항에서 10분 하카타역 & 텐진 스마트 이동">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=600&q=80" alt="후쿠오카 유후인 온천" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="후쿠오카 지하철 1일 무제한 패스 & 공항 셔틀 가이드" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">후쿠오카 지하철 1일 무제한 패스 & 공항 셔틀 가이드</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(1,420)</span></div>
+                            <div class="card-badges-green"><span>QR 승차권</span> • <span>도심 이동 최적</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 8,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">7,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="일본 후쿠오카" data-dur="2박 3일" data-budget="1인당 80만원" data-transport="전철 & 시내버스" data-theme="학문의 신 다자이후 신사 & 후쿠오카 타워 야경">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" alt="후쿠오카 다자이후 텐만구 & 모모치 해변 선셋 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">후쿠오카 다자이후 텐만구 & 모모치 해변 선셋 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,100)</span></div>
+                            <div class="card-badges-green"><span>우메가에 모찌 증정</span> • <span>타워 전망대 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 45,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">38,250</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="healing" data-dest="일본 후쿠오카 & 유후인" data-dur="2박 3일" data-budget="1인당 85만원" data-transport="투어 버스 & 신칸센" data-theme="유후인 긴린코 호수 & 벳푸 지옥온천 힐링 당일치기">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=600&q=80" alt="후쿠오카 유후인·벳푸·다자이후 일일 버스 투어" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">후쿠오카 유후인·벳푸·다자이후 일일 버스 투어</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,650)</span></div>
-                            <div class="card-badges-green"><span>한국어 가이드</span> <span class="badge-dot-sep">•</span> <span>온천욕 포함</span></div>
+                            <div class="card-badges-green"><span>한국어 가이드</span> • <span>온천욕 포함</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 75,000</span><span class="discount-percent">-16%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">63,000</span></div>
@@ -387,16 +766,127 @@
                         </div>
                     </article>
 
-                    <!-- 10. 방콕 디너 크루즈 -->
-                    <article class="agoda-card" data-category="food" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인 90만원" data-transport="디너 크루즈 & 그랩" data-theme="방콕 차오프라야 프린세스 디너 크루즈 & 야시장">
+                    <article class="agoda-card" data-category="food" data-dest="일본 후쿠오카 하카타" data-dur="2박 3일" data-budget="1인당 78만원" data-transport="도보" data-theme="진한 하카타 돈코츠 국물과 나카스 포장마차 안주">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=600&q=80" alt="방콕 차오프라야 디너 크루즈" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80" alt="하카타 원조 돈코츠 라멘 & 모츠나베 미식 바우처" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">방콕 차오프라야 프린세스 디너 크루즈 뷔페</h3>
+                            <h3 class="card-title">하카타 원조 돈코츠 라멘 & 모츠나베 미식 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(3,200)</span></div>
+                            <div class="card-badges-green"><span>줄 서지 않는 우선석</span> • <span>현지인 추천</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 38,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">33,440</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="일본 후쿠오카 페이페이돔" data-dur="2박 3일" data-budget="1인당 85만원" data-transport="시내버스" data-theme="빛과 소리의 인터랙티브 디지털 아트 & 옥상 루프 슬라이드">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="후쿠오카 보스 이조 팀랩 포레스트 & 절규 루프 슬라이더" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">후쿠오카 보스 이조 팀랩 포레스트 & 절규 루프 슬라이더</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(850)</span></div>
+                            <div class="card-badges-green"><span>어트랙션 콤보</span> • <span>모바일 티켓</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 34,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">30,600</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="일본 후쿠오카 유후인" data-dur="2박 3일" data-budget="1인당 120만원" data-transport="유후인노모리 열차" data-theme="개인 노천탕 힐링과 정갈한 제철 가이세키 요리">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="유후인 전통 료칸 개인 노천탕 & 가이세키 석식 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">유후인 전통 료칸 개인 노천탕 & 가이세키 석식 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">5.0</strong><span class="review-count">(1,120)</span></div>
+                            <div class="card-badges-green"><span>조·석식 포함</span> • <span>천연 온천 힐링</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 350,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">297,500</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="일본 후쿠오카 텐진" data-dur="2박 3일" data-budget="1인당 90만원" data-transport="도보 & 지하철" data-theme="텐진 패션 편집샵 & 캐널시티 음악 분수쇼 감상">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="텐진 지하상가 & 캐널시티 하카타 쇼핑 할인 쿠폰팩" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">텐진 지하상가 & 캐널시티 하카타 쇼핑 할인 쿠폰팩</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.6</strong><span class="review-count">(640)</span></div>
+                            <div class="card-badges-green"><span>면세 혜택 안내</span> • <span>기념품 증정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 15,000</span><span class="discount-percent">-30%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">10,500</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인당 85만원" data-transport="전용 프라이빗 밴" data-theme="공항 도착 즉시 호텔까지 시원하고 편안한 이동">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80" alt="방콕 수완나품 공항 프라이빗 24시간 픽업 & 샌딩" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">방콕 수완나품 공항 프라이빗 24시간 픽업 & 샌딩</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(3,890)</span></div>
+                            <div class="card-badges-green"><span>단독 차량</span> • <span>고속도로 통행료 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 32,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">28,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인당 90만원" data-transport="수상보트 & 도보" data-theme="황금빛 사원과 거대 와불상 역사 문화 탐방">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=600&q=80" alt="방콕 왕궁 & 왓 프라깨우, 왓포 에메랄드 사원 오전 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">방콕 왕궁 & 왓 프라깨우, 왓포 에메랄드 사원 오전 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,450)</span></div>
+                            <div class="card-badges-green"><span>한국어 공인 가이드</span> • <span>입장권 일체 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 42,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">36,960</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="healing" data-dest="태국 방콕 통로" data-dur="4박 5일" data-budget="1인당 95만원" data-transport="그랩(Grab)" data-theme="도심 속 비밀 정원에서 받는 럭셔리 아로마 전신 마사지">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="방콕 오아시스 스파 120분 프리미엄 아로마 테라피" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">방콕 오아시스 스파 120분 프리미엄 아로마 테라피</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,520)</span></div>
+                            <div class="card-badges-green"><span>웰컴 드링크</span> • <span>개별 스파 룸</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 80,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">68,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인당 90만원" data-transport="디너 크루즈 & 그랩" data-theme="방콕 차오프라야 프린세스 디너 크루즈 & 야시장">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=600&q=80" alt="방콕 차오프라야 프린세스 디너 크루즈 뷔페 & 라이브" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">방콕 차오프라야 프린세스 디너 크루즈 뷔페 & 라이브</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(890)</span></div>
-                            <div class="card-badges-green"><span>예약 즉시 확정</span> <span class="badge-dot-sep">•</span> <span>라이브 공연</span></div>
+                            <div class="card-badges-green"><span>예약 즉시 확정</span> • <span>라이브 색소폰 연주</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 45,000</span><span class="discount-percent">-12%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">39,600</span></div>
@@ -404,16 +894,79 @@
                         </div>
                     </article>
 
-                    <!-- 11. 다낭 바나힐 투어 -->
-                    <article class="agoda-card" data-category="tour" data-dest="베트남 다낭 & 호이안" data-dur="3박 5일" data-budget="1인 80만원" data-transport="전용 픽업 차량" data-theme="다낭 썬월드 바나힐 골든브릿지 & 호이안 올드타운">
+                    <article class="agoda-card" data-category="activity" data-dest="태국 방콕" data-dur="4박 5일" data-budget="1인당 95만원" data-transport="셔틀 차량" data-theme="기린 먹이주기 체험 & 돌고래 쇼 사파리 어드벤처">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=600&q=80" alt="다낭 바나힐" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=600&q=80" alt="방콕 사파리월드 & 마린파크 1일 입장권 (점심 뷔페 옵션)" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">다낭 바나힐 입장권 &amp; 왕복 케이블카 탑승권</h3>
+                            <h3 class="card-title">방콕 사파리월드 & 마린파크 1일 입장권 (점심 뷔페 옵션)</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(3,110)</span></div>
+                            <div class="card-badges-green"><span>기린 먹이주기 인생샷</span> • <span>모바일 입장</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 46,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">39,100</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="태국 방콕 리버사이드" data-dur="4박 5일" data-budget="1인당 110만원" data-transport="호텔 무료 셔틀보트" data-theme="강변 인피니티풀 수영과 왓아룬 일몰 루프탑 바">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="방콕 차오프라야 리버뷰 5성급 럭셔리 인피니티풀 호텔 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">방콕 차오프라야 리버뷰 5성급 럭셔리 인피니티풀 호텔 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,040)</span></div>
+                            <div class="card-badges-green"><span>환상적인 석양</span> • <span>조식 뷔페 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 180,000</span><span class="discount-percent">-20%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">144,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="태국 방콕 아이콘시암" data-dur="4박 5일" data-budget="1인당 100만원" data-transport="BTS & 페리" data-theme="실내 수상시장 쑥시암 먹거리와 럭셔리 쇼핑 몰">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="아이콘시암(ICONSIAM) 쑥시암 먹거리 & 쇼핑 바우처" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">아이콘시암(ICONSIAM) 쑥시암 먹거리 & 쇼핑 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(1,420)</span></div>
+                            <div class="card-badges-green"><span>에어컨 쾌적 쇼핑</span> • <span>분수쇼 무료관람</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 30,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">27,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="베트남 다낭" data-dur="3박 5일" data-budget="1인당 75만원" data-transport="프라이빗 픽업 차량" data-theme="안전하고 쾌적한 전용 차량 에어컨 이동">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80" alt="다낭 국제공항 - 다낭/호이안 호텔 프라이빗 왕복 픽업" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">다낭 국제공항 - 다낭/호이안 호텔 프라이빗 왕복 픽업</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(4,500)</span></div>
+                            <div class="card-badges-green"><span>연착 대기 무료</span> • <span>기사 매너 최고</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 25,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">21,250</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="베트남 다낭 & 호이안" data-dur="3박 5일" data-budget="1인당 80만원" data-transport="전용 픽업 차량" data-theme="다낭 썬월드 바나힐 골든브릿지 & 호이안 올드타운">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=600&q=80" alt="다낭 바나힐 입장권 & 왕복 케이블카 탑승권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">다낭 바나힐 입장권 & 왕복 케이블카 탑승권</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(3,100)</span></div>
-                            <div class="card-badges-green"><span>뷔페 옵션 선택 가능</span></div>
+                            <div class="card-badges-green"><span>뷔페 옵션 선택 가능</span> • <span>골든핸즈 인생샷</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 52,000</span><span class="discount-percent">-10%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">46,800</span></div>
@@ -421,16 +974,63 @@
                         </div>
                     </article>
 
-                    <!-- 12. 다낭 오션뷰 리조트 -->
+                    <article class="agoda-card" data-category="healing" data-dest="베트남 다낭 미케비치" data-dur="3박 5일" data-budget="1인당 75만원" data-transport="그랩 택시" data-theme="천연 허브 핫스톤 마사지와 시원한 피로 회복">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="다낭 미케비치 허벌 스파 프리미엄 90분 핫스톤 마사지" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">다낭 미케비치 허벌 스파 프리미엄 90분 핫스톤 마사지</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,780)</span></div>
+                            <div class="card-badges-green"><span>픽업 서비스</span> • <span>다과 및 스프 제공</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 42,000</span><span class="discount-percent">-18%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">34,440</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="베트남 다낭 & 호이안" data-dur="3박 5일" data-budget="1인당 80만원" data-transport="호텔 셔틀" data-theme="석양 지는 바닷가 앞 랍스터 & 새우 해산물 만찬">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="호이안 안방비치 오션뷰 씨푸드 바비큐 플래터 2인 세트" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">호이안 안방비치 오션뷰 씨푸드 바비큐 플래터 2인 세트</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(920)</span></div>
+                            <div class="card-badges-green"><span>선셋 오션뷰 테라스</span> • <span>망고 스무디 증정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 50,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">45,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="베트남 다낭 호이안" data-dur="3박 5일" data-budget="1인당 78만원" data-transport="투어 차량" data-theme="스릴 넘치는 바구니배 댄스와 베트남 전통 요리 만들기">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80" alt="호이안 코코넛 바구니배 탑승 & 전통 쿠킹 클래스" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">호이안 코코넛 바구니배 탑승 & 전통 쿠킹 클래스</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,980)</span></div>
+                            <div class="card-badges-green"><span>스릴 만점 회전쇼</span> • <span>직접 만든 요리 식사</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 36,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">30,600</span></div>
+                            </div>
+                        </div>
+                    </article>
+
                     <article class="agoda-card" data-category="hotel" data-dest="베트남 다낭" data-dur="3박 4일" data-budget="2인 총 160만원" data-transport="호텔 셔틀" data-theme="미케비치 5성급 풀빌라 리조트 호캉스 & 스파">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="다낭 리조트 호캉스" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="다낭 미케비치 5성급 럭셔리 오션뷰 리조트 1박 바우처" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">다낭 미케비치 5성급 럭셔리 오션뷰 리조트 1박 바우처</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(780)</span></div>
-                            <div class="card-badges-green"><span>조식 2인 &amp; 스파 60분 무료</span></div>
+                            <div class="card-badges-green"><span>조식 2인 & 스파 60분 무료</span> • <span>전용 해변</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 220,000</span><span class="discount-percent">-25%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">165,000</span></div>
@@ -438,16 +1038,47 @@
                         </div>
                     </article>
 
-                    <!-- 13. 타이베이 예스진지 투어 -->
-                    <article class="agoda-card" data-category="tour" data-dest="대만 타이베이" data-dur="3박 4일" data-budget="1인 75만원" data-transport="예스진지 전용 투어버스" data-theme="예류 지질공원, 스펀 풍등 날리기, 지우펀 홍등 투어">
+                    <article class="agoda-card" data-category="shopping" data-dest="베트남 다낭 시내" data-dur="3박 5일" data-budget="1인당 70만원" data-transport="도보 & 그랩" data-theme="맞춤 아오자이 입고 핑크성당 사진 & 건망고 기념품 쇼핑">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1508248467877-aec1b08de376?auto=format&fit=crop&w=600&q=80" alt="타이베이 지우펀" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80" alt="다낭 한시장 전통 아오자이 맞춤 & 롯데마트 쇼핑 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">다낭 한시장 전통 아오자이 맞춤 & 롯데마트 쇼핑 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(1,320)</span></div>
+                            <div class="card-badges-green"><span>1시간 초스피드 맞춤</span> • <span>한국어 통역 지원</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 28,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">25,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="대만 타이베이" data-dur="3박 4일" data-budget="1인당 70만원" data-transport="공항 MRT & 지하철" data-theme="35분 만에 시내 도착 & 교통카드 충전 자유 여행">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="타이베이 타오위안 공항철도 MRT 왕복권 & 대만 이지카드" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">타이베이 타오위안 공항철도 MRT 왕복권 & 대만 이지카드</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(5,200)</span></div>
+                            <div class="card-badges-green"><span>타오위안 공항 즉시수령</span> • <span>편의점 결제 가능</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 18,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">16,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="대만 타이베이" data-dur="3박 4일" data-budget="1인당 75만원" data-transport="예스진지 전용 투어버스" data-theme="예류 지질공원, 스펀 풍등 날리기, 지우펀 홍등 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508248467877-aec1b08de376?auto=format&fit=crop&w=600&q=80" alt="타이베이 예스진지 (예류·스펀·지우펀) 한국어 버스 투어" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">타이베이 예스진지 (예류·스펀·지우펀) 한국어 버스 투어</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(1,940)</span></div>
-                            <div class="card-badges-green"><span>시밀러룩 스냅 촬영 지원</span></div>
+                            <div class="card-badges-green"><span>시밀러룩 스냅 촬영 지원</span> • <span>닭날개볶음밥 간식</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 35,000</span><span class="discount-percent">-20%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">28,000</span></div>
@@ -455,16 +1086,111 @@
                         </div>
                     </article>
 
-                    <!-- 14. 파리 세느강 바토무슈 -->
-                    <article class="agoda-card" data-category="tour" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인 300만원" data-transport="파리 메트로 & 유람선" data-theme="에펠탑 & 세느강 크루즈 로맨틱 야경 투어">
+                    <article class="agoda-card" data-category="healing" data-dest="대만 타이베이 베이터우" data-dur="3박 4일" data-budget="1인당 80만원" data-transport="타이베이 MRT" data-theme="지열곡 산책 후 피로를 녹이는 백유황 천연 온천욕">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" alt="파리 세느강 바토무슈" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" alt="타이베이 베이터우 스프링시티 천연 유황 온천탕 힐링권" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">파리 세느강 바토무슈 크루즈 &amp; 에펠탑 야경 투어</h3>
+                            <h3 class="card-title">타이베이 베이터우 스프링시티 천연 유황 온천탕 힐링권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(1,030)</span></div>
+                            <div class="card-badges-green"><span>독립 프라이빗 룸</span> • <span>피로 회복 백유황 온천</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 38,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">32,300</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="대만 타이베이 융캉제" data-dur="3박 4일" data-budget="1인당 75만원" data-transport="지하철" data-theme="육즙 가득 샤오롱바오와 진한 대만식 우육면 미식">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80" alt="타이베이 딘타이펑 본점 샤오롱바오 & 우육면 세트 식사권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">타이베이 딘타이펑 본점 샤오롱바오 & 우육면 세트 식사권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(4,100)</span></div>
+                            <div class="card-badges-green"><span>공식 패스트패스</span> • <span>디저트 만두 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 42,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">37,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="대만 타이베이 스펀" data-dur="3박 4일" data-budget="1인당 72만원" data-transport="투어버스" data-theme="기찻길 위 소원 풍등 띄우기 & 웅장한 스펀 폭포 감상">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508248467877-aec1b08de376?auto=format&fit=crop&w=600&q=80" alt="스펀 기찻길 4색 천등(풍등) 날리기 & 폭포 트레킹" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">스펀 기찻길 4색 천등(풍등) 날리기 & 폭포 트레킹</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,400)</span></div>
+                            <div class="card-badges-green"><span>4색 소원지 작성</span> • <span>직원 사진 촬영</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 16,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">13,600</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="대만 타이베이 시먼딩" data-dur="3박 4일" data-budget="1인당 85만원" data-transport="시먼역 도보 3분" data-theme="젊음의 거리 시먼딩 번화가 중심 깔끔하고 편안한 숙소">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="타이베이 시먼딩 중심 모던 감성 3.5성급 부티크 호텔 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">타이베이 시먼딩 중심 모던 감성 3.5성급 부티크 호텔 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(1,450)</span></div>
+                            <div class="card-badges-green"><span>야시장 도보 1분</span> • <span>무료 커피 라운지</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 110,000</span><span class="discount-percent">-18%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">90,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="대만 타이베이 스린" data-dur="3박 4일" data-budget="1인당 70만원" data-transport="MRT" data-theme="품절대란 라뜰리에 누가크래커 & 스린 야시장 기념품">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="타이베이 융캉제 누가크래커 예약 구매 & 스린 야시장 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">타이베이 융캉제 누가크래커 예약 구매 & 스린 야시장 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(980)</span></div>
+                            <div class="card-badges-green"><span>줄 안 서고 픽업</span> • <span>망고젤리 증정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 24,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">21,600</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인당 280만원" data-transport="파리 메트로 & RER" data-theme="파리 1~5존 지하철 및 베르사유까지 자유 패스">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="파리 나비고 데쿠베르트 1주일 교통권 충전 가이드" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">파리 나비고 데쿠베르트 1주일 교통권 충전 가이드</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,150)</span></div>
+                            <div class="card-badges-green"><span>파리 시내 전 구역</span> • <span>공항/베르사유 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 48,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">43,200</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인당 300만원" data-transport="파리 메트로 & 유람선" data-theme="에펠탑 & 세느강 크루즈 로맨틱 야경 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" alt="파리 세느강 바토무슈 크루즈 & 에펠탑 야경 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">파리 세느강 바토무슈 크루즈 & 에펠탑 야경 투어</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(520)</span></div>
-                            <div class="card-badges-green"><span>한국어 오디오 가이드 지원</span></div>
+                            <div class="card-badges-green"><span>한국어 오디오 가이드 지원</span> • <span>즉시 발권</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 35,000</span><span class="discount-percent">-10%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">31,500</span></div>
@@ -472,16 +1198,111 @@
                         </div>
                     </article>
 
-                    <!-- 15. 뉴욕 탑오브더락 & 센트럴파크 -->
-                    <article class="agoda-card" data-category="tour" data-dest="미국 뉴욕" data-dur="6박 8일" data-budget="1인 400만원" data-transport="뉴욕 지하철 (MTA)" data-theme="맨해튼 록펠러센터 전망대 & 타임스퀘어 브로드웨이">
+                    <article class="agoda-card" data-category="healing" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인당 290만원" data-transport="도보 & 메트로" data-theme="초록빛 의자에 앉아 분수대를 바라보는 파리지앵 감성">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" alt="뉴욕 맨해튼 전망대" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=600&q=80" alt="튈르리 정원 & 룩셈부르크 공원 여유로운 피크닉 투어" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
-                            <h3 class="card-title">뉴욕 탑오브더락 전망대 &amp; 서밋 원 밴더빌트 입장권</h3>
+                            <h3 class="card-title">튈르리 정원 & 룩셈부르크 공원 여유로운 피크닉 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(430)</span></div>
+                            <div class="card-badges-green"><span>바게트 샌드위치 세트</span> • <span>인생샷 가이드</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 28,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">23,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="프랑스 파리 몽마르트르" data-dur="5박 6일" data-budget="1인당 320만원" data-transport="메트로" data-theme="에스카르고 달팽이 요리와 오리 콩피, 와인 페어링">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="몽마르트르 감성 비스트로 프랑스 정통 3코스 디너" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">몽마르트르 감성 비스트로 프랑스 정통 3코스 디너</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(610)</span></div>
+                            <div class="card-badges-green"><span>하우스 와인 1잔 포함</span> • <span>창가석 우선 배정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 75,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">67,500</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="프랑스 파리" data-dur="5박 6일" data-budget="1인당 310만원" data-transport="RER A선" data-theme="핑크빛 잠자는 숲속의 미녀 성 & 화려한 일루미네이션 쇼">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1513477447267-eaab640c6636?auto=format&fit=crop&w=600&q=80" alt="파리 디즈니랜드 1일 2파크 파크호퍼 자유이용권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">파리 디즈니랜드 1일 2파크 파크호퍼 자유이용권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,840)</span></div>
+                            <div class="card-badges-green"><span>일루미네이션 명당</span> • <span>모바일 바우처</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 145,000</span><span class="discount-percent">-8%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">133,400</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="프랑스 파리 7구" data-dur="5박 6일" data-budget="1인당 350만원" data-transport="도보 & 택시" data-theme="침대에 누워 반짝이는 에펠탑 야경을 감상하는 로맨틱 호캉스">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" alt="에펠탑 뷰 테라스 파리 4성급 부티크 호텔 1박 바우처" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">에펠탑 뷰 테라스 파리 4성급 부티크 호텔 1박 바우처</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(380)</span></div>
+                            <div class="card-badges-green"><span>에펠탑 직망 뷰</span> • <span>프랑스식 크루아상 조식</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 420,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">357,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="프랑스 파리 샹젤리제" data-dur="5박 6일" data-budget="1인당 330만원" data-transport="메트로" data-theme="화려한 유리 돔 아래 면세 쇼핑 & 몽쥬약국 뷰티 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=600&q=80" alt="갤러리 라파예트 백화점 VIP 라운지 & 쇼핑 기프트팩" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">갤러리 라파예트 백화점 VIP 라운지 & 쇼핑 기프트팩</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(820)</span></div>
+                            <div class="card-badges-green"><span>VIP 라운지 음료 무료</span> • <span>즉시 택스리펀</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 30,000</span><span class="discount-percent">-30%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">21,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="미국 뉴욕" data-dur="6박 8일" data-budget="1인당 380만원" data-transport="뉴욕 메트로 전철" data-theme="맨해튼 브루클린 퀸즈 24시간 스마트 대중교통 이동">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" alt="뉴욕 MTA 7일 무제한 메트로카드 & 시티패스 패키지" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">뉴욕 MTA 7일 무제한 메트로카드 & 시티패스 패키지</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(3,400)</span></div>
+                            <div class="card-badges-green"><span>24시간 지하철/버스</span> • <span>실물 카드 발급</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 52,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">46,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="미국 뉴욕" data-dur="6박 8일" data-budget="1인당 400만원" data-transport="뉴욕 지하철 (MTA)" data-theme="맨해튼 록펠러센터 전망대 & 타임스퀘어 브로드웨이">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=600&q=80" alt="뉴욕 탑오브더락 전망대 & 서밋 원 밴더빌트 입장권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">뉴욕 탑오브더락 전망대 & 서밋 원 밴더빌트 입장권</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(2,800)</span></div>
-                            <div class="card-badges-green"><span>모바일 즉시 입장</span></div>
+                            <div class="card-badges-green"><span>모바일 즉시 입장</span> • <span>인기 시간대 배정</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 65,000</span><span class="discount-percent">-12%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">57,200</span></div>
@@ -489,22 +1310,205 @@
                         </div>
                     </article>
 
-                    <!-- 16. 바르셀로나 사그라다 파밀리아 -->
-                    <article class="agoda-card" data-category="tour" data-dest="스페인 바르셀로나" data-dur="5박 7일" data-budget="1인 280만원" data-transport="바르셀로나 T-Casual 메트로" data-theme="사그라다 파밀리아 & 구엘 공원 가우디 반일 투어">
+                    <article class="agoda-card" data-category="healing" data-dest="미국 뉴욕 맨해튼" data-dur="6박 8일" data-budget="1인당 390만원" data-transport="도보 & 지하철" data-theme="베데스다 분수 피크닉과 해질녘 브루클린 브릿지 걷기">
                         <div class="card-img-wrap">
-                            <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=600&q=80" alt="바르셀로나 사그라다 파밀리아" class="card-img" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=600&q=80" alt="센트럴파크 자전거 렌탈 & 덤보 브루클린 브릿지 선셋 워킹" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">센트럴파크 자전거 렌탈 & 덤보 브루클린 브릿지 선셋 워킹</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,670)</span></div>
+                            <div class="card-badges-green"><span>종일 자전거 대여</span> • <span>스냅 포토존 코스</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 38,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">32,300</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="미국 뉴욕 브루클린" data-dur="6박 8일" data-budget="1인당 420만원" data-transport="MTA 메트로" data-theme="130년 전통 최고급 포터하우스 스테이크 미식 탐방">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" alt="브루클린 피터루거 드라이에이징 스테이크 예약 & 다이닝권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">브루클린 피터루거 드라이에이징 스테이크 예약 & 다이닝권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,890)</span></div>
+                            <div class="card-badges-green"><span>뉴욕 3대 스테이크</span> • <span>사전 테이블 확정</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 150,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">135,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="미국 뉴욕 맨해튼" data-dur="6박 8일" data-budget="1인당 410만원" data-transport="도보" data-theme="타임스퀘어 브로드웨이 명작 뮤지컬 오리지널 감동">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=600&q=80" alt="브로드웨이 뮤지컬 '라이온 킹' 오케스트라 명당석 티켓" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">브로드웨이 뮤지컬 '라이온 킹' 오케스트라 명당석 티켓</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">5.0</strong><span class="review-count">(4,900)</span></div>
+                            <div class="card-badges-green"><span>중앙 1층 좌석 보장</span> • <span>모바일 티켓</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 230,000</span><span class="discount-percent">-8%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">211,600</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="미국 뉴욕 맨해튼" data-dur="6박 8일" data-budget="1인당 450만원" data-transport="지하철" data-theme="엠파이어 스테이트 빌딩이 보이는 럭셔리 루프탑 호캉스">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="맨해튼 타임스퀘어 중심 4성급 하이라이즈 뷰 호텔 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">맨해튼 타임스퀘어 중심 4성급 하이라이즈 뷰 호텔 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(870)</span></div>
+                            <div class="card-badges-green"><span>도보 3분 브로드웨이</span> • <span>루프탑 바 할인</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 480,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">422,400</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="미국 뉴욕 소호" data-dur="6박 8일" data-budget="1인당 430만원" data-transport="셔틀버스 & 도보" data-theme="철제 계단 감성 소호 스트리트 & 대형 아울렛 브랜드 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="우드버리 커먼 프리미엄 아울렛 왕복 전용 셔틀버스 티켓" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">우드버리 커먼 프리미엄 아울렛 왕복 전용 셔틀버스 티켓</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(2,350)</span></div>
+                            <div class="card-badges-green"><span>VIP 할인 쿠폰북 포함</span> • <span>타임스퀘어 출발</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 55,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">46,750</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="transport" data-dest="스페인 바르셀로나" data-dur="5박 7일" data-budget="1인당 270만원" data-transport="메트로, 버스, 트램" data-theme="공항 이동 포함 바르셀로나 전역 3일 무제한 자유 이동">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="바르셀로나 Hola BCN! 대중교통 72시간 무제한 패스" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">바르셀로나 Hola BCN! 대중교통 72시간 무제한 패스</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(3,120)</span></div>
+                            <div class="card-badges-green"><span>공항 메트로 포함</span> • <span>지하철/버스 무제한</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 36,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">32,400</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="tour" data-dest="스페인 바르셀로나" data-dur="5박 7일" data-budget="1인당 280만원" data-transport="바르셀로나 T-Casual 메트로" data-theme="사그라다 파밀리아 & 구엘 공원 가우디 반일 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=600&q=80" alt="바르셀로나 사그라다 파밀리아 성당 패스트트랙 투어" class="card-img" loading="lazy">
                             <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
                         </div>
                         <div class="card-body">
                             <h3 class="card-title">바르셀로나 사그라다 파밀리아 성당 패스트트랙 투어</h3>
                             <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">5.0</strong><span class="review-count">(3,450)</span></div>
-                            <div class="card-badges-green"><span>한국인 전문 공인 가이드 동행</span></div>
+                            <div class="card-badges-green"><span>한국인 전문 공인 가이드 동행</span> • <span>줄 서지 않는 빠른 입장</span></div>
                             <div class="card-price-area">
                                 <div class="price-original"><span class="strikethrough">₩ 80,000</span><span class="discount-percent">-15%</span></div>
                                 <div class="price-current"><span class="currency">₩</span><span class="amount">68,000</span></div>
                             </div>
                         </div>
                     </article>
+
+                    <article class="agoda-card" data-category="healing" data-dest="스페인 바르셀로나" data-dur="5박 7일" data-budget="1인당 260만원" data-transport="도보 & 케이블카" data-theme="지중해 바닷바람 맞으며 힐링 산책과 황홀한 야경">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" alt="바르셀로네타 해변 선셋 산책 & 몬주익 케이블카 탑승권" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">바르셀로네타 해변 선셋 산책 & 몬주익 케이블카 탑승권</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(980)</span></div>
+                            <div class="card-badges-green"><span>파노라마 지중해 뷰</span> • <span>야경 명소</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 26,000</span><span class="discount-percent">-12%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">22,880</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="food" data-dest="스페인 바르셀로나 람블라스" data-dur="5박 7일" data-budget="1인당 275만원" data-transport="도보" data-theme="이베리코 하몽, 감바스 알 아히요와 달콤한 샹그리아 한잔">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="보케리아 시장 하몽 & 정통 스페인 타파스 바 미식 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">보케리아 시장 하몽 & 정통 스페인 타파스 바 미식 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(1,410)</span></div>
+                            <div class="card-badges-green"><span>하몽 테이스팅</span> • <span>샹그리아 1잔 포함</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 48,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">40,800</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="activity" data-dest="스페인 바르셀로나" data-dur="5박 7일" data-budget="1인당 285만원" data-transport="메트로 L3" data-theme="메시의 발자취가 담긴 전설의 축구 경기장과 트로피 투어">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb325?auto=format&fit=crop&w=600&q=80" alt="FC 바르셀로나 캄프 누 스타디움 투어 & 박물관 티켓" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">FC 바르셀로나 캄프 누 스타디움 투어 & 박물관 티켓</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.9</strong><span class="review-count">(4,200)</span></div>
+                            <div class="card-badges-green"><span>락커룸/피치 입장</span> • <span>오디오 가이드</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 45,000</span><span class="discount-percent">-10%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">40,500</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="hotel" data-dest="스페인 바르셀로나 람블라스" data-dur="5박 7일" data-budget="1인당 300만원" data-transport="도보" data-theme="고딕 지구와 카탈루냐 광장 접근성 최고, 루프탑 수영장">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="바르셀로나 람블라스 중심 야외 루프탑 수영장 4성급 호텔 1박" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">바르셀로나 람블라스 중심 야외 루프탑 수영장 4성급 호텔 1박</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.8</strong><span class="review-count">(760)</span></div>
+                            <div class="card-badges-green"><span>카탈루냐 광장 도보 3분</span> • <span>루프탑 칵테일 바</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 260,000</span><span class="discount-percent">-15%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">221,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="agoda-card" data-category="shopping" data-dest="스페인 바르셀로나 그라시아" data-dur="5박 7일" data-budget="1인당 290만원" data-transport="도보" data-theme="가우디 건축물 옆 우아한 명품거리와 스페인 로컬 패션 쇼핑">
+                        <div class="card-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=600&q=80" alt="그라시아 거리 명품 & 로컬 디자이너 편집샵 쇼핑 투어" class="card-img" loading="lazy">
+                            <button type="button" class="card-wishlist" title="위시리스트 저장" aria-label="위시리스트">♡</button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">그라시아 거리 명품 & 로컬 디자이너 편집샵 쇼핑 투어</h3>
+                            <div class="card-rating"><span class="star-icon">★</span><strong class="rating-score">4.7</strong><span class="review-count">(510)</span></div>
+                            <div class="card-badges-green"><span>가우디 명소 인접</span> • <span>택스프리 가이드</span></div>
+                            <div class="card-price-area">
+                                <div class="price-original"><span class="strikethrough">₩ 30,000</span><span class="discount-percent">-20%</span></div>
+                                <div class="price-current"><span class="currency">₩</span><span class="amount">24,000</span></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- 필터 결과가 없을 때 안내 카드 -->
+                    <div class="product-empty-box" id="productEmptyNotice" style="display: none;">
+                        <div class="empty-icon">🧭</div>
+                        <div class="empty-title" id="emptyNoticeTitle">해당 조건에 맞는 추천 항목이 없습니다</div>
+                        <p class="empty-sub" id="emptyNoticeSub">선택하신 지역과 테마의 상품을 준비 중입니다. 대신 Gemini AI에게 이 조건으로 맞춤 여행 일정을 바로 만들어 달라고 요청해보세요!</p>
+                        <button type="button" class="btn-empty-generate" id="btnEmptyGenerate">✨ AI로 이 조건 맞춤 일정 생성하기</button>
+                    </div>
                 </div>
             </section>
 

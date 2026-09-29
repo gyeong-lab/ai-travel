@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 상태 관리 변수
     let currentPlanMarkdown = "";
     let loadingInterval = null;
+    let currentCityKey = "제주";
+    let currentCategory = "all";
 
     // 10대 인기 여행지 프리셋 데이터
     const presets = {
@@ -206,14 +208,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /**
-     * 2. 카테고리 탭 클릭 시 실제 카드 필터링 및 조건 반영
+     * 2. 지역 및 카테고리 교차 필터링 핵심 함수 (2차원 동시 필터링)
+     */
+    function filterProducts() {
+        const emptyNotice = document.getElementById("productEmptyNotice");
+        const emptyNoticeTitle = document.getElementById("emptyNoticeTitle");
+        let visibleCount = 0;
+
+        productCards.forEach((card) => {
+            const cardDest = card.dataset.dest || "";
+            const cardCat = card.dataset.category || "";
+
+            const matchCity = (!currentCityKey || currentCityKey === "all") || cardDest.includes(currentCityKey);
+            const matchCat = (currentCategory === "all") || (cardCat === currentCategory);
+
+            if (matchCity && matchCat) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        if (emptyNotice) {
+            if (visibleCount === 0) {
+                emptyNotice.style.display = "flex";
+                if (emptyNoticeTitle) {
+                    const catBtn = document.querySelector(`.cat-item[data-category="${currentCategory}"] .cat-label`);
+                    const catLabel = catBtn ? catBtn.textContent.trim() : "해당 테마";
+                    const displayCity = currentCityKey === "all" ? "선택하신 지역" : currentCityKey;
+                    emptyNoticeTitle.textContent = `${displayCity}의 '${catLabel}' 추천 코스를 준비 중입니다`;
+                }
+            } else {
+                emptyNotice.style.display = "none";
+            }
+        }
+    }
+
+    /**
+     * 2-1. 카테고리 탭 클릭 시 교차 필터링 및 체크 배지 표시
      */
     categoryButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
             categoryButtons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
 
-            const category = btn.dataset.category;
+            currentCategory = btn.dataset.category || "all";
             const label = btn.querySelector(".cat-label")?.textContent.trim();
 
             // 칩 업데이트
@@ -223,20 +263,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 chipCategory.style.display = "inline-flex";
             }
 
-            // 카드 필터링
-            productCards.forEach((card) => {
-                const cardCat = card.dataset.category;
-                if (category === "all" || cardCat === category) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-
             // 관심사 기본 추천어 채우기
-            if (category !== "all" && label) {
-                interestsInput.value = `${label} 중심 맞춤 여행, 인기 명소 탐방`;
+            if (currentCategory !== "all" && label) {
+                const cityName = (!currentCityKey || currentCityKey === "all") ? "현지" : currentCityKey;
+                interestsInput.value = `${cityName} ${label} 중심 맞춤 여행, 인기 명소 탐방`;
             }
+
+            filterProducts();
         });
     });
 
@@ -248,6 +281,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!query) return;
 
         destinationInput.value = query;
+        currentCityKey = (query === "전체" || query === "전체 추천") ? "all" : query;
+
+        // 프리셋 버튼 active 상태 동기화
+        presetButtons.forEach((b) => {
+            const pKey = b.dataset.preset;
+            if (presets[pKey] && query.includes(presets[pKey].keyword)) {
+                b.classList.add("active");
+            } else {
+                b.classList.remove("active");
+            }
+        });
 
         // 칩 업데이트
         if (chipDestination) {
@@ -256,17 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chipDestination.style.display = "inline-flex";
         }
 
-        // 목적지에 맞는 카드 필터링
-        productCards.forEach((card) => {
-            const dest = card.dataset.dest || "";
-            const title = card.querySelector(".card-title")?.textContent || "";
-            if (dest.includes(query) || title.includes(query) || query === "전체") {
-                card.style.display = "flex";
-            } else {
-                card.style.display = "none";
-            }
-        });
-
+        filterProducts();
         destinationInput.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -284,9 +318,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".chip-remove").forEach((btn) => {
         btn.addEventListener("click", (e) => {
             const chip = e.target.closest(".filter-chip");
-            if (chip) chip.style.display = "none";
-            // 전체 카드 다시 보이기
-            productCards.forEach((card) => (card.style.display = "flex"));
+            if (chip) {
+                chip.style.display = "none";
+                if (chip.id === "chipDestination") {
+                    currentCityKey = "all";
+                    presetButtons.forEach((b) => b.classList.remove("active"));
+                } else if (chip.id === "chipCategory") {
+                    currentCategory = "all";
+                    categoryButtons.forEach((b) => b.classList.remove("active"));
+                    const allCat = document.querySelector('.cat-item[data-category="all"]');
+                    if (allCat) allCat.classList.add("active");
+                }
+                filterProducts();
+            }
         });
     });
 
@@ -294,6 +338,9 @@ document.addEventListener("DOMContentLoaded", () => {
      * 5. 폼 초기화 버튼 (헤더 및 사이드바 공통)
      */
     function resetAll() {
+        currentCityKey = "제주";
+        currentCategory = "all";
+
         destinationInput.value = "제주도 서귀포 & 애월";
         durationInput.value = "2박 3일";
         budgetInput.value = "2인 총 120만원";
@@ -307,8 +354,16 @@ document.addEventListener("DOMContentLoaded", () => {
         priceRange.value = 1200000;
         priceMax.textContent = "₩ 1,200,000";
 
-        if (chipDestination) chipDestination.style.display = "inline-flex";
-        if (chipCategory) chipCategory.style.display = "inline-flex";
+        if (chipDestination) {
+            const textEl = chipDestination.querySelector(".chip-text");
+            if (textEl) textEl.textContent = "제주도";
+            chipDestination.style.display = "inline-flex";
+        }
+        if (chipCategory) {
+            const textEl = chipCategory.querySelector(".chip-text");
+            if (textEl) textEl.textContent = "전체 추천";
+            chipCategory.style.display = "inline-flex";
+        }
 
         categoryButtons.forEach((b) => b.classList.remove("active"));
         const firstCat = document.querySelector('.cat-item[data-category="all"]');
@@ -318,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const firstPreset = document.querySelector('.preset-btn[data-preset="jeju"]');
         if (firstPreset) firstPreset.classList.add("active");
 
-        productCards.forEach((card) => (card.style.display = "flex"));
+        filterProducts();
 
         hideError();
         resultWrapper.style.display = "none";
@@ -418,16 +473,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     chipDestination.style.display = "inline-flex";
                 }
 
-                // 카드 필터링 (키워드 매칭)
-                const cityKey = data.keyword;
-                productCards.forEach((card) => {
-                    const cardDest = card.dataset.dest || "";
-                    if (cardDest.includes(cityKey)) {
-                        card.style.display = "flex";
-                    } else {
-                        card.style.display = "none";
-                    }
-                });
+                currentCityKey = data.keyword;
+                filterProducts();
 
                 travelForm.scrollIntoView({ behavior: "smooth", block: "start" });
             }
@@ -631,4 +678,19 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
+
+    /**
+     * 13. 빈 결과 안내 카드의 'AI 일정 생성' 버튼 동작
+     */
+    const btnEmptyGenerate = document.getElementById("btnEmptyGenerate");
+    if (btnEmptyGenerate) {
+        btnEmptyGenerate.addEventListener("click", () => {
+            travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            travelForm.classList.add("form-focus-pulse");
+            setTimeout(() => travelForm.classList.remove("form-focus-pulse"), 1200);
+        });
+    }
+
+    // 14. 페이지 첫 진입 시 기본 선택 지역(제주) 및 카테고리(전체) 교차 필터링 1회 실행
+    filterProducts();
 });
