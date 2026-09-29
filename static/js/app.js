@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const koreanText = formatKoreanBudget(val);
 
         if (priceMax) {
-            priceMax.textContent = `₩ ${formattedWon} (${koreanText})`;
+            priceMax.textContent = `₩ ${formattedWon}`;
         }
 
         // 기존에 "2인", "1인당" 등 수식어가 붙어있으면 자연스럽게 보존하여 연동
@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const maxVal = parseInt(priceRange.max, 10);
             const clamped = Math.max(minVal, Math.min(maxVal, parsedVal));
             priceRange.value = clamped;
-            priceMax.textContent = `₩ ${clamped.toLocaleString("ko-KR")} (${formatKoreanBudget(clamped)})`;
+            priceMax.textContent = `₩ ${clamped.toLocaleString("ko-KR")}`;
         }
     }
 

@@ -531,10 +531,14 @@ button {
 .price-range-display {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    align-items: center;
+    font-size: 12px;
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 8px;
+    white-space: nowrap;
+    gap: 8px;
+    font-variant-numeric: tabular-nums;
 }
 
 .slider-container {
