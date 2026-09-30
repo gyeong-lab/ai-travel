@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const companionsInput = document.getElementById("companions");
     const transportationInput = document.getElementById("transportation");
     const accommodationInput = document.getElementById("accommodation");
+    const accommodationMatchedBadge = document.getElementById("accommodationMatchedBadge");
+    const accommodationQuickChips = document.getElementById("accommodationQuickChips");
     const travelStyleInput = document.getElementById("travelStyle");
     const travelModeInput = document.getElementById("travelMode");
     const dietaryInput = document.getElementById("dietaryInfo");
@@ -575,6 +577,204 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    const ACCOMMODATION_SUGGESTIONS = {
+        // 제주
+        "애월": {
+            primary: "애월 해안도로 & 한담해변 인근 오션뷰 감성 숙소 / 풀빌라",
+            chips: ["🌊 한담 오션뷰 감성 숙소", "🏊 프라이빗 독채 풀빌라", "🌿 고내리 조용한 펜션", "🏨 4성급 오션 리조트"]
+        },
+        "한림": {
+            primary: "협재·금능 에메랄드 해변 도보 3분 감성 펜션 & 호텔",
+            chips: ["🌊 협재 오션뷰 호텔", "🏊 프라이빗 감성 풀빌라", "🏖️ 금능해변 도보 펜션"]
+        },
+        "서귀포": {
+            primary: "서귀포 중문 관광단지 오션뷰 특급 리조트 & 호텔",
+            chips: ["🏨 5성급 특급 오션 리조트", "🌊 바다전망 감성 호텔", "🏊 숲속 프라이빗 풀빌라", "💰 올레시장 근처 가성비 호텔"]
+        },
+        "중문": {
+            primary: "중문 관광단지 내 최고급 5성급 오션뷰 리조트 & 스파",
+            chips: ["🏨 중문 5성급 럭셔리 리조트", "🏊 인피니티풀 풀빌라", "🌊 주상절리 뷰 호텔"]
+        },
+        "성산": {
+            primary: "성산일출봉 일출 뷰 & 프라이빗 독채 펜션",
+            chips: ["🌅 성산일출봉 뷰 펜션", "🌊 광치기해변 감성 스테이", "🏨 섭지코지 오션 리조트"]
+        },
+        "구좌": {
+            primary: "월정리·세화 해변 인근 오션뷰 감성 카페형 숙소",
+            chips: ["🌊 월정리 오션뷰 숙소", "🌿 세화 조용한 돌담 펜션", "🏖️ 함덕 해변 호텔"]
+        },
+        "함덕": {
+            primary: "함덕 서우봉해변 에메랄드 오션뷰 호텔 & 리조트",
+            chips: ["🌊 함덕 해변 1열 호텔", "🏊 오션 인피니티풀 숙소", "💰 함덕 가성비 리조트"]
+        },
+        // 서울
+        "성수": {
+            primary: "성수동·서울숲 도보권 트렌디한 감성 부티크 호텔",
+            chips: ["✨ 성수 감성 부티크 호텔", "🌿 서울숲 도보 디자인 스테이", "🏨 뚝섬 역세권 호텔"]
+        },
+        "서울숲": {
+            primary: "성수동·서울숲 도보권 트렌디한 감성 부티크 호텔",
+            chips: ["✨ 성수 감성 부티크 호텔", "🌿 서울숲 도보 디자인 스테이", "🏨 뚝섬 역세권 호텔"]
+        },
+        "홍대": {
+            primary: "홍대입구·연남동 중심 트렌디한 감성 디자인 호텔 & 스테이",
+            chips: ["🎨 연남동 감성 스테이", "🛍️ 홍대입구 역세권 호텔", "🏨 신촌/마포 부티크 호텔"]
+        },
+        "연남": {
+            primary: "연남동 경의선 숲길 도보권 감성 프라이빗 스테이",
+            chips: ["🌿 연남 숲길 감성 스테이", "🎨 연트럴파크 부티크", "🏨 홍대 역세권 호텔"]
+        },
+        "종로": {
+            primary: "북촌한옥마을 & 익선동 고즈넉한 전통 한옥 스테이",
+            chips: ["🏯 북촌 프라이빗 한옥", "🏮 익선동 감성 부티크", "🏛️ 광화문 4성급 호텔", "💰 종로 역세권 가성비 호텔"]
+        },
+        "북촌": {
+            primary: "북촌한옥마을 고즈넉한 전통 독채 한옥 스테이",
+            chips: ["🏯 북촌 독채 한옥", "🍵 다도 체험 전통 스테이", "🏮 삼청동 감성 숙소"]
+        },
+        "익선동": {
+            primary: "익선동 한옥거리 & 종로 중심 레트로 감성 호텔",
+            chips: ["🏮 익선동 한옥 호텔", "✨ 종로 레트로 부티크", "🏯 북촌 한옥 스테이"]
+        },
+        "강남": {
+            primary: "강남·신사 가로수길 인근 프리미엄 럭셔리 호텔",
+            chips: ["👑 강남 5성급 럭셔리 호텔", "✨ 신사 가로수길 부티크", "🏨 삼성동 코엑스 인근 호텔"]
+        },
+        // 부산
+        "해운대": {
+            primary: "해운대 해변 1열 정면 오션뷰 럭셔리 호텔",
+            chips: ["🌊 해운대 1열 오션뷰 호텔", "🏊 인피니티풀 특급 리조트", "🏨 해리단길 감성 숙소"]
+        },
+        "광안리": {
+            primary: "광안대교 파노라마 오션뷰 감성 호텔 & 레지던스",
+            chips: ["🌉 광안대교 1열 뷰 호텔", "✨ 광안리 감성 레지던스", "🍷 루프탑 오션뷰 스테이"]
+        },
+        "기장": {
+            primary: "기장 아난티 코브 & 오시리아 럭셔리 오션 리조트",
+            chips: ["👑 기장 럭셔리 5성급 리조트", "🌊 오시리아 오션뷰 호텔", "🏊 프라이빗 인피니티풀"]
+        },
+        "영도": {
+            primary: "영도 흰여울마을 절벽 오션뷰 감성 스테이 & 호텔",
+            chips: ["🌊 흰여울마을 바다뷰 스테이", "🌉 부산항대교 야경 호텔", "💰 남포 역세권 가성비 호텔"]
+        },
+        // 강릉 / 속초
+        "강릉": {
+            primary: "경포대·안목해변 인피니티풀 오션뷰 호텔 & 리조트",
+            chips: ["🌊 경포대 오션뷰 호텔", "☕ 안목 커피거리 뷰 숙소", "🌲 송정 솔밭길 감성 펜션"]
+        },
+        "속초": {
+            primary: "속초 영금정·속초해변 바다 전망 오션뷰 호텔 & 리조트",
+            chips: ["🌊 속초아이 오션뷰 호텔", "🐟 중앙시장 도보 가성비 호텔", "🏔️ 설악산 힐링 리조트"]
+        },
+        "양양": {
+            primary: "양양 서피비치 & 인구해변 서핑 감성 비치 리조트",
+            chips: ["🏄‍♂️ 서피비치 감성 리조트", "🌊 인구항 오션뷰 호텔", "🌿 죽도 힐링 스테이"]
+        },
+        // 경주
+        "경주": {
+            primary: "황리단길 중심 정원 딸린 전통 프라이빗 한옥 스테이",
+            chips: ["🏯 황리단길 독채 한옥", "🌊 보문호수 레이크뷰 리조트", "🏊 감포 바다뷰 풀빌라", "💰 대릉원 인근 가성비 한옥"]
+        },
+        "황리단길": {
+            primary: "황리단길 중심 고즈넉한 전통 한옥 스테이",
+            chips: ["🏯 황리단길 독채 한옥", "🏮 정원 딸린 감성 한옥", "💰 황리단길 가성비 게하"]
+        },
+        "보문": {
+            primary: "보문관광단지 호수 전망 힐링 리조트 & 스파 호텔",
+            chips: ["🌊 보문호수 레이크뷰 리조트", "♨️ 천연온천 스파 호텔", "👨‍👩‍👧 가족 친화형 리조트"]
+        },
+        // 여수
+        "여수": {
+            primary: "돌산대교 야경 뷰 오션 테라스 풀빌라 & 리조트",
+            chips: ["🌉 돌산대교 야경뷰 리조트", "🏊 인피니티풀 풀빌라", "🌊 오동도 엑스포 인근 호텔", "🏮 낭만포차 도보 호텔"]
+        },
+        "돌산": {
+            primary: "돌산도 바다전망 인피니티풀 풀빌라 & 럭셔리 리조트",
+            chips: ["🏊 돌산 인피니티풀 풀빌라", "🌉 돌산대교 야경 리조트", "🌊 향일암 인근 힐링 펜션"]
+        }
+    };
+
+    function updateAccommodationPreference(dest, subRegion, autoFocusPulse = true) {
+        if (!accommodationInput) return;
+        const sub = (subRegion || "").trim();
+        const baseDest = (dest || "").trim();
+
+        let matched = null;
+        let matchedKey = "";
+
+        // 1. subRegion 우선 탐색
+        if (sub) {
+            for (const [key, data] of Object.entries(ACCOMMODATION_SUGGESTIONS)) {
+                if (sub.includes(key)) {
+                    matched = data;
+                    matchedKey = key;
+                    break;
+                }
+            }
+            if (!matched) {
+                matched = {
+                    primary: `${sub} 중심 동선 밀착형 감성 숙소 (호텔/펜션)`,
+                    chips: [`🏨 ${sub} 중심가 호텔`, `✨ ${sub} 감성 숙소/펜션`, `💰 ${sub} 가성비 숙소`]
+                };
+                matchedKey = sub;
+            }
+        } else {
+            // 2. destination 탐색
+            for (const [key, data] of Object.entries(ACCOMMODATION_SUGGESTIONS)) {
+                if (baseDest.includes(key)) {
+                    matched = data;
+                    matchedKey = key;
+                    break;
+                }
+            }
+        }
+
+        if (matched) {
+            accommodationInput.value = matched.primary;
+            if (autoFocusPulse) {
+                accommodationInput.classList.remove("input-highlight-pulse");
+                void accommodationInput.offsetWidth;
+                accommodationInput.classList.add("input-highlight-pulse");
+            }
+
+            if (accommodationMatchedBadge) {
+                accommodationMatchedBadge.textContent = `🎯 ${matchedKey} 맞춤 연동`;
+                accommodationMatchedBadge.style.display = "inline-flex";
+            }
+
+            renderAccommodationChips(matched.chips);
+        } else {
+            if (accommodationMatchedBadge) {
+                accommodationMatchedBadge.style.display = "none";
+            }
+            renderAccommodationChips(["🏨 동선 밀착 감성 호텔", "🏊 오션뷰/리버뷰 숙소", "🏯 전통 스테이", "💰 실속 가성비 숙소"]);
+        }
+    }
+
+    function renderAccommodationChips(chipsList) {
+        if (!accommodationQuickChips) return;
+        accommodationQuickChips.innerHTML = "";
+        if (!chipsList || chipsList.length === 0) return;
+
+        chipsList.forEach(chipText => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "btn-acc-chip";
+            btn.textContent = chipText;
+            btn.addEventListener("click", () => {
+                if (accommodationInput) {
+                    accommodationInput.value = chipText;
+                    accommodationInput.classList.remove("input-highlight-pulse");
+                    void accommodationInput.offsetWidth;
+                    accommodationInput.classList.add("input-highlight-pulse");
+                }
+                accommodationQuickChips.querySelectorAll(".btn-acc-chip").forEach(c => c.classList.remove("active"));
+                btn.classList.add("active");
+            });
+            accommodationQuickChips.appendChild(btn);
+        });
+    }
+
     function extractBaseCity(destStr) {
         if (!destStr) return "제주도";
         // 괄호 및 기존 한정 문구 제거: e.g. "제주도 (애월읍 일대만 한정)" -> "제주도"
@@ -607,8 +807,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 void destinationInput.offsetWidth; // trigger reflow
                 destinationInput.classList.add("input-highlight-pulse");
 
+                // 세부 한정 지역에 맞춰 숙소 선호 필드도 자동 변경
+                updateAccommodationPreference(destinationInput.value, val, !isSilent);
+
                 if (!isSilent && subRegionFeedback && subRegionFeedbackText) {
-                    subRegionFeedbackText.textContent = `목적지가 '${destinationInput.value}'(으)로 자동 변경되었습니다!`;
+                    subRegionFeedbackText.textContent = `목적지('${destinationInput.value}')와 숙소가 '${val}' 맞춤으로 자동 설정되었습니다!`;
                     subRegionFeedback.style.display = "flex";
                 }
                 if (!isSilent && btnApplySubRegion) {
@@ -624,6 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 destinationInput.value = baseCity;
                 destinationInput.classList.remove("input-highlight-pulse");
+                updateAccommodationPreference(baseCity, "", false);
                 if (subRegionFeedback) subRegionFeedback.style.display = "none";
                 if (btnApplySubRegion) {
                     btnApplySubRegion.classList.remove("applied");
@@ -747,7 +951,13 @@ document.addEventListener("DOMContentLoaded", () => {
             if (subRegionContainer && subRegionContainer.style.display !== "none") {
                 renderSubRegionChips();
             }
+            const subVal = subRegionInput ? subRegionInput.value.trim() : "";
+            updateAccommodationPreference(destinationInput.value, subVal, false);
         });
+
+        // 초기 로딩 시 숙소 선호 필드 및 칩 자동 구성
+        const initSub = subRegionInput ? subRegionInput.value.trim() : "";
+        updateAccommodationPreference(destinationInput.value, initSub, false);
     }
 
     /**
@@ -928,6 +1138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btnToggleSubRegion.setAttribute("aria-expanded", "false");
         }
         updateSubRegionState();
+        updateAccommodationPreference("제주도", "", false);
         setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
 
         if (typeof initDatePickers === "function") {
@@ -1403,6 +1614,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 updateSubRegionState();
                 renderSubRegionChips();
+                updateAccommodationPreference(data.destination, "", false);
 
                 topSearchInput.value = data.shortName;
                 if (chipDestination) {

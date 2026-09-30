@@ -21,7 +21,7 @@
 
     <!-- Pretendard 최신 웹폰트 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261001_subreg_confirm">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261001_acc_matched">
     <!-- Leaflet.js 인터랙티브 지도 라이브러리 (API 키 없이 즉시 실행 & 카카오맵 길찾기 연동) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -439,9 +439,18 @@
                     </div>
 
                     <!-- 숙소 유형 -->
-                    <div class="form-group">
-                        <label for="accommodation">🏨 숙소 선호</label>
+                    <div class="form-group accommodation-form-group">
+                        <div class="accommodation-label-row">
+                            <label for="accommodation">🏨 숙소 선호</label>
+                            <span class="badge-auto-matched" id="accommodationMatchedBadge">🎯 지역 맞춤 연동</span>
+                        </div>
                         <input type="text" id="accommodation" name="accommodation" value="동선에 맞춘 바다 전망 감성 숙소" placeholder="예: 동선에 맞춘 감성 숙소, 가성비 호텔, 오션뷰 리조트">
+                        
+                        <!-- 지역 맞춤 숙소 빠른 추천 칩 -->
+                        <div class="accommodation-quick-chips" id="accommodationQuickChips">
+                            <!-- JS로 지역/권역 맞춤 숙소 칩이 동적으로 렌더링됩니다 -->
+                        </div>
+
                         <div class="budget-calc-sub" style="color: #059669;">
                             <span class="calc-icon">🚗</span>
                             <span class="calc-text">이동시간 단축을 위해 당일 저녁 동선 근처의 숙소를 우선 추천합니다</span>
@@ -2594,6 +2603,6 @@
     </aside>
 
     <!-- 스크립트 연결 -->
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=20261001_subreg_confirm"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=20261001_acc_matched"></script>
 </body>
 </html>

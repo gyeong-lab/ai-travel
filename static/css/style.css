@@ -1783,6 +1783,63 @@ label[for="travelStyle"] {
     box-shadow: 0 1px 4px rgba(217, 119, 6, 0.3);
 }
 
+/* 숙소 선호 필드 라벨 & 맞춤 뱃지 & 빠른 추천 칩 */
+.accommodation-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.badge-auto-matched {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.2s ease;
+}
+
+.accommodation-quick-chips {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+.btn-acc-chip {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.btn-acc-chip:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.btn-acc-chip.active {
+    background: #2563eb;
+    border-color: #1d4ed8;
+    color: #ffffff;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+}
+
 /* 여행 기조 & 스타일 입력창 및 초이스 칩 */
 .style-input-wrap {
     margin-bottom: 6px;
