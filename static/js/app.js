@@ -2239,12 +2239,222 @@ document.addEventListener("DOMContentLoaded", () => {
         "맨해튼": { lat: 40.7831, lng: -73.9712, zoom: 12 }
     };
 
+    // 🌟 주요 여행지별 세부 권역(Sub-Region) 중심 좌표 매핑 (지역 한정 일정표 및 클러스터링 동선 최적화)
+    const SUB_REGION_COORDS = {
+        // 제주 세부 권역
+        "애월": { lat: 33.4628, lng: 126.3117 },
+        "애월읍": { lat: 33.4628, lng: 126.3117 },
+        "한림": { lat: 33.4144, lng: 126.2625 },
+        "한림읍": { lat: 33.4144, lng: 126.2625 },
+        "협재": { lat: 33.3941, lng: 126.2397 },
+        "서귀포": { lat: 33.2541, lng: 126.5601 },
+        "서귀포시": { lat: 33.2541, lng: 126.5601 },
+        "중문": { lat: 33.2483, lng: 126.4132 },
+        "성산": { lat: 33.4586, lng: 126.9427 },
+        "성산읍": { lat: 33.4586, lng: 126.9427 },
+        "구좌": { lat: 33.5228, lng: 126.8523 },
+        "구좌읍": { lat: 33.5228, lng: 126.8523 },
+        "조천": { lat: 33.5350, lng: 126.6345 },
+        "조천읍": { lat: 33.5350, lng: 126.6345 },
+        "제주시": { lat: 33.5000, lng: 126.5312 },
+        "안덕": { lat: 33.2548, lng: 126.3315 },
+        "대정": { lat: 33.2268, lng: 126.2514 },
+        "표선": { lat: 33.3265, lng: 126.8315 },
+        "남원": { lat: 33.2798, lng: 126.7198 },
+        "우도": { lat: 33.5042, lng: 126.9541 },
+
+        // 서울 세부 권역
+        "종로": { lat: 37.5730, lng: 126.9794 },
+        "명동": { lat: 37.5636, lng: 126.9827 },
+        "강남": { lat: 37.4979, lng: 127.0276 },
+        "성수": { lat: 37.5445, lng: 127.0560 },
+        "홍대": { lat: 37.5563, lng: 126.9226 },
+        "여의도": { lat: 37.5219, lng: 126.9242 },
+        "잠실": { lat: 37.5133, lng: 127.1001 },
+        "이태원": { lat: 37.5345, lng: 126.9946 },
+
+        // 부산 세부 권역
+        "해운대": { lat: 35.1587, lng: 129.1604 },
+        "광안리": { lat: 35.1532, lng: 129.1189 },
+        "서면": { lat: 35.1578, lng: 129.0594 },
+        "남포동": { lat: 35.0979, lng: 129.0305 },
+        "영도": { lat: 35.0912, lng: 129.0678 },
+        "기장": { lat: 35.2447, lng: 129.2223 }
+    };
+
+    /**
+     * 🛫 사용자가 선택한 출도착 교통 거점(버스터미널, 기차역, 항구, 공항, 자차)에 맞는 정확한 명칭과 좌표 결정
+     */
+    function resolveTransportationHub(destination, transportText, isExit, subRegion) {
+        const dest = destination || "제주";
+        const rawText = (transportText || "").trim();
+        const actionLabel = isExit ? "귀국" : "출발";
+        const sub = subRegion || "";
+
+        // 1) 버스터미널 매칭
+        if (rawText.includes("버스") || rawText.includes("터미널")) {
+            if (dest.includes("제주")) {
+                if (sub.includes("서귀포") || sub.includes("중문") || sub.includes("남원")) {
+                    return { name: `서귀포버스터미널 (${actionLabel})`, lat: 33.2492, lng: 126.5085, type: "bus" };
+                }
+                return { name: `제주버스터미널 (${actionLabel})`, lat: 33.4998, lng: 126.5152, type: "bus" };
+            }
+            if (dest.includes("서울")) {
+                return { name: `서울고속버스터미널 (${actionLabel})`, lat: 37.5054, lng: 127.0044, type: "bus" };
+            }
+            if (dest.includes("부산")) {
+                return { name: `부산서부버스터미널 (${actionLabel})`, lat: 35.1630, lng: 128.9818, type: "bus" };
+            }
+            if (dest.includes("강릉")) {
+                return { name: `강릉고속버스터미널 (${actionLabel})`, lat: 37.7547, lng: 128.8785, type: "bus" };
+            }
+            if (dest.includes("속초")) {
+                return { name: `속초고속버스터미널 (${actionLabel})`, lat: 38.1905, lng: 128.5986, type: "bus" };
+            }
+            if (dest.includes("경주")) {
+                return { name: `경주고속버스터미널 (${actionLabel})`, lat: 35.8390, lng: 129.2023, type: "bus" };
+            }
+            if (dest.includes("여수")) {
+                return { name: `여수종합버스터미널 (${actionLabel})`, lat: 34.7584, lng: 127.7126, type: "bus" };
+            }
+            const center = DEST_COORDS[dest] || { lat: 37.5665, lng: 126.9780 };
+            return { name: `${dest} 버스터미널 (${actionLabel})`, lat: center.lat + 0.015, lng: center.lng - 0.01, type: "bus" };
+        }
+
+        // 2) KTX / 기차역 매칭
+        if (rawText.includes("ktx") || rawText.includes("기차") || rawText.includes("열차") || rawText.includes("역")) {
+            if (dest.includes("서울")) {
+                return { name: `서울역 KTX (${actionLabel})`, lat: 37.5559, lng: 126.9723, type: "train" };
+            }
+            if (dest.includes("부산")) {
+                return { name: `부산역 KTX (${actionLabel})`, lat: 35.1152, lng: 129.0422, type: "train" };
+            }
+            if (dest.includes("강릉")) {
+                return { name: `강릉역 KTX (${actionLabel})`, lat: 37.7645, lng: 128.8996, type: "train" };
+            }
+            if (dest.includes("경주")) {
+                return { name: `신경주역 KTX (${actionLabel})`, lat: 35.7981, lng: 129.1396, type: "train" };
+            }
+            if (dest.includes("여수")) {
+                return { name: `여수엑스포역 KTX (${actionLabel})`, lat: 34.7528, lng: 127.7486, type: "train" };
+            }
+            if (dest.includes("오사카")) {
+                return { name: `신오사카역 신칸센 (${actionLabel})`, lat: 34.7335, lng: 135.5003, type: "train" };
+            }
+            if (dest.includes("도쿄")) {
+                return { name: `도쿄역 JR (${actionLabel})`, lat: 35.6812, lng: 139.7671, type: "train" };
+            }
+            if (dest.includes("후쿠오카")) {
+                return { name: `하카타역 (${actionLabel})`, lat: 33.5902, lng: 130.4207, type: "train" };
+            }
+            if (dest.includes("제주")) {
+                return { name: `제주연안여객터미널(KTX연계) (${actionLabel})`, lat: 33.5222, lng: 126.5401, type: "port" };
+            }
+            const center = DEST_COORDS[dest] || { lat: 37.5665, lng: 126.9780 };
+            return { name: `${dest}역 KTX (${actionLabel})`, lat: center.lat + 0.01, lng: center.lng + 0.01, type: "train" };
+        }
+
+        // 3) 항구 / 여객터미널 매칭
+        if (rawText.includes("항구") || rawText.includes("여객") || rawText.includes("선박") || rawText.includes("페리") || rawText.includes("배")) {
+            if (dest.includes("제주")) {
+                return { name: `제주연안여객터미널 (${actionLabel})`, lat: 33.5222, lng: 126.5401, type: "port" };
+            }
+            if (dest.includes("부산")) {
+                return { name: `부산항국제여객터미널 (${actionLabel})`, lat: 35.1186, lng: 129.0514, type: "port" };
+            }
+            if (dest.includes("여수")) {
+                return { name: `여수연안여객선터미널 (${actionLabel})`, lat: 34.7397, lng: 127.7346, type: "port" };
+            }
+            if (dest.includes("속초")) {
+                return { name: `속초항국제크루즈터미널 (${actionLabel})`, lat: 38.2045, lng: 128.5975, type: "port" };
+            }
+            if (dest.includes("강릉")) {
+                return { name: `강릉항 여객터미널 (${actionLabel})`, lat: 37.7712, lng: 128.9482, type: "port" };
+            }
+            const center = DEST_COORDS[dest] || { lat: 37.5665, lng: 126.9780 };
+            return { name: `${dest} 여객선터미널 (${actionLabel})`, lat: center.lat + 0.02, lng: center.lng - 0.02, type: "port" };
+        }
+
+        // 4) 자차 / 렌터카 매칭
+        if (rawText.includes("자차")) {
+            if (dest.includes("제주")) {
+                return { name: `제주 렌터카 하우스/인수점 (${actionLabel})`, lat: 33.5080, lng: 126.4980, type: "car" };
+            }
+            if (dest.includes("서울")) {
+                return { name: `서울 만남의광장 (자차 ${actionLabel})`, lat: 37.4601, lng: 127.0422, type: "car" };
+            }
+            if (dest.includes("부산")) {
+                return { name: `부산 톨게이트 (자차 ${actionLabel})`, lat: 35.2890, lng: 129.0980, type: "car" };
+            }
+            const center = DEST_COORDS[dest] || { lat: 37.5665, lng: 126.9780 };
+            return { name: `${dest} 관문 (자차 ${actionLabel})`, lat: center.lat + 0.02, lng: center.lng + 0.02, type: "car" };
+        }
+
+        // 5) 공항 (기본값)
+        const airportMap = {
+            "제주": { name: "제주국제공항", lat: 33.5113, lng: 126.4930 },
+            "부산": { name: "김해국제공항", lat: 35.1795, lng: 128.9382 },
+            "강릉": { name: "강릉역 KTX (출발지)", lat: 37.7645, lng: 128.8996 },
+            "속초": { name: "속초 고속버스터미널 (출발지)", lat: 38.1905, lng: 128.5986 },
+            "경주": { name: "신경주역 KTX (출발지)", lat: 35.7981, lng: 129.1396 },
+            "여수": { name: "여수엑스포역 KTX (출발지)", lat: 34.7528, lng: 127.7486 },
+            "서울": { name: "김포국제공항", lat: 37.5587, lng: 126.7945 },
+            "오사카": { name: "간사이국제공항", lat: 34.4320, lng: 135.2304 },
+            "도쿄": { name: "하네다국제공항", lat: 35.5494, lng: 139.7798 },
+            "후쿠오카": { name: "후쿠오카공항", lat: 33.5859, lng: 130.4507 },
+            "삿포로": { name: "신치토세국제공항", lat: 42.7752, lng: 141.6923 },
+            "방콕": { name: "수완나품국제공항", lat: 13.6900, lng: 100.7501 },
+            "다낭": { name: "다낭국제공항", lat: 16.0538, lng: 108.1994 },
+            "타이베이": { name: "타오위안국제공항", lat: 25.0797, lng: 121.2342 },
+            "싱가포르": { name: "싱가포르 창이국제공항", lat: 1.3644, lng: 103.9915 },
+            "발리": { name: "발리 응우라라이국제공항", lat: -8.7481, lng: 115.1672 },
+            "괌": { name: "괌 앤토니오 B. 원팻 국제공항", lat: 13.4834, lng: 144.7959 },
+            "파리": { name: "샤를드골국제공항", lat: 49.0097, lng: 2.5479 },
+            "런던": { name: "런던 히드로국제공항", lat: 51.4700, lng: -0.4543 },
+            "로마": { name: "로마 레오나르도 다빈치(피우미치노)공항", lat: 41.8003, lng: 12.2389 },
+            "바르셀로나": { name: "바르셀로나 엘프랏국제공항", lat: 41.2974, lng: 2.0833 },
+            "뉴욕": { lat: 40.6413, lng: -73.7781, name: "존F케네디(JFK)국제공항" }
+        };
+
+        for (const [k, ap] of Object.entries(airportMap)) {
+            if (dest.includes(k)) {
+                return { name: `${ap.name} (${actionLabel})`, lat: ap.lat, lng: ap.lng, type: "airport" };
+            }
+        }
+
+        const fallbackCenter = DEST_COORDS[dest] || { lat: 37.5665, lng: 126.9780 };
+        return { name: `${dest} 공항/역 (${actionLabel})`, lat: fallbackCenter.lat + 0.02, lng: fallbackCenter.lng - 0.02, type: "airport" };
+    }
+
     const SPOT_COORDS = {
-        // 제주 스팟
+        // 제주 스팟 & 버스터미널/항구
         "제주공항": { lat: 33.5113, lng: 126.4930 },
+        "제주국제공항": { lat: 33.5113, lng: 126.4930 },
+        "제주버스터미널": { lat: 33.4998, lng: 126.5152 },
+        "서귀포버스터미널": { lat: 33.2492, lng: 126.5085 },
+        "제주연안여객터미널": { lat: 33.5222, lng: 126.5401 },
+        "제주항": { lat: 33.5222, lng: 126.5401 },
+        "제주 렌터카 하우스": { lat: 33.5080, lng: 126.4980 },
         "애월": { lat: 33.4628, lng: 126.3117 },
         "한담해변": { lat: 33.4621, lng: 126.3093 },
         "한담해안산책로": { lat: 33.4618, lng: 126.3105 },
+        "놀맨": { lat: 33.4619, lng: 126.3106 },
+        "놀맨 해물라면": { lat: 33.4619, lng: 126.3106 },
+        "봄날": { lat: 33.4623, lng: 126.3095 },
+        "봄날카페": { lat: 33.4623, lng: 126.3095 },
+        "랜디스도넛": { lat: 33.4608, lng: 126.3115 },
+        "랜디스도넛 제주애월점": { lat: 33.4608, lng: 126.3115 },
+        "노티드 제주": { lat: 33.4610, lng: 126.3101 },
+        "노티드": { lat: 33.4610, lng: 126.3101 },
+        "애월카페거리": { lat: 33.4615, lng: 126.3102 },
+        "애월 카페거리": { lat: 33.4615, lng: 126.3102 },
+        "돈사돈 애월점": { lat: 33.4645, lng: 126.3250 },
+        "다인오세아노 호텔": { lat: 33.4770, lng: 126.3465 },
+        "다인오세아노": { lat: 33.4770, lng: 126.3465 },
+        "새별오름": { lat: 33.3665, lng: 126.3562 },
+        "과물노천탕": { lat: 33.4510, lng: 126.3095 },
+        "뽈살집": { lat: 33.3955, lng: 126.2415 },
+        "뽈살집 한림점": { lat: 33.3955, lng: 126.2415 },
         "협재": { lat: 33.3941, lng: 126.2397 },
         "협재해수욕장": { lat: 33.3941, lng: 126.2397 },
         "금능해수욕장": { lat: 33.3905, lng: 126.2345 },
@@ -2485,7 +2695,30 @@ document.addEventListener("DOMContentLoaded", () => {
         "코엑스": { lat: 37.5118, lng: 127.0592 },
         "청계천": { lat: 37.5691, lng: 126.9787 },
         "해운대": { lat: 35.1587, lng: 129.1604 },
-        "광안리": { lat: 35.1532, lng: 129.1189 }
+        "광안리": { lat: 35.1532, lng: 129.1189 },
+
+        // 국내 주요 교통 거점 스팟 (버스터미널, KTX 기차역, 여객터미널)
+        "서울고속버스터미널": { lat: 37.5054, lng: 127.0044 },
+        "센트럴시티터미널": { lat: 37.5048, lng: 127.0040 },
+        "동서울터미널": { lat: 37.5345, lng: 127.0942 },
+        "동서울종합터미널": { lat: 37.5345, lng: 127.0942 },
+        "서울역": { lat: 37.5559, lng: 126.9723 },
+        "용산역": { lat: 37.5298, lng: 126.9647 },
+        "부산역": { lat: 35.1152, lng: 129.0422 },
+        "부산서부버스터미널": { lat: 35.1630, lng: 128.9818 },
+        "부산종합버스터미널": { lat: 35.2848, lng: 129.0950 },
+        "부산항국제여객터미널": { lat: 35.1186, lng: 129.0514 },
+        "강릉역": { lat: 37.7645, lng: 128.8996 },
+        "강릉고속버스터미널": { lat: 37.7547, lng: 128.8785 },
+        "강릉항 여객터미널": { lat: 37.7712, lng: 128.9482 },
+        "속초고속버스터미널": { lat: 38.1905, lng: 128.5986 },
+        "속초시외버스터미널": { lat: 38.2114, lng: 128.5888 },
+        "속초항": { lat: 38.2045, lng: 128.5975 },
+        "신경주역": { lat: 35.7981, lng: 129.1396 },
+        "경주고속버스터미널": { lat: 35.8390, lng: 129.2023 },
+        "여수엑스포역": { lat: 34.7528, lng: 127.7486 },
+        "여수종합버스터미널": { lat: 34.7584, lng: 127.7126 },
+        "여수연안여객선터미널": { lat: 34.7397, lng: 127.7346 }
     };
 
     let leafletMap = null;
@@ -2501,41 +2734,65 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * AI 계획서 텍스트에서 '평균', '접이식 전기차' 같은 비장소 단어를 걸러내고 실제 명소/식당/상호명만 추출
+     * AI 계획서 텍스트에서 '평균', '접이식 전기차', '최종', '미식' 등 비장소 단어를 걸러내고 실제 명소/식당/상호명만 깨끗하게 추출
      */
     function cleanPlaceName(rawContent, currentDay) {
         if (!rawContent) return null;
         let text = rawContent.trim();
 
-        // 1. 꿀팁, 이동시간, 예상 경비, 주의사항 등 정보성 텍스트는 원천 제외
-        if (/(꿀팁|소요시간|이동시간|예상\s*경비|경비|비용|이동\s*정보|준비물|주의사항|환전|안내사항)/i.test(text)) {
+        // 1. 꿀팁, 이동시간, 예상 경비, 주의사항, 환전 등 정보성 텍스트는 원천 제외
+        if (/(꿀팁|소요시간|이동시간|예상\s*경비|경비|비용|이동\s*정보|준비물|주의사항|환전|안내사항|탑승\s*수속)/i.test(text)) {
             return null;
         }
 
-        // 2. 괄호 안의 부가설명(가격, 대기시간, 세부사항 등) 제거
-        text = text.replace(/\([^\)]*\)/g, " ").replace(/（[^）]*）/g, " ");
-
-        // 3. 이동 화살표(➜, →, ->, ~>) 동선에서 메인 목적지 세그먼트 분리
-        if (/[➜→\->~>]/.test(text)) {
-            const segs = text.split(/[➜→\->~>]+/).map(s => s.trim()).filter(Boolean);
-            let targetSeg = segs[segs.length - 1];
-            // 마지막 세그먼트가 단순 '이동/도착/출발'이면 바로 앞의 명소 선택
-            if (/^(이동|출발|도착|체크인|복귀)$/.test(targetSeg) && segs.length > 1) {
-                targetSeg = segs[segs.length - 2];
-            }
-            text = targetSeg || text;
+        // 2. 콜론(: 또는 ：)이 있으면 콜론 앞의 헤더 라벨(추천 미식, 최종 행선지, 핵심 관광 등) 완전 제거!
+        if (text.includes(":") || text.includes("：")) {
+            const colonIdx = Math.max(text.indexOf(":"), text.indexOf("："));
+            text = text.substring(colonIdx + 1).trim();
         }
 
-        // 4. 마크다운 기호 제거
+        // 3. 앞부분의 흔한 불릿/이모지 기호 제거
+        text = text.replace(/^[-*•]\s*(?:📍|🍴|🎯|🌙|🏨|🌅|✈️|🚢|🚄|🚗|☕)?\s*/g, "").trim();
+
+        // 4. 마크다운 기호 제거 (*, _, `, ~, [, ])
         text = text.replace(/[\*\_`~\[\]]/g, " ").trim();
 
-        // 5. 렌터카, 접이식 전기차, 셔틀버스 등 이동수단/대여 접두어 제거
-        text = text.replace(/^(?:접이식\s*전기차|전기차|전동\s*바이크|전동\s*스쿠터|전기자전거|자전거|렌터카|렌트카|셔틀버스|대중교통|차량)\s*(?:대여|탑승|이용|픽업|인수)?\s*(?:및|후|로|타고)?\s*/gi, "");
+        // 5. 텍스트가 괄호로 시작할 때 (예: "(놀맨 해물라면) 제주 대표 라면" -> "놀맨 해물라면")
+        const leadingParenMatch = text.match(/^[\(\[（]([^\)\]）]+)[\)\]）]\s*(.*)$/);
+        if (leadingParenMatch) {
+            const insideParen = leadingParenMatch[1].trim();
+            const afterParen = leadingParenMatch[2].trim();
+            if (!/^(1일차|2일차|3일차|오전|오후|저녁|점심|팁|주의)/.test(insideParen)) {
+                text = insideParen;
+            } else {
+                text = afterParen;
+            }
+        } else {
+            // 뒤쪽 부가 설명 괄호 제거
+            text = text.replace(/[\(\[（][^\)\]）]*[\)\]）]/g, " ").trim();
+        }
 
-        // 6. 평균, 대략, 약, 맛집, 명소 등 일반 수식어 제거
-        text = text.replace(/^(?:평균|대략|약|최고의|인기|유명|대표|시그니처|추천|로컬|숨은|필수|감성|힐링)\s*(?:맛집|명소|식당|카페|투어|코스|만찬|체험|관광)?\s*[:：\-·]?\s*/gi, "");
+        // 6. 이동 화살표(➜, →, ->, ~>) 동선에서 목적지 세그먼트 분리
+        if (/[➜→\->~>]/.test(text)) {
+            const segs = text.split(/[➜→\->~>]+/).map(s => s.trim()).filter(Boolean);
+            let validSeg = null;
+            for (let i = segs.length - 1; i >= 0; i--) {
+                const seg = segs[i].replace(/^(?:이동|출발|도착|체크인|체크아웃|탑승|수속|복귀)\s*/g, "").trim();
+                if (seg && !/^(이동|출발|도착|체크인|체크아웃|탑승|수속|복귀)$/.test(seg)) {
+                    validSeg = seg;
+                    break;
+                }
+            }
+            text = validSeg || text;
+        }
 
-        // 7. SPOT_COORDS 중에서 긴 이름 순으로 포함 여부 최우선 탐색
+        // 7. 앞부분의 이동수단/서술적 프리픽스 제거
+        text = text.replace(/^(?:접이식\s*전기차|전기차|전동\s*바이크|전동\s*스쿠터|전기자전거|자전거|렌터카|렌트카|셔틀버스|대중교통|차량)?\s*(?:대여|탑승|이용|픽업|인수|도착|출발|체크인|체크아웃)?\s*(?:및|후|로|에|타고)?\s*(?:첫\s*코스로|첫\s*목적지로)?\s*/gi, "").trim();
+
+        // 8. 불필요한 라벨 단어 프리픽스 제거 (예: "최종 행선지 - 봄날" -> "봄날", "추천 미식 봄날" -> "봄날")
+        text = text.replace(/^(?:추천\s*)?(?:미식|맛집|식당|카페|핵심\s*명소|핵심\s*관광지?|핵심\s*코스|방문\s*장소|방문지|관광지|최종\s*행선지|최종\s*목적지|최종\s*코스|첫\s*코스|첫\s*목적지|점심\s*식사|저녁\s*만찬|숙소\s*체크인|숙소|오전\s*일정|오후\s*일정|야간\s*일정|핵심|미식|최종|방문)\s*[:：\-·]?\s*/gi, "").trim();
+
+        // 9. SPOT_COORDS 중에서 긴 이름 순으로 매칭 최우선 확인
         const spotKeys = Object.keys(SPOT_COORDS).sort((a, b) => b.length - a.length);
         for (const key of spotKeys) {
             if (text.includes(key) || rawContent.includes(key)) {
@@ -2543,17 +2800,34 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 8. 쉼표, 슬래시 등으로 분리 후 첫 번째 명소명 추출
-        const chunks = text.split(/[,/·&|및\s+➜→]+/);
+        // 10. 쉼표, 슬래시, 공백 등으로 분리 후 첫 번째 명소명 추출
+        const chunks = text.split(/[,/·&|및\s+➜→-]+/).map(s => s.trim()).filter(Boolean);
         let candidate = chunks[0] ? chunks[0].trim() : text;
 
-        // 9. 서술어/동사 접미사 제거 (예: "성산일출봉 탐방" -> "성산일출봉", "우도 해안도로 라이딩" -> "우도 해안도로")
-        candidate = candidate.replace(/\s*(?:탐방|관람|산책|산책로\s*걷기|등반|라이딩|투어|체험|일주|구경|방문|식사|시식|만찬|즐기기|힐링|휴식|숙박|체크인|체크아웃|이동|도착|출발|인수|반납|대여)$/gi, "").trim();
+        const DISCARD_PREFIXES = new Set([
+            "최종", "미식", "핵심", "방문", "행선지", "관광지", "첫코스", "식사", "만찬",
+            "체크인", "체크아웃", "목적지", "일정", "명소", "코스", "투어", "호텔", "숙소",
+            "도착", "출발", "이동", "대표", "추천", "인기", "유명"
+        ]);
+        if (DISCARD_PREFIXES.has(candidate) && chunks.length > 1) {
+            candidate = chunks[1].trim();
+        }
+        if (DISCARD_PREFIXES.has(candidate) && chunks.length > 2) {
+            candidate = chunks[2].trim();
+        }
 
-        // 10. 문맥 조사 제거 (에서, 으로, 에게, 에서부터)
-        candidate = candidate.replace(/(?:에서|으로|에게|에서부터)\s*$/g, "").trim();
+        // 시설/상호 수식어 결합 (예: "다인오세아노" + "호텔" -> "다인오세아노 호텔")
+        if (chunks.length > 1 && ["호텔", "리조트", "펜션", "게스트하우스", "카페", "식당", "점", "애월점", "해수욕장", "공원", "시장", "해물라면"].includes(chunks[1])) {
+            candidate = `${candidate} ${chunks[1]}`;
+        }
 
-        // 11. 무효 키워드 블랙리스트 체크 (평균, 접이식 전기차 등)
+        // 11. 서술어/동사 접미사 제거
+        candidate = candidate.replace(/\s*(?:탐방|관람|산책|산책로\s*걷기|등반|라이딩|투어|체험|일주|구경|방문|식사|시식|만찬|즐기기|힐링|휴식|숙박|체크인|체크아웃|이동|도착|출발|인수|반납|대여|탑승)$/gi, "").trim();
+
+        // 12. 문맥 조사 제거 (에서, 으로, 에게, 로, 에서부터)
+        candidate = candidate.replace(/(?:에서부터|에서|으로|에게|로)\s*$/g, "").trim();
+
+        // 13. 무효 키워드 블랙리스트 엄격 체크
         const INVALID_WORDS = new Set([
             "평균", "접이식", "전기차", "접이식 전기차", "전동스쿠터", "전기자전거", "자전거",
             "렌터카", "렌트카", "셔틀", "셔틀버스", "대중교통", "차량", "소요", "시간",
@@ -2561,7 +2835,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "확인", "필요", "주의", "참고", "안내", "꿀팁", "팁", "준비물",
             "추천", "인기", "최고", "유명", "로컬", "식사", "만찬", "체크인", "체크아웃",
             "휴식", "자유", "일정", "코스", "동선", "루트", "약", "대략", "최소", "최대", "총", "기준",
-            "오전", "점심", "오후", "저녁", "숙소", "도착", "출발", "이동", "탑승", "첫코스"
+            "오전", "점심", "오후", "저녁", "숙소", "도착", "출발", "이동", "탑승", "첫코스",
+            "최종", "미식", "핵심", "방문", "행선지", "관광지", "명소", "목적지"
         ]);
 
         if (!candidate || candidate.length < 2 || INVALID_WORDS.has(candidate)) {
@@ -2573,26 +2848,62 @@ document.addEventListener("DOMContentLoaded", () => {
             return null;
         }
 
-        if (candidate.length > 15) {
+        if (candidate.length > 20) {
             candidate = candidate.split(/\s+/).slice(0, 3).join(" ");
         }
 
         return candidate;
     }
 
-    function extractPlacesFromPlan(markdown, destination, transportType) {
+    /**
+     * 🗺️ 계획서 마크다운에서 일자별 방문 장소를 순서대로 정밀 추출하고,
+     * 선택된 출도착 교통 거점(버스터미널, KTX역, 항구, 공항 등)과 일치하도록 지도 핀 & 순차 동선 구성
+     */
+    function extractPlacesFromPlan(markdown, destination, transportType, entryTransport, exitTransport, subRegion) {
         if (!markdown) return [];
         const places = [];
+        const dest = destination || "제주";
 
-        let center = { lat: 33.3617, lng: 126.5292 }; // 기본 제주
-        for (const [key, coords] of Object.entries(DEST_COORDS)) {
-            if (destination.includes(key)) {
-                center = coords;
-                break;
+        const entryText = entryTransport || (document.getElementById("entryTransport") ? document.getElementById("entryTransport").value : "") || "✈️ 공항";
+        const exitText = exitTransport || (document.getElementById("exitTransport") ? document.getElementById("exitTransport").value : "") || "✈️ 공항";
+        const sub = subRegion || (document.getElementById("subRegionInput") ? document.getElementById("subRegionInput").value.trim() : "");
+
+        // 1. 중심 좌표 결정: 세부 권역(subRegion) 우선 -> destination 내 세부키워드 -> 메인도시 좌표
+        let center = { lat: 33.4628, lng: 126.3117 }; // 기본 애월
+        let foundSubCenter = false;
+
+        if (sub) {
+            for (const [sKey, sCoord] of Object.entries(SUB_REGION_COORDS)) {
+                if (sub.includes(sKey) || sKey.includes(sub)) {
+                    center = { ...sCoord };
+                    foundSubCenter = true;
+                    break;
+                }
+            }
+        }
+        if (!foundSubCenter) {
+            for (const [sKey, sCoord] of Object.entries(SUB_REGION_COORDS)) {
+                if (dest.includes(sKey)) {
+                    center = { ...sCoord };
+                    foundSubCenter = true;
+                    break;
+                }
+            }
+        }
+        if (!foundSubCenter) {
+            for (const [key, coords] of Object.entries(DEST_COORDS)) {
+                if (dest.includes(key)) {
+                    center = { ...coords };
+                    break;
+                }
             }
         }
 
-        // 일자별 구분 정규식 (### 🌟 [Day 1], #### ■ 1일차, ### Day 1 등 모두 유연하게 지원)
+        // 2. 사용자가 선택한 출도착 교통편(버스터미널, 기차역, 항구, 공항 등)에 맞는 정확한 시작/종료 허브 객체 생성
+        const entryHub = resolveTransportationHub(dest, entryText, false, sub);
+        const exitHub = resolveTransportationHub(dest, exitText, true, sub);
+
+        // 3. 일자별 섹션 분리 (Day 1, Day 2 등)
         const daySections = markdown.split(/(?=###\s*🌟?\s*\[?Day\s*\d+|####\s*■\s*\d+일차|####\s*■\s*Day\s*\d+|###\s*■?\s*\d+일차)/gi);
         let dayIndex = 1;
 
@@ -2609,29 +2920,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                // 장소/방문지/미식/숙소 관련 라인 매칭
-                const timeMatch = line.match(/(?:[-*]\s*(?:📍|🍴|🎯|🌙|🏨|🌅|✈️|🚢|🚄)?\s*\*\*?(도착\s*&?\s*첫\s*코스|첫\s*목적지|추천\s*미식|핵심\s*관광[^:]*|방문\s*장소|핵심\s*명소|저녁\s*만찬|점심\s*식사|숙소\s*체크인|숙소|동선\/출국수속|관광\s*지)\*\*?:\s*|[-*]\s*(?:📍|🍴|🎯|🌙|🏨)\s*(?:\[[^\]]+\])?\s*)([^\r\n]+)/i);
-                if (timeMatch) {
-                    const rawContent = (timeMatch[2] ? timeMatch[2].trim() : (timeMatch[1] || "")).trim();
-                    const placeName = cleanPlaceName(rawContent, currentDay);
+                // 장소/방문지/미식/숙소 관련 라인 판별
+                const isPlaceBullet = /^[-*•]\s*(?:📍|🍴|🎯|🌙|🏨|🌅|✈️|🚢|🚄|🚗|☕)/.test(line) ||
+                                     /(?:도착\s*&?\s*첫\s*코스|첫\s*목적지|추천\s*미식|핵심\s*관광|방문\s*장소|핵심\s*명소|저녁\s*만찬|점심\s*식사|숙소\s*체크인|최종\s*행선지|최종\s*목적지|방문지|관광지)\s*[:：]/i.test(line);
+
+                if (isPlaceBullet) {
+                    const placeName = cleanPlaceName(line, currentDay);
 
                     if (placeName && !places.some(p => p.day === currentDay && p.name === placeName)) {
                         let spotCoord = SPOT_COORDS[placeName];
                         if (!spotCoord) {
                             for (const [sKey, sVal] of Object.entries(SPOT_COORDS)) {
-                                if (rawContent.includes(sKey)) {
+                                if (placeName.includes(sKey) || line.includes(sKey)) {
                                     spotCoord = sVal;
                                     break;
                                 }
                             }
                         }
 
+                        // SPOT_COORDS에 없을 때: 중심 좌표 근처에서 일자별/순서별로 완만한 순차 동선 배치 (중구난방 점프 방지)
                         if (!spotCoord) {
-                            const angle = ((currentDay * 80 + orderInDay * 55) % 360) * (Math.PI / 180);
-                            const radius = 0.035 + (orderInDay * 0.02);
+                            const dayBaseAngle = ((currentDay - 1) * 60) * (Math.PI / 180);
+                            const orderOffset = (orderInDay - 1) * 0.15;
+                            const angle = dayBaseAngle + orderOffset;
+                            // 400m ~ 1.5km 이내의 자연스러운 도심/해변 동선 반경 유지
+                            const radius = 0.005 + (orderInDay * 0.0028);
                             spotCoord = {
-                                lat: center.lat + Math.sin(angle) * radius,
-                                lng: center.lng + Math.cos(angle) * (radius * 1.3)
+                                lat: Number((center.lat + Math.sin(angle) * radius).toFixed(5)),
+                                lng: Number((center.lng + Math.cos(angle) * (radius * 1.25)).toFixed(5))
                             };
                         }
 
@@ -2639,7 +2955,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             day: currentDay,
                             order: orderInDay,
                             name: placeName,
-                            desc: rawContent,
+                            desc: line.replace(/^[-*•]\s*/, '').replace(/[\*\_`~]/g, '').trim(),
                             lat: spotCoord.lat,
                             lng: spotCoord.lng
                         });
@@ -2651,93 +2967,63 @@ document.addEventListener("DOMContentLoaded", () => {
             dayIndex++;
         });
 
-        // 🌟 모든 여행지의 1일차 첫 출발지는 항상 해당 여행지 '공항'으로 보장
-        const airportMap = {
-            "제주": { name: "제주국제공항", lat: 33.5113, lng: 126.4930 },
-            "부산": { name: "김해국제공항", lat: 35.1795, lng: 128.9382 },
-            "강릉": { name: "강릉역 KTX (출발지)", lat: 37.7645, lng: 128.8996 },
-            "속초": { name: "속초 고속버스터미널 (출발지)", lat: 38.1905, lng: 128.5986 },
-            "경주": { name: "신경주역 KTX (출발지)", lat: 35.7981, lng: 129.1396 },
-            "여수": { name: "여수엑스포역 KTX (출발지)", lat: 34.7528, lng: 127.7486 },
-            "서울": { name: "김포국제공항", lat: 37.5587, lng: 126.7945 },
-            "오사카": { name: "간사이국제공항", lat: 34.4320, lng: 135.2304 },
-            "도쿄": { name: "하네다국제공항", lat: 35.5494, lng: 139.7798 },
-            "후쿠오카": { name: "후쿠오카공항", lat: 33.5859, lng: 130.4507 },
-            "삿포로": { name: "신치토세국제공항", lat: 42.7752, lng: 141.6923 },
-            "방콕": { name: "수완나품국제공항", lat: 13.6900, lng: 100.7501 },
-            "다낭": { name: "다낭국제공항", lat: 16.0538, lng: 108.1994 },
-            "타이베이": { name: "타오위안국제공항", lat: 25.0797, lng: 121.2342 },
-            "싱가포르": { name: "싱가포르 창이국제공항", lat: 1.3644, lng: 103.9915 },
-            "발리": { name: "발리 응우라라이국제공항", lat: -8.7481, lng: 115.1672 },
-            "괌": { name: "괌 앤토니오 B. 원팻 국제공항", lat: 13.4834, lng: 144.7959 },
-            "파리": { name: "샤를드골국제공항", lat: 49.0097, lng: 2.5479 },
-            "런던": { name: "런던 히드로국제공항", lat: 51.4700, lng: -0.4543 },
-            "로마": { name: "로마 레오나르도 다빈치(피우미치노)공항", lat: 41.8003, lng: 12.2389 },
-            "바르셀로나": { name: "바르셀로나 엘프랏국제공항", lat: 41.2974, lng: 2.0833 },
-            "뉴욕": { lat: 40.6413, lng: -73.7781, name: "존F케네디(JFK)국제공항" }
-        };
-
-        let targetAirport = null;
-        for (const [k, ap] of Object.entries(airportMap)) {
-            if (destination.includes(k)) {
-                targetAirport = ap;
-                break;
-            }
-        }
-        if (!targetAirport) {
-            targetAirport = { name: `${destination} 공항/역 (출발)`, lat: center.lat + 0.02, lng: center.lng - 0.02 };
-        }
-
-        // 1. [1일차 첫 출발지 공항 보장]
-        const hasDay1Airport = places.some(p => p.day === 1 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("역")));
+        // 4. [1일차 첫 출발지 허브 보장 - 선택된 교통 거점 반영]
+        const hasDay1Hub = places.some(p => p.day === 1 && p.order <= 1 && (p.name.includes("공항") || p.name.includes("터미널") || p.name.includes("역") || p.name.includes("항구") || p.name.includes("Airport")));
         const isTransit = (transportType || "").includes("대중교통") || (transportType || "").includes("버스") || (transportType || "").includes("지하철");
-        if (!hasDay1Airport) {
-            // 맨 앞에 1일차 출발지(공항) 삽입
+        if (!hasDay1Hub) {
             places.unshift({
                 day: 1,
                 order: 0,
-                name: `${targetAirport.name} (출발)`,
-                desc: isTransit ? "공항/역 도착 및 대중교통(급행/간선/지하철) 탑승 / 여정 시작" : "공항/역 도착 및 렌터카 픽업 / 여정 시작",
-                lat: targetAirport.lat,
-                lng: targetAirport.lng
+                name: entryHub.name,
+                desc: isTransit ? `${entryHub.name} 도착 및 대중교통 탑승 / 여정 시작` : `${entryHub.name} 도착 및 렌터카/차량 탑승 / 여정 시작`,
+                lat: entryHub.lat,
+                lng: entryHub.lng
             });
+        } else {
+            // 이미 1일차 1번에 허브가 있으면 이름과 좌표를 사용자가 선택한 허브로 정확히 보정
+            const firstHub = places.find(p => p.day === 1 && (p.name.includes("공항") || p.name.includes("터미널") || p.name.includes("역") || p.name.includes("항구")));
+            if (firstHub && !firstHub.name.includes(entryHub.name.replace(/\s*\(출발\)/, ""))) {
+                firstHub.name = entryHub.name;
+                firstHub.lat = entryHub.lat;
+                firstHub.lng = entryHub.lng;
+            }
         }
 
-        // 2. [마지막 날 최종 목적지 공항/역 귀국 보장]
+        // 5. [마지막 날 최종 목적지 귀국/출발 허브 보장 - 선택된 교통 거점 반영]
         const uniqueDays = Array.from(new Set(places.map(p => p.day))).sort((a, b) => a - b);
         const lastDayNum = uniqueDays.length > 0 ? uniqueDays[uniqueDays.length - 1] : 1;
 
-        // 마지막 날의 공항: 1일차 출발 공항(idx 0) 외에 마지막 날에 도착/귀국 공항이 있는지 확인
-        const hasLastDayAirport = places.some((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("터미널")));
-        if (!hasLastDayAirport) {
+        const hasLastDayHub = places.some((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("귀국") || p.name.includes("출발") || p.name.includes("터미널") || p.name.includes("공항") || p.name.includes("역")));
+        if (!hasLastDayHub) {
             places.push({
                 day: lastDayNum,
-                order: 999,
-                name: `${targetAirport.name} (귀국)`,
-                desc: isTransit ? "일정 마무리 및 공항/역 이동, 대중교통/항공편 탑승 수속 및 귀국" : "일정 마무리 및 렌터카 반납, 공항/역 이동 후 탑승 수속 및 귀국",
-                lat: targetAirport.lat,
-                lng: targetAirport.lng
+                order: 9999,
+                name: exitHub.name,
+                desc: isTransit ? `일정 마무리 및 ${exitHub.name} 이동, 대중교통 탑승 수속 및 귀국` : `일정 마무리 및 ${exitHub.name} 이동 후 탑승 수속 및 귀국`,
+                lat: exitHub.lat,
+                lng: exitHub.lng
             });
         } else {
-            // 마지막 날에 이미 공항이 있으면, 맨 뒤로 이동시켜 최종 목적지로 확정
-            const endAirportIdx = places.findIndex((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("공항") || p.name.includes("Airport") || p.name.includes("터미널")));
-            if (endAirportIdx !== -1) {
-                const item = places.splice(endAirportIdx, 1)[0];
-                if (!item.name.includes("귀국") && !item.name.includes("출발")) {
-                    item.name = `${targetAirport.name} (귀국)`;
-                }
-                item.order = 999;
+            // 마지막 날에 이미 귀국/출발 허브가 있으면 맨 뒤로 이동 및 사용자 선택 허브로 정밀 보정
+            const endHubIdx = places.findIndex((p, idx) => p.day === lastDayNum && idx > 0 && (p.name.includes("귀국") || p.name.includes("공항") || p.name.includes("터미널") || p.name.includes("역")));
+            if (endHubIdx !== -1) {
+                const item = places.splice(endHubIdx, 1)[0];
+                item.name = exitHub.name;
+                item.lat = exitHub.lat;
+                item.lng = exitHub.lng;
+                item.order = 9999;
                 places.push(item);
             }
         }
 
-        // 3. 전체 일정 Day 및 Order 순으로 엄격 정렬 후 1, 2, 3, 4 순차 번호 재부여
+        // 6. 전체 일정 Day 및 Order 순으로 엄격 정렬
         places.sort((a, b) => {
             const dayDiff = (Number(a.day) || 1) - (Number(b.day) || 1);
             if (dayDiff !== 0) return dayDiff;
-            return (Number(a.order) || 1) - (Number(b.order) || 1);
+            return (Number(a.order) || 0) - (Number(b.order) || 0);
         });
 
+        // 7. 일자별로 1, 2, 3, 4 순차 번호 재부여 (동선 순서 100% 엄격 보장)
         const dayCounts = {};
         places.forEach(p => {
             dayCounts[p.day] = (dayCounts[p.day] || 0) + 1;
@@ -2746,10 +3032,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (places.length === 0) {
             places.push(
-                { day: 1, order: 1, name: `${targetAirport.name} (출발)`, desc: "공항 도착 및 첫날 일정 시작", lat: targetAirport.lat, lng: targetAirport.lng },
-                { day: 1, order: 2, name: `${destination} 대표 감성 명소`, desc: "첫날 오후 시그니처 랜드마크", lat: center.lat - 0.02, lng: center.lng - 0.04 },
-                { day: 2, order: 1, name: `${destination} 자연 & 힐링 코스`, desc: "둘째날 메인 힐링 투어", lat: center.lat - 0.05, lng: center.lng + 0.03 },
-                { day: 2, order: 2, name: `${targetAirport.name} (귀국)`, desc: "일정 마무리 및 공항 이동, 탑승 수속", lat: targetAirport.lat, lng: targetAirport.lng }
+                { day: 1, order: 1, name: entryHub.name, desc: `${entryHub.name} 도착 및 첫날 일정 시작`, lat: entryHub.lat, lng: entryHub.lng },
+                { day: 1, order: 2, name: `${dest} 대표 감성 명소`, desc: "첫날 오후 시그니처 랜드마크", lat: center.lat - 0.005, lng: center.lng - 0.008 },
+                { day: 2, order: 1, name: `${dest} 자연 & 힐링 코스`, desc: "둘째날 메인 힐링 투어", lat: center.lat + 0.006, lng: center.lng + 0.007 },
+                { day: 2, order: 2, name: exitHub.name, desc: `일정 마무리 및 ${exitHub.name} 이동, 탑승 수속`, lat: exitHub.lat, lng: exitHub.lng }
             );
         }
 
@@ -2932,7 +3218,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const mapCanvas = document.getElementById("planInteractiveMap");
         if (!mapSection || !mapCanvas || !window.L) return;
 
-        const places = extractPlacesFromPlan(plan.markdown, plan.dest, plan.transportation);
+        const places = extractPlacesFromPlan(
+            plan.markdown,
+            plan.dest,
+            plan.transportation,
+            plan.entryTransport,
+            plan.exitTransport,
+            plan.subRegion
+        );
         if (places.length === 0) {
             mapSection.style.display = "none";
             return;
