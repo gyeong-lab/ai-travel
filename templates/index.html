@@ -21,7 +21,7 @@
 
     <!-- Pretendard 최신 웹폰트 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261001_labels">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261001_subreg_confirm">
     <!-- Leaflet.js 인터랙티브 지도 라이브러리 (API 키 없이 즉시 실행 & 카카오맵 길찾기 연동) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -282,7 +282,12 @@
                                         <span class="sub-input-icon">📍</span>
                                         <input type="text" id="subRegion" name="sub_region" class="sub-region-input" placeholder="어디서만 놀고 싶으신가요? (예: 애월읍 일대만, 서귀포 중문 주변, 해운대/광안리만)">
                                     </div>
+                                    <button type="button" id="btnApplySubRegion" class="btn-sub-apply" title="한정 지역 적용 및 목적지 자동 반영">✓ 확인</button>
                                     <button type="button" id="btnClearSubRegion" class="btn-sub-clear" title="지역 한정 해제/지우기">초기화</button>
+                                </div>
+                                <div id="subRegionFeedback" class="sub-region-feedback" style="display: none;">
+                                    <span class="feedback-icon">✓</span>
+                                    <span id="subRegionFeedbackText" class="feedback-text">목적지가 한정 지역으로 자동 반영되었습니다.</span>
                                 </div>
                                 <p class="sub-region-desc">
                                     💡 <strong>1일차부터 마지막 날까지</strong> 모든 일정의 <strong>숙소·먹거리(맛집/카페)·놀거리(명소/액티비티)</strong>를 위 한정 지역 안에서만 찾아 계획을 구성합니다.
@@ -2589,6 +2594,6 @@
     </aside>
 
     <!-- 스크립트 연결 -->
-    <script src="{{ url_for('static', filename='js/app.js') }}?v=20261001_seoul_strict"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=20261001_subreg_confirm"></script>
 </body>
 </html>

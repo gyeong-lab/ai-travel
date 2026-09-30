@@ -32,7 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const subRegionInput = document.getElementById("subRegion");
     const subRegionActiveBadge = document.getElementById("subRegionActiveBadge");
     const btnCloseSubRegion = document.getElementById("btnCloseSubRegion");
+    const btnApplySubRegion = document.getElementById("btnApplySubRegion");
     const btnClearSubRegion = document.getElementById("btnClearSubRegion");
+    const subRegionFeedback = document.getElementById("subRegionFeedback");
+    const subRegionFeedbackText = document.getElementById("subRegionFeedbackText");
     const subRegionChips = document.getElementById("subRegionChips");
 
     // 여행 날짜 및 교통 거점 선택 요소
@@ -572,6 +575,72 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function extractBaseCity(destStr) {
+        if (!destStr) return "제주도";
+        // 괄호 및 기존 한정 문구 제거: e.g. "제주도 (애월읍 일대만 한정)" -> "제주도"
+        let clean = destStr.replace(/\s*\([^\)]*한정[^\)]*\)/g, "").replace(/\s*\([^\)]*\)/g, "").trim();
+        const KNOWN_CITIES = [
+            "제주도", "제주", "서울", "부산", "강릉", "속초", "경주", "여수",
+            "오사카", "교토", "도쿄", "후쿠오카", "삿포로", "오타루", "비에이",
+            "방콕", "파타야", "다낭", "호이안", "타이베이", "싱가포르", "발리", "우붓",
+            "괌", "파리", "런던", "로마", "바르셀로나", "뉴욕"
+        ];
+        for (const city of KNOWN_CITIES) {
+            if (clean.includes(city)) {
+                if (city === "제주" || city === "제주도") return "제주도";
+                if (city === "강릉" || city === "속초") return "강원도 강릉/속초";
+                return city;
+            }
+        }
+        return clean.split(/\s+/)[0] || clean;
+    }
+
+    function applySubRegion(val, isSilent = false) {
+        val = (val || "").trim();
+        if (subRegionInput) subRegionInput.value = val;
+
+        if (destinationInput) {
+            const baseCity = extractBaseCity(destinationInput.value);
+            if (val) {
+                destinationInput.value = `${baseCity} (${val} 한정)`;
+                destinationInput.classList.remove("input-highlight-pulse");
+                void destinationInput.offsetWidth; // trigger reflow
+                destinationInput.classList.add("input-highlight-pulse");
+
+                if (!isSilent && subRegionFeedback && subRegionFeedbackText) {
+                    subRegionFeedbackText.textContent = `목적지가 '${destinationInput.value}'(으)로 자동 변경되었습니다!`;
+                    subRegionFeedback.style.display = "flex";
+                }
+                if (!isSilent && btnApplySubRegion) {
+                    btnApplySubRegion.classList.add("applied");
+                    btnApplySubRegion.textContent = "✓ 적용됨";
+                    setTimeout(() => {
+                        if (btnApplySubRegion) {
+                            btnApplySubRegion.classList.remove("applied");
+                            btnApplySubRegion.textContent = "✓ 확인";
+                        }
+                    }, 1400);
+                }
+            } else {
+                destinationInput.value = baseCity;
+                destinationInput.classList.remove("input-highlight-pulse");
+                if (subRegionFeedback) subRegionFeedback.style.display = "none";
+                if (btnApplySubRegion) {
+                    btnApplySubRegion.classList.remove("applied");
+                    btnApplySubRegion.textContent = "✓ 확인";
+                }
+            }
+        }
+
+        updateSubRegionState();
+
+        if (subRegionChips) {
+            subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => {
+                c.classList.toggle("active", c.dataset.region === val);
+            });
+        }
+    }
+
     function renderSubRegionChips() {
         if (!subRegionChips) return;
         const dest = (destinationInput?.value || "").trim();
@@ -598,16 +667,10 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.textContent = reg;
             btn.dataset.region = reg;
             btn.addEventListener("click", () => {
-                if (subRegionInput) {
-                    if (subRegionInput.value === reg) {
-                        subRegionInput.value = "";
-                    } else {
-                        subRegionInput.value = reg;
-                    }
-                    subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => {
-                        c.classList.toggle("active", c.dataset.region === subRegionInput.value);
-                    });
-                    updateSubRegionState();
+                if (subRegionInput && subRegionInput.value === reg) {
+                    applySubRegion(""); // 클릭 시 해제
+                } else {
+                    applySubRegion(reg);
                 }
             });
             subRegionChips.appendChild(btn);
@@ -645,18 +708,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    if (btnApplySubRegion) {
+        btnApplySubRegion.addEventListener("click", () => {
+            const val = subRegionInput ? subRegionInput.value.trim() : "";
+            applySubRegion(val);
+        });
+    }
+
     if (btnClearSubRegion) {
         btnClearSubRegion.addEventListener("click", () => {
-            if (subRegionInput) subRegionInput.value = "";
-            if (subRegionChips) {
-                subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => c.classList.remove("active"));
-            }
-            updateSubRegionState();
+            applySubRegion("");
             if (subRegionInput) subRegionInput.focus();
         });
     }
 
     if (subRegionInput) {
+        subRegionInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const val = subRegionInput.value.trim();
+                applySubRegion(val);
+            }
+        });
+
         subRegionInput.addEventListener("input", () => {
             updateSubRegionState();
             if (subRegionChips) {
@@ -842,6 +916,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (dietaryInput) dietaryInput.value = "";
         allergyChips.forEach(c => c.classList.remove("active"));
         if (subRegionInput) subRegionInput.value = "";
+        if (subRegionFeedback) subRegionFeedback.style.display = "none";
+        if (btnApplySubRegion) {
+            btnApplySubRegion.classList.remove("applied");
+            btnApplySubRegion.textContent = "✓ 확인";
+        }
         if (subRegionChips) subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => c.classList.remove("active"));
         if (subRegionContainer) subRegionContainer.style.display = "none";
         if (btnToggleSubRegion) {
@@ -1317,6 +1396,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (subRegionInput) subRegionInput.value = "";
+                if (subRegionFeedback) subRegionFeedback.style.display = "none";
+                if (btnApplySubRegion) {
+                    btnApplySubRegion.classList.remove("applied");
+                    btnApplySubRegion.textContent = "✓ 확인";
+                }
                 updateSubRegionState();
                 renderSubRegionChips();
 
