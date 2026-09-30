@@ -959,10 +959,35 @@ button {
 
 .form-group label {
     display: block;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
-    color: #4b5563;
-    margin-bottom: 4px;
+    color: #334155;
+    margin-bottom: 5px;
+}
+
+/* 사용자 요청: 핵심 6대 입력 항목 라벨 강조 (더 크고 굵게, 레이아웃 보존) */
+label[for="destination"],
+.date-label-row .label-heading,
+.hub-label-row .label-heading,
+.budget-label-main,
+label[for="interests"],
+label[for="travelStyle"] {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.4 !important;
+}
+
+label[for="destination"],
+label[for="interests"],
+label[for="travelStyle"] {
+    margin-bottom: 6px !important;
+}
+
+.date-label-row .label-heading,
+.hub-label-row .label-heading {
+    margin-bottom: 0 !important;
 }
 
 .form-group input {
@@ -1626,9 +1651,9 @@ button {
 }
 
 .label-heading {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    color: #4b5563;
+    color: #1e293b;
     margin-bottom: 6px;
     display: block;
 }
