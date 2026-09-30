@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "제주도 서귀포 & 애월",
             duration: "2박 3일",
             budget: "2인 총 120만원",
-            interests: "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링",
+            interests: "오션뷰 감성 카페, 해안도로 드라이브, 로컬 흑돼지/해산물 미식, 피톤치드 숲길 힐링 산책",
             companions: "연인과 둘이서",
             transportation: "렌터카 (전기차)",
             accommodation: "동선에 맞춘 오션뷰 감성 숙소",
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "서울 성수 & 종로 & 한남",
             duration: "2박 3일",
             budget: "2인 총 80만원",
-            interests: "성수동 감성 플래그십 스토어 & 디저트 카페, 북촌 한옥마을 & 익선동 골목 투어, 한남동 전시 & 미식 탐방, 한강 야경 피크닉",
+            interests: "트렌디 플래그십 스토어 & 디저트 카페, 전통 한옥 골목 투어, 문화 예술 전시 & 미식 탐방, 리버뷰 야경 피크닉",
             companions: "친구 또는 연인",
             transportation: "지하철 & 도보/따릉이",
             accommodation: "성수/종로 인근 감성 부티크 호텔",
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "부산 해운대 & 광안리 & 영도",
             duration: "2박 3일",
             budget: "2인 총 95만원",
-            interests: "해운대 블루라인파크 해변열차, 광안대교 오션뷰 카페, 영도 흰여울문화마을, 자갈치 꼼장어 & 밀면 투어",
+            interests: "해변 관광열차 체험, 탁 트인 오션뷰 감성 카페, 알록달록 해안 문화마을 산책, 수산시장 & 로컬 미식 투어",
             companions: "친구 또는 연인",
             transportation: "KTX (부산역) & 지하철/택시",
             accommodation: "광안리 해변 1열 정면 오션뷰 호텔",
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "강원도 강릉 & 속초",
             duration: "2박 3일",
             budget: "2인 총 85만원",
-            interests: "안목해변 커피거리, 초당순두부 짬뽕, 속초 중앙시장 만석닭강정, 설악산 권금성 케이블카, 아르떼뮤지엄",
+            interests: "바다 전망 커피거리 카페 투어, 로컬 전통 순두부 & 짬뽕 미식, 전통시장 명물 먹거리, 파노라마 케이블카 & 미디어아트",
             companions: "가족 또는 연인",
             transportation: "KTX 강릉선 & 렌터카",
             accommodation: "경포대/강문해변 인피니티풀 오션뷰 호텔",
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "경주 황리단길 & 보문단지",
             duration: "1박 2일",
             budget: "2인 총 60만원",
-            interests: "황리단길 감성 한옥 카페 & 십원빵, 대릉원 포토존, 동궁과 월지 야경, 첨성대, 불국사 산책",
+            interests: "감성 한옥 카페 & 길거리 간식, 고분 포토존 인생샷, 호수 야경 감상, 역사 유적지 산책 & 힐링",
             companions: "연인과 둘이서",
             transportation: "KTX 신경주역 & 시내버스/택시",
             accommodation: "황리단길 중심 전통 프라이빗 한옥 스테이",
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "여수 돌산도 & 오동도",
             duration: "2박 3일",
             budget: "2인 총 88만원",
-            interests: "여수 해상케이블카, 오동도 동백열차, 낭만포차 거리 돌문어해물삼합, 하멜등대 야경, 예술의섬 장도",
+            interests: "해상 케이블카 탑승, 동백꽃 숲길 산책, 바닷가 포차거리 해물삼합 미식, 등대 야경 감상, 감성 예술 문화공간",
             companions: "연인 또는 친구",
             transportation: "KTX 여수엑스포역 & 렌터카",
             accommodation: "돌산대교 야경 뷰 오션 테라스 리조트",
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "일본 오사카 & 교토",
             duration: "3박 4일",
             budget: "1인당 100만원",
-            interests: "도톤보리 미식 투어, USJ 닌텐도 월드, 교토 청수사/아라시야마, 쇼핑",
+            interests: "로컬 번화가 미식 탐방, 테마파크 어트랙션, 전통 사찰 & 대나무숲 산책, 트렌디 쇼핑",
             companions: "친구와 둘이서",
             transportation: "대중교통 (지하철, 라피트)",
             accommodation: "난바역 근처 가성비 비즈니스 호텔",
@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "일본 도쿄 (시부야 & 긴자)",
             duration: "3박 4일",
             budget: "1인당 120만원",
-            interests: "시부야 스카이 전망대, 긴자 쇼핑, 신주쿠 야경, 감성 카페 투어",
+            interests: "도심 루프탑 전망대, 명품 & 편집숍 쇼핑, 화려한 도심 야경 감상, 골목길 감성 카페 투어",
             companions: "친구와 둘이서",
             transportation: "도쿄 메트로 72시간 패스",
             accommodation: "시부야/신주쿠 역세권 모던 호텔",
@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "일본 후쿠오카 & 유후인",
             duration: "2박 3일",
             budget: "1인당 85만원",
-            interests: "하카타 돈코츠 라멘, 유후인 료칸 온천욕, 긴린코 호수, 나카스 포장마차",
+            interests: "원조 돈코츠 라멘 미식, 전통 료칸 온천욕 & 힐링, 신비로운 아침 호수 산책, 강변 포장마차 야식 투어",
             companions: "부모님과 함께",
             transportation: "유후인노모리 관광열차 & 버스",
             accommodation: "유후인 전통 온천 료칸 (가이세키 석식)",
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "일본 삿포로 & 오타루 & 비에이",
             duration: "4박 5일",
             budget: "1인당 145만원",
-            interests: "비에이 청의 호수 & 흰그림자 투어, 오타루 운하 오르골당, 삿포로 맥주박물관 & 징기스칸 양고기, 스스키노 미소라멘",
+            interests: "신비로운 호수 & 자연 풍경 투어, 운하 감성 산책, 맥주박물관 & 전통 양고기 미식, 로컬 라멘 투어",
             companions: "친구 또는 연인",
             transportation: "JR 홋카이도 레일패스 & 비에이 일일 투어버스",
             accommodation: "스스키노역 천연온천 대욕장 호텔",
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "태국 방콕 & 파타야",
             duration: "4박 5일",
             budget: "1인당 90만원",
-            interests: "쩟페어 야시장 먹거리, 차오프라야 크루즈 디너, 왓아룬 사원 뷰 루프탑, 1일 1스파",
+            interests: "활기찬 야시장 로컬 먹거리, 리버 크루즈 디너, 사원 뷰 루프탑 바, 1일 1힐링 스파 마사지",
             companions: "친구 2명",
             transportation: "대중교통 (BTS/MRT) 및 그랩(Grab)",
             accommodation: "차오프라야 강변 가성비 5성급 호텔",
@@ -281,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "베트남 다낭 & 호이안",
             duration: "3박 5일",
             budget: "1인당 80만원",
-            interests: "미케비치 힐링, 바나힐 골든브릿지, 호이안 올드타운 야경 & 소원배, 마사지",
+            interests: "에메랄드 비치 힐링, 산악 테마파크 어트랙션, 고즈넉한 구시가지 야경 & 소원배, 힐링 마사지",
             companions: "가족 (아이 동반)",
             transportation: "전용 렌터카 & 그랩(Grab)",
             accommodation: "미케비치 오션뷰 풀빌라 리조트",
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "대만 타이베이",
             duration: "3박 4일",
             budget: "1인당 75만원",
-            interests: "예스진지 투어, 딘타이펑 딤섬 & 우육면, 지우펀 홍등 거리, 스린 야시장",
+            interests: "외곽 명소 일일 투어, 전통 딤섬 & 우육면 미식, 홍등 거리 감성 산책, 활기찬 야시장 투어",
             companions: "친구와 함께",
             transportation: "타이베이 MRT & 예스진지 일일 투어버스",
             accommodation: "시먼딩역 중심 3성급 호텔",
@@ -307,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "싱가포르 마리나베이 & 센토사",
             duration: "3박 5일",
             budget: "1인당 155만원",
-            interests: "마리나베이샌즈 스카이파크 & 분수쇼, 가든스바이더베이 슈퍼트리쇼, 유니버설스튜디오 싱가포르, 점보씨푸드 칠리크랩",
+            interests: "스카이파크 전망대 & 분수쇼, 슈퍼트리 나이트쇼, 글로벌 테마파크 어트랙션, 시그니처 칠리크랩 미식",
             companions: "가족 또는 친구",
             transportation: "싱가포르 지하철 (MRT) 및 그랩",
             accommodation: "마리나베이 도보권 모던 4~5성급 호텔",
@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "인도네시아 발리 (우붓 & 짱구)",
             duration: "5박 7일",
             budget: "1인당 175만원",
-            interests: "우붓 뜨갈랄랑 계단식 논 & 발리스윙, 짱구 비치클럽 선셋 파티, 울루와투 절벽사원 케착댄스, 플로팅 조식",
+            interests: "계단식 논 & 그네 포토존, 비치클럽 선셋 파티, 절벽사원 전통공연, 플로팅 조식 & 풀빌라 힐링",
             companions: "연인과 함께",
             transportation: "전용 기사 차량 렌트 & 그랩",
             accommodation: "우붓 정글 프라이빗 풀빌라",
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "미국 괌 투몬 비치",
             duration: "3박 5일",
             budget: "1인당 135만원",
-            interests: "투몬비치 에메랄드 스노클링, 돌핀 워칭 크루즈, 사랑의 절벽 선셋, 괌 T갤러리아 면세 쇼핑, 남부 렌터카 드라이브",
+            interests: "에메랄드 비치 스노클링, 돌고래 워칭 크루즈, 일몰 감상 선셋 포인트, 면세 쇼핑, 해안도로 드라이브",
             companions: "가족 (아이 동반) 또는 연인",
             transportation: "오픈카 렌터카 & 트롤리 버스",
             accommodation: "투몬비치 전용 프라이빗 비치 보유 오션프론트 리조트",
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "프랑스 파리",
             duration: "5박 6일",
             budget: "1인당 300만원",
-            interests: "루브르 & 오르세 미술관, 에펠탑 야경, 세느강 바토무슈, 몽마르트르 골목",
+            interests: "세계적인 미술관 관람, 랜드마크 야경 감상, 리버 유람선 투어, 고즈넉한 예술가 골목 산책",
             companions: "혼자 떠나는 여행",
             transportation: "대중교통 (파리 메트로) 및 도보",
             accommodation: "시내 중심 3성급 부티크 호텔",
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "영국 런던 템스강 & 소호",
             duration: "5박 7일",
             budget: "1인당 320만원",
-            interests: "빅벤 & 런던아이 야경, 대영박물관 & 내셔널갤러리, 웨스트엔드 뮤지컬, 버로우 마켓 미식 투어, 타워브리지",
+            interests: "대영박물관 & 갤러리 투어, 랜드마크 전망대, 뮤지컬 관람, 왕실 공원 산책",
             companions: "친구 또는 나홀로 여행",
             transportation: "런던 언더그라운드 (지하철)",
             accommodation: "소호/코벤트가든 중심 부티크 호텔",
@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "이탈리아 로마 & 바티칸",
             duration: "4박 6일",
             budget: "1인당 260만원",
-            interests: "콜로세움 & 포로 로마노, 바티칸 미술관 패스트트랙 투어, 트레비 분수 & 스페인광장 젤라또, 판테온 신전",
+            interests: "고대 유적지 탐방, 박물관 가이드 투어, 분수 & 광장 젤라또 산책, 신전 관람",
             companions: "친구와 둘이서",
             transportation: "로마 메트로 & 도보",
             accommodation: "테르미니역 도보 5분 4성급 호텔",
@@ -385,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "스페인 바르셀로나",
             duration: "5박 7일",
             budget: "1인당 280만원",
-            interests: "사그라다 파밀리아 대성당, 구엘 공원 가우디 투어, 보케리아 시장 타파스, 바르셀로네타 해변",
+            interests: "가우디 건축 투어, 대성당 관람, 전통시장 타파스 미식, 지중해 해변 산책",
             companions: "친구와 둘이서",
             transportation: "바르셀로나 메트로 및 도보",
             accommodation: "람블라스 거리 근처 감성 호텔",
@@ -398,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
             destination: "미국 뉴욕 맨해튼",
             duration: "6박 8일",
             budget: "1인당 400만원",
-            interests: "타임스퀘어 브로드웨이 뮤지컬, 센트럴파크, 탑오브더락 전망대, 소호 쇼핑",
+            interests: "브로드웨이 뮤지컬 관람, 도심 센트럴파크 산책, 전망대 야경, 트렌디 쇼핑",
             companions: "연인과 함께",
             transportation: "뉴욕 지하철 (MTA)",
             accommodation: "맨해튼 미드타운 4성급 호텔",
@@ -1037,10 +1037,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 chipCategory.style.display = "inline-flex";
             }
 
-            // 관심사 기본 추천어 채우기
+            // 관심사 기본 추천어 채우기 (지역 이름 제외, 순수 테마/관심사만 반영)
             if (currentCategory !== "all" && label) {
-                const cityName = (!currentCityKey || currentCityKey === "all") ? "현지" : currentCityKey;
-                interestsInput.value = `${cityName} ${label} 중심 맞춤 여행, 인기 명소 탐방`;
+                interestsInput.value = `${label} 중심 맞춤 여행, 인기 명소 탐방`;
             }
 
             filterProducts();
@@ -1119,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         durationInput.value = "2박 3일";
         budgetInput.value = "2인 총 120만원";
         updatePeopleCount(2, false);
-        interestsInput.value = "오션뷰 감성 카페, 애월 해안도로, 흑돼지 맛집, 사려니숲길 힐링";
+        interestsInput.value = "오션뷰 감성 카페, 해안도로 드라이브, 로컬 흑돼지/해산물 미식, 피톤치드 숲길 힐링 산책";
         companionsInput.value = "연인과 둘이서";
         transportationInput.value = "렌터카 (전기차)";
         accommodationInput.value = "동선에 맞춘 오션뷰 감성 숙소";
@@ -1673,6 +1672,63 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 🎯 여행 테마 & 관심사 자동 기입 시 지역/도시명 제거 유틸리티
+     * 사용자가 요청한 대로 특정 지역명(제주, 서울, 부산 등)을 빼고 순수 테마와 관심사만 남김
+     */
+    function stripRegionNamesFromTheme(themeText) {
+        if (!themeText) return "";
+        let clean = themeText;
+
+        const REGION_PATTERNS = [
+            // 국내
+            /제주(?:도|시)?/g, /서귀포(?:시)?/g, /애월(?:읍)?/g, /한림(?:읍)?/g, /협재(?:해수욕장|해변)?/g,
+            /성산(?:일출봉|읍)?/g, /우도(?:봉)?/g, /조천(?:읍)?/g, /구좌(?:읍)?/g, /중문(?:관광단지)?/g,
+            /안덕(?:면)?/g, /대정(?:읍)?/g, /표선(?:면)?/g, /남원(?:읍)?/g, /오설록(?:티뮤지엄)?/g,
+            /카멜리아힐/g, /사려니숲길/g, /비자림/g, /한담(?:해변|해안산책로)?/g, /동문(?:시장|야시장)?/g,
+            /서울(?:특별시|시)?/g, /성수(?:동)?/g, /종로(?:구)?/g, /한남(?:동)?/g, /북촌(?:한옥마을)?/g,
+            /익선(?:동)?/g, /명동/g, /홍대/g, /연남(?:동)?/g, /망원(?:동)?/g, /여의도/g, /잠실/g,
+            /이태원/g, /강남/g, /한강(?:공원)?/g, /더현대/g, /DDP/g, /동대문/g,
+            /부산(?:광역시|시)?/g, /해운대(?:해수욕장)?/g, /광안리(?:해수욕장)?/g, /광안대교/g, /영도/g,
+            /서면/g, /남포(?:동)?/g, /자갈치(?:시장)?/g, /기장/g, /흰여울(?:문화마을)?/g,
+            /강릉(?:시)?/g, /속초(?:시)?/g, /설악산/g, /경포(?:대|해변)?/g, /주문진/g, /안목(?:해변)?/g,
+            /초당(?:순두부)?/g, /정동진/g, /아르떼뮤지엄/g,
+            /경주(?:시)?/g, /황리단길/g, /보문(?:단지|호)?/g, /불국사/g, /대릉원/g, /동궁과\s*월지/g, /첨성대/g,
+            /여수(?:시)?/g, /돌산(?:도|대교)?/g, /오동도/g, /향일암/g, /하멜등대/g, /거문도/g,
+            // 해외
+            /오사카/g, /교토/g, /고베/g, /난바(?:역)?/g, /도톤보리/g, /신사이바시/g, /우메다/g, /글리코상/g,
+            /도쿄/g, /시부야(?:스카이)?/g, /신주쿠/g, /긴자/g, /하라주쿠/g, /오모테산도/g, /마이하마/g,
+            /후쿠오카/g, /하카타(?:역)?/g, /텐진/g, /유후인/g, /벳푸/g, /다자이후/g, /나카스/g, /캐널시티/g,
+            /삿포로/g, /오타루/g, /비에이/g, /후라노/g, /스스키노/g,
+            /방콕/g, /파타야/g, /차오프라야/g, /왓아룬/g, /왓포/g, /통로/g,
+            /다낭/g, /호이안/g, /바나힐/g, /미케비치/g,
+            /타이베이/g, /시먼딩/g, /지우펀/g, /예스진지/g, /스린/g,
+            /싱가포르/g, /마리나베이(?:샌즈)?/g, /센토사/g,
+            /발리/g, /우붓/g, /짱구/g, /뜨갈랄랑/g, /울루와투/g,
+            /괌/g, /투몬(?:비치|베이)?/g,
+            /파리/g, /에펠탑/g, /루브르/g, /오르세/g, /세느강/g, /몽마르트르/g,
+            /런던/g, /빅벤/g, /런던아이/g, /템스강/g, /소호/g,
+            /로마/g, /바티칸/g, /콜로세움/g, /포로\s*로마노/g, /트레비/g,
+            /바르셀로나/g, /가우디/g, /사그라다\s*파밀리아/g, /구엘/g,
+            /뉴욕/g, /맨해튼/g, /타임스퀘어/g, /센트럴파크/g
+        ];
+
+        REGION_PATTERNS.forEach(pat => {
+            clean = clean.replace(pat, "");
+        });
+
+        clean = clean.replace(/\s*(?:&|·|\+|및|과|와)\s*$/g, "")
+                     .replace(/^\s*(?:&|·|\+|및|과|와)\s*/g, "")
+                     .replace(/\s*(?:&|·|\+|및|과|와)\s*(?:&|·|\+|및|과|와)+/g, " & ")
+                     .replace(/\s+/g, " ")
+                     .replace(/,\s*,+/g, ",")
+                     .replace(/^\s*[,]\s*/, "")
+                     .replace(/\s*[,]\s*$/, "")
+                     .trim();
+
+        return clean;
+    }
+
+    /**
      * 8. 상품 카드 클릭 시 폼에 상세 정보 자동 완성
      */
     productCards.forEach((card) => {
@@ -1701,7 +1757,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             if (transport) transportationInput.value = transport;
-            if (theme) interestsInput.value = theme;
+            if (theme) interestsInput.value = stripRegionNamesFromTheme(theme);
 
             // 시각적 강조 피드백
             card.style.transform = "scale(0.98)";
@@ -1807,12 +1863,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 setDatesFromDurationText(item.dur);
                             }
                             if (item.transport) transportationInput.value = item.transport;
-                            if (item.theme) interestsInput.value = item.theme;
+                            const cleanTheme = stripRegionNamesFromTheme(item.theme);
+                            if (cleanTheme) interestsInput.value = cleanTheme;
 
                             // 예산 초과 검사 및 배너 표시
                             const isOver = checkAndShowBudgetOverload(item.budget, item.title);
                             if (isOver) {
-                                interestsInput.value = `[저장 코스 예산 초과 가성비 대체 추천] ${item.theme} (⚠️ 희망 코스가 현재 예산보다 높으므로, 감성은 동일하고 더 저렴한 가성비 대체 코스로 제안해 주세요)`;
+                                interestsInput.value = `[저장 코스 예산 초과 가성비 대체 추천] ${cleanTheme} (⚠️ 희망 코스가 현재 예산보다 높으므로, 감성은 동일하고 더 저렴한 가성비 대체 코스로 제안해 주세요)`;
                             }
 
                             travelForm.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -2023,7 +2080,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }, { val: 0, budget: "", title: "" });
 
             if (uniqueDests) destinationInput.value = uniqueDests;
-            if (themes) interestsInput.value = `[저장한 추천 코스] ${themes}`;
+            const cleanThemes = stripRegionNamesFromTheme(themes);
+            if (cleanThemes) interestsInput.value = `[저장한 추천 코스] ${cleanThemes}`;
 
             // 예산 초과 여부 확인
             const isOver = checkAndShowBudgetOverload(maxBudgetItem.budget, maxBudgetItem.title);
