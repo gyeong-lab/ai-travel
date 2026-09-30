@@ -21,7 +21,7 @@
 
     <!-- Pretendard 최신 웹폰트 -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261001_subreg">
     <!-- Leaflet.js 인터랙티브 지도 라이브러리 (API 키 없이 즉시 실행 & 카카오맵 길찾기 연동) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -248,10 +248,53 @@
                 </div>
 
                 <form id="travelForm" novalidate>
-                    <!-- 목적지 -->
-                    <div class="form-group">
-                        <label for="destination">📍 목적지 <span class="req-star">*</span></label>
+                    <!-- 목적지 및 세부 지역 한정 -->
+                    <div class="form-group destination-group">
+                        <label for="destination">📍 목적지 (여행 장소) <span class="req-star">*</span></label>
                         <input type="text" id="destination" name="destination" value="제주도 서귀포 & 애월" placeholder="예: 제주도, 오사카, 파리, 방콕" required>
+                        
+                        <!-- 장소 적는 입력칸 바로 밑: 한정 지역 설정 토글 버튼 -->
+                        <div class="sub-region-trigger-wrapper">
+                            <button type="button" id="btnToggleSubRegion" class="btn-sub-region-toggle-row" aria-expanded="false" title="여행지 내 특정 권역/세부 지역으로 전 일정 한정하기">
+                                <span class="sub-pill-left">
+                                    <span class="sub-toggle-icon">🎯</span>
+                                    <span class="sub-toggle-text">이 여행지 내 특정 지역만 한정하기</span>
+                                </span>
+                                <span class="sub-pill-right">
+                                    <span class="sub-toggle-badge" id="subRegionActiveBadge" style="display: none;">설정됨</span>
+                                    <span class="sub-toggle-arrow" id="subToggleArrow">▼ 펼치기</span>
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- 버튼을 눌렀을 때만 장소 입력칸 밑에 나타나는 한정된 지역 적는 입력칸 -->
+                        <div id="subRegionContainer" class="sub-region-collapse" style="display: none;">
+                            <div class="sub-region-box">
+                                <div class="sub-region-box-header">
+                                    <div class="sub-region-title">
+                                        <span class="sub-icon">🎯</span>
+                                        <strong>한정할 세부 지역 입력 (전 일정 적용)</strong>
+                                    </div>
+                                    <button type="button" id="btnCloseSubRegion" class="btn-sub-close" title="접기">✕ 접기</button>
+                                </div>
+                                <div class="sub-region-input-row">
+                                    <div class="sub-input-inner">
+                                        <span class="sub-input-icon">📍</span>
+                                        <input type="text" id="subRegion" name="sub_region" class="sub-region-input" placeholder="어디서만 놀고 싶으신가요? (예: 애월읍 일대만, 서귀포 중문 주변, 해운대/광안리만)">
+                                    </div>
+                                    <button type="button" id="btnClearSubRegion" class="btn-sub-clear" title="지역 한정 해제/지우기">초기화</button>
+                                </div>
+                                <p class="sub-region-desc">
+                                    💡 <strong>1일차부터 마지막 날까지</strong> 모든 일정의 <strong>숙소·먹거리(맛집/카페)·놀거리(명소/액티비티)</strong>를 위 한정 지역 안에서만 찾아 계획을 구성합니다.
+                                </p>
+                                <div class="sub-region-chips-wrap">
+                                    <span class="sub-chips-lbl">빠른 선택:</span>
+                                    <div class="sub-region-chips" id="subRegionChips">
+                                        <!-- 목적지에 맞춤형 세부 권역 칩이 동적으로 렌더링됩니다 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 여행 날짜 및 기간 설정 (날씨·옷차림·축제 연동) -->
@@ -2478,6 +2521,6 @@
     </aside>
 
     <!-- 스크립트 연결 -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=20261001_subreg"></script>
 </body>
 </html>

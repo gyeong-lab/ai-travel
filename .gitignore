@@ -16,3 +16,8 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+
+# 런타임 저장 데이터 및 임시 샘플
+data/
+sample*.png
+

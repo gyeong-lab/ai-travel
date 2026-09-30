@@ -167,6 +167,7 @@ def analyze_budget_tier(budget_str: str) -> tuple:
 def build_prompt(data: dict) -> str:
     """사용자가 입력한 여행 조건과 예산 티어, 선택한 모드(A/B)에 따라 차별화된 프롬프트를 생성합니다."""
     destination = data.get("destination", "").strip()
+    sub_region = data.get("sub_region", "").strip()
     duration = data.get("duration", "").strip()
     budget = data.get("budget", "").strip()
     interests = data.get("interests", "").strip()
@@ -189,6 +190,22 @@ def build_prompt(data: dict) -> str:
 
     # 예산 등급 자동 분석
     tier_title, tier_guide = analyze_budget_tier(budget)
+
+    # 전 일정 특정 세부 지역 한정 지침
+    if sub_region:
+        sub_region_guide = f"""
+- 🎯 **[🚨 초특급 필수 제약: 전 일정 특정 세부 지역("{sub_region}") 완벽 한정 & 집중 투어]**:
+  * **사용자의 핵심 요청**: 여행지("{destination}") 전체 중에서도 **반드시 "{sub_region}" 및 그 바로 인접 생활권(반경 3~7km 이내)** 안에서만 모든 여행을 즐기기를 강력히 요구했습니다!
+  * **[모든 여행 일수(1일차부터 마지막 날까지 100%) 한정 준수]**:
+    - **1일차, 2일차, 3일차 등 전체 모든 일차의 모든 일정**은 단 하루도 예외 없이 철저하게 **"{sub_region}"** 권역 안에서만 소화해야 합니다!
+    - 여행 기간 동안 다른 먼 지역이나 반대편 동네로 이동하는 것은 절대 금지합니다. (예: 제주도 전체 일정이더라도 사용자가 애월로 한정했다면 서귀포 남부/성산/표선/구좌 등으로 넘어가지 않고, 1일차부터 귀국날까지 100% 애월 및 인접 한림 일대에서만 머무름)
+  * **🏨 [숙소 한정]**: 전 일정 동안의 숙소(호텔/리조트/펜션/풀빌라/게스트하우스)는 반드시 **"{sub_region}"** 권역 내에 위치해야 합니다. (동일 숙소 연박 또는 해당 동네 내 숙소 이동)
+  * **🍽️ [먹거리(맛집·카페) 한정]**: 점심, 저녁, 감성 카페, 베이커리, 디저트, 야식/포장 등 모든 식도락은 철저히 **"{sub_region}"** 현지 주민들이 손꼽는 찐 로컬 맛집과 핫플레이스로만 구성하세요.
+  * **🎡 [놀거리/볼거리/액티비티 한정]**: **"{sub_region}"**에 위치한 숨은 명소, 해변/오름/숲길 산책로, 로컬 문화 공간, 원데이 클래스, 힐링 스팟을 샅샅이 발굴하여 여유롭고 깊이 있게 즐기도록 구성하세요.
+  * **🛫🛬 [거점 출도착 동선]**: 1일차에는 {entry_transport}에서 곧바로 **"{sub_region}"**으로 이동하여 집중 일정을 시작하고, 마지막 날에도 **"{sub_region}"**에서 여유롭게 일정을 마무리한 후 {exit_transport}로 직행하여 안전하게 귀국하도록 설계하세요.
+"""
+    else:
+        sub_region_guide = ""
 
     # 알레르기 및 음식 기피 지침
     if dietary_info:
@@ -226,12 +243,14 @@ def build_prompt(data: dict) -> str:
 - [동선 밀착 & 이동시간 최소화]: 방문지 사이의 이동시간을 최소화하고, 점심/저녁 식당과 숙소는 철저히 경로상의 가까운 위치(차량 5~10분, 도보권)로 묶어 길 위에서 버리는 시간을 원천 차단하세요.
 """
 
+    dest_display = f"{destination} (🎯 전 일정 세부 한정 지역: {sub_region})" if sub_region else destination
+
     prompt = f"""
 당신은 최고의 글로벌 여행 플래너이자 투어 컨설턴트입니다.
-아래 사용자가 입력한 조건, **여행 날짜/시기**, **입국/귀국 교통 거점**, **예산 등급 지침**, **여행 기조 스타일("{travel_style}")**, **음식/알레르기 지침**을 철저히 반영하여, 보기 쉽고 체계적인 맞춤 여행 계획서를 **Markdown** 형식으로 작성해 주세요.
+아래 사용자가 입력한 조건, **여행 날짜/시기**, **입국/귀국 교통 거점**, **예산 등급 지침**, **여행 기조 스타일("{travel_style}")**, **세부 지역 한정 지침**, **음식/알레르기 지침**을 철저히 반영하여, 보기 쉽고 체계적인 맞춤 여행 계획서를 **Markdown** 형식으로 작성해 주세요.
 
 ### [사용자 여행 기본 정보]
-- 1. 여행지: {destination}
+- 1. 여행지: {dest_display}
 - 2. 📅 여행 기간 및 일정: **{date_label}**
 - 3. 🛫 첫날(입국/도착) 시작 거점: **{entry_transport}**
 - 4. 🛬 마지막날(귀국/출발) 종료 거점: **{exit_transport}**
@@ -250,6 +269,7 @@ def build_prompt(data: dict) -> str:
 ### [선택된 여행 기조 & 스타일 지침]
 - 적용 스타일: **{travel_style}**
 {mode_instruction}
+{sub_region_guide}
 
 ### [🍽️ 음식 & 알레르기 안심 가이드 지침]
 {dietary_guide}
@@ -306,13 +326,13 @@ def build_prompt(data: dict) -> str:
 - **예산 등급({tier_title})에 따라 식당 수준, 이동 수단, 유료 액티비티 여부가 확연히 차이 나도록 계획을 구성하세요.**
 - **사용자가 작성/선택한 여행 기조 스타일("{travel_style}")이 전체 일정의 분위기와 동선에 선명하게 드러나야 합니다.**
 
-# ✈️ {destination} {date_label} 맞춤 여행 일정표
-> **{tier_title}** | **여행 기조: {travel_style}**  
+# ✈️ {destination}{f' ({sub_region} 집중 투어)' if sub_region else ''} {date_label} 맞춤 여행 일정표
+> **{tier_title}** | **여행 기조: {travel_style}**{f' | **🎯 한정 권역: {sub_region}**' if sub_region else ''}  
 > **출도착 거점**: 시작({entry_transport}) ➔ 종료({exit_transport})  
 > **💡 이번 예산 맞춤 여행 특징**: (설정하신 예산 {budget}에 맞춰 식사, 액티비티, 동선을 어떤 수준과 혜택으로 설계했는지 1~2줄 요약)
 
 ### 📱 [채팅 공유용 핵심 요약] 한눈에 보는 여행 가이드
-- 📍 **여행 장소 & 기간**: {destination} ({date_label})
+- 📍 **여행 장소 & 기간**: {destination}{f' [🎯 한정 지역: {sub_region} (전 일정 집중)]' if sub_region else ''} ({date_label})
 - 🛫 **첫날 ➔ 마지막날 거점**: {entry_transport} 시작 ➜ {exit_transport} 귀국
 - 💰 **총 예상 가격**: {budget} (1인 약 XX만원 기준 - 실시간 가격 확인 필요)
 - 🎯 **핵심 활동**: (선택한 여행 기조를 반영한 대표 시그니처 액티비티 3가지 요약)
@@ -799,7 +819,7 @@ def generate_plan():
         return jsonify({"success": False, "error": "올바른 JSON 요청이 아닙니다."}), 400
 
     data = request.get_json()
-    logger.info(f"[요청 수신] 여행지: {data.get('destination')}, 기간: {data.get('duration')}, 모드: {data.get('mode')}")
+    logger.info(f"[요청 수신] 여행지: {data.get('destination')}, 세부한정: {data.get('sub_region', '없음')}, 기간: {data.get('duration')}, 모드: {data.get('mode')}")
 
     # 2. 필수 입력값 검증 (Frontend와 Backend 양쪽 검증)
     required_fields = {

@@ -26,6 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const allergyChips = document.querySelectorAll(".btn-allergy-chip");
     const styleChips = document.querySelectorAll(".style-chip");
 
+    // 세부 지역 한정 토글 및 입력 요소
+    const btnToggleSubRegion = document.getElementById("btnToggleSubRegion");
+    const subRegionContainer = document.getElementById("subRegionContainer");
+    const subRegionInput = document.getElementById("subRegion");
+    const subRegionActiveBadge = document.getElementById("subRegionActiveBadge");
+    const btnCloseSubRegion = document.getElementById("btnCloseSubRegion");
+    const btnClearSubRegion = document.getElementById("btnClearSubRegion");
+    const subRegionChips = document.getElementById("subRegionChips");
+
     // 여행 날짜 및 교통 거점 선택 요소
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
@@ -502,6 +511,159 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * 1-1. 세부 지역 한정(sub-region) 토글 및 스마트 칩 기능
+     */
+    const SUB_REGION_SUGGESTIONS = {
+        "제주": ["애월·한림만", "서귀포·중문만", "구좌·조천·함덕", "성산·표선만", "제주시내·용담"],
+        "부산": ["해운대·기장만", "광안리·수영만", "영도·남포·자갈치", "서면·전포만"],
+        "강릉": ["강릉 안목·경포만", "속초 중앙시장·영금정만", "양양 서피비치·인구항만"],
+        "속초": ["속초 중앙시장·영금정만", "양양 서피비치·인구항만", "강릉 안목·경포만"],
+        "경주": ["황리단길·대릉원만", "보문관광단지만", "불국사·토함산권역"],
+        "여수": ["돌산도·향일암만", "이순신광장·해양공원", "오동도·엑스포역권역"],
+        "서울": ["성수·서울숲만", "홍대·연남·망원만", "종로·북촌·익선동", "강남·신사·압구정"],
+        "오사카": ["난바·도톤보리 중심", "우메다·나카자키초", "신세카이·텐노지"],
+        "도쿄": ["시부야·하라주쿠", "신주쿠·신오쿠보", "긴자·도쿄역", "아사쿠사·우에노"],
+        "후쿠오카": ["하카타·텐진만", "유후인 온천마을만"],
+        "삿포로": ["삿포로 시내·스스키노", "오타루 운하주변", "비에이·후라노"],
+        "방콕": ["수쿰빗·통로·에까마이", "사톤·아이콘시암", "카오산·올드시티"],
+        "다낭": ["미케비치·시내", "호이안 올드타운·안방비치"],
+        "타이베이": ["시먼딩·용산사", "중산·단수이", "신이·타이베이101"]
+    };
+
+    const subToggleArrow = document.getElementById("subToggleArrow");
+
+    function updateSubRegionState() {
+        const val = subRegionInput ? subRegionInput.value.trim() : "";
+        const textEl = btnToggleSubRegion ? btnToggleSubRegion.querySelector(".sub-toggle-text") : null;
+        if (val) {
+            if (subRegionActiveBadge) {
+                subRegionActiveBadge.style.display = "inline-block";
+                subRegionActiveBadge.textContent = "설정됨";
+            }
+            if (btnToggleSubRegion) {
+                btnToggleSubRegion.classList.add("has-value");
+                btnToggleSubRegion.title = `세부 지역 한정: ${val} (클릭하여 수정/해제)`;
+            }
+            if (textEl) {
+                textEl.textContent = `한정 지역: ${val}`;
+            }
+        } else {
+            if (subRegionActiveBadge) subRegionActiveBadge.style.display = "none";
+            if (btnToggleSubRegion) {
+                btnToggleSubRegion.classList.remove("has-value");
+                btnToggleSubRegion.title = "여행지 내 특정 권역/세부 지역으로 전 일정 한정하기";
+            }
+            if (textEl) {
+                textEl.textContent = "이 여행지 내 특정 지역만 한정하기";
+            }
+        }
+    }
+
+    function renderSubRegionChips() {
+        if (!subRegionChips) return;
+        const dest = (destinationInput?.value || "").trim();
+        let matchedList = null;
+
+        for (const [key, list] of Object.entries(SUB_REGION_SUGGESTIONS)) {
+            if (dest.includes(key)) {
+                matchedList = list;
+                break;
+            }
+        }
+
+        if (!matchedList) {
+            matchedList = ["중심가/시내 권역만", "해변/오션뷰 권역만", "힐링 외곽/자연 스팟만"];
+        }
+
+        const currentVal = subRegionInput ? subRegionInput.value.trim() : "";
+        subRegionChips.innerHTML = "";
+
+        matchedList.forEach(reg => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "sub-region-chip" + (currentVal === reg ? " active" : "");
+            btn.textContent = reg;
+            btn.dataset.region = reg;
+            btn.addEventListener("click", () => {
+                if (subRegionInput) {
+                    if (subRegionInput.value === reg) {
+                        subRegionInput.value = "";
+                    } else {
+                        subRegionInput.value = reg;
+                    }
+                    subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => {
+                        c.classList.toggle("active", c.dataset.region === subRegionInput.value);
+                    });
+                    updateSubRegionState();
+                }
+            });
+            subRegionChips.appendChild(btn);
+        });
+    }
+
+    if (btnToggleSubRegion) {
+        btnToggleSubRegion.addEventListener("click", () => {
+            if (!subRegionContainer) return;
+            const isHidden = subRegionContainer.style.display === "none" || !subRegionContainer.style.display;
+            if (isHidden) {
+                subRegionContainer.style.display = "block";
+                btnToggleSubRegion.classList.add("active");
+                btnToggleSubRegion.setAttribute("aria-expanded", "true");
+                if (subToggleArrow) subToggleArrow.textContent = "▲ 접기";
+                renderSubRegionChips();
+                if (subRegionInput) subRegionInput.focus();
+            } else {
+                subRegionContainer.style.display = "none";
+                btnToggleSubRegion.classList.remove("active");
+                btnToggleSubRegion.setAttribute("aria-expanded", "false");
+                if (subToggleArrow) subToggleArrow.textContent = "▼ 펼치기";
+            }
+        });
+    }
+
+    if (btnCloseSubRegion) {
+        btnCloseSubRegion.addEventListener("click", () => {
+            if (subRegionContainer) subRegionContainer.style.display = "none";
+            if (btnToggleSubRegion) {
+                btnToggleSubRegion.classList.remove("active");
+                btnToggleSubRegion.setAttribute("aria-expanded", "false");
+            }
+            if (subToggleArrow) subToggleArrow.textContent = "▼ 펼치기";
+        });
+    }
+
+    if (btnClearSubRegion) {
+        btnClearSubRegion.addEventListener("click", () => {
+            if (subRegionInput) subRegionInput.value = "";
+            if (subRegionChips) {
+                subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => c.classList.remove("active"));
+            }
+            updateSubRegionState();
+            if (subRegionInput) subRegionInput.focus();
+        });
+    }
+
+    if (subRegionInput) {
+        subRegionInput.addEventListener("input", () => {
+            updateSubRegionState();
+            if (subRegionChips) {
+                const currentVal = subRegionInput.value.trim();
+                subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => {
+                    c.classList.toggle("active", c.dataset.region === currentVal);
+                });
+            }
+        });
+    }
+
+    if (destinationInput) {
+        destinationInput.addEventListener("input", () => {
+            if (subRegionContainer && subRegionContainer.style.display !== "none") {
+                renderSubRegionChips();
+            }
+        });
+    }
+
+    /**
      * 2. 지역 및 카테고리 교차 필터링 핵심 함수 (2차원 동시 필터링 + 찜 목록 지원)
      */
     function filterProducts() {
@@ -666,6 +828,14 @@ document.addEventListener("DOMContentLoaded", () => {
         accommodationInput.value = "동선에 맞춘 오션뷰 감성 숙소";
         if (dietaryInput) dietaryInput.value = "";
         allergyChips.forEach(c => c.classList.remove("active"));
+        if (subRegionInput) subRegionInput.value = "";
+        if (subRegionChips) subRegionChips.querySelectorAll(".sub-region-chip").forEach(c => c.classList.remove("active"));
+        if (subRegionContainer) subRegionContainer.style.display = "none";
+        if (btnToggleSubRegion) {
+            btnToggleSubRegion.classList.remove("active");
+            btnToggleSubRegion.setAttribute("aria-expanded", "false");
+        }
+        updateSubRegionState();
         setTravelStyle("🌿 여유로운 힐링 / 쉼이 있는 로컬 감성 여행", "B");
 
         if (typeof initDatePickers === "function") {
@@ -1133,6 +1303,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     setMode(data.mode);
                 }
 
+                if (subRegionInput) subRegionInput.value = "";
+                updateSubRegionState();
+                renderSubRegionChips();
+
                 topSearchInput.value = data.shortName;
                 if (chipDestination) {
                     chipDestination.querySelector(".chip-text").textContent = data.shortName;
@@ -1578,6 +1752,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const mode = travelModeInput ? travelModeInput.value : (document.querySelector('input[name="mode"]:checked')?.value || "A");
         const travel_style = travelStyleInput ? travelStyleInput.value.trim() : "";
         const dietary_info = dietaryInput ? dietaryInput.value.trim() : "";
+        const sub_region = subRegionInput ? subRegionInput.value.trim() : "";
 
         if (!destination || !duration || !budget || !interests) {
             showError("목적지, 여행 기간, 예산, 여행 테마는 필수 입력 항목입니다.");
@@ -1590,6 +1765,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const payload = {
             destination,
+            sub_region,
             duration,
             start_date: startDate,
             end_date: endDate,
@@ -3257,12 +3433,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!accommodationBookingSection) return;
 
         const dest = plan?.dest || destinationInput?.value.trim() || "제주도";
+        const subRegion = plan?.subRegion || (subRegionInput ? subRegionInput.value.trim() : "");
+        const searchKeyword = subRegion ? `${dest} ${subRegion}` : dest;
         const startDate = plan?.startDate || startDateInput?.value || "";
         const endDate = plan?.endDate || endDateInput?.value || "";
         const dateRangeStr = startDate && endDate ? `${startDate} ~ ${endDate}` : (plan?.dur || "2박 3일");
 
         // 1. 헤더 안내 텍스트 갱신
-        if (bookingDestName) bookingDestName.textContent = dest;
+        if (bookingDestName) bookingDestName.textContent = subRegion ? `${dest} (${subRegion})` : dest;
         if (bookingDateSpan) bookingDateSpan.textContent = dateRangeStr;
         if (bookingDateBadge) bookingDateBadge.textContent = `📅 ${dateRangeStr} 자동 연동`;
 
@@ -3277,13 +3455,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isDomesticDest) {
             if (startDate && endDate) {
-                primaryPortalUrl = `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(dest)}&checkIn=${startDate}&checkOut=${endDate}`;
+                primaryPortalUrl = `https://www.yeogi.com/domestic-accommodations?keyword=${encodeURIComponent(searchKeyword)}&checkIn=${startDate}&checkOut=${endDate}`;
             } else {
-                primaryPortalUrl = `https://www.yeogi.com/search?keyword=${encodeURIComponent(dest)}`;
+                primaryPortalUrl = `https://www.yeogi.com/search?keyword=${encodeURIComponent(searchKeyword)}`;
             }
         } else {
             // 해외: 아고다 글로벌 예약 검색
-            primaryPortalUrl = `https://www.agoda.com/ko-kr/search?city=${encodeURIComponent(dest)}`;
+            primaryPortalUrl = `https://www.agoda.com/ko-kr/search?city=${encodeURIComponent(searchKeyword)}`;
         }
 
         if (linkYeogiPortal) {
@@ -3538,7 +3716,11 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPlanMarkdown = plan.markdown;
 
         if (resultHeaderTitle) {
-            resultHeaderTitle.textContent = `${plan.dest} ${plan.dur} 맞춤 여행 일정표`;
+            if (plan.subRegion) {
+                resultHeaderTitle.innerHTML = `${plan.dest} <span class="sub-region-result-badge">🎯 ${plan.subRegion} 집중</span> ${plan.dur} 맞춤 여행 일정표`;
+            } else {
+                resultHeaderTitle.textContent = `${plan.dest} ${plan.dur} 맞춤 여행 일정표`;
+            }
         }
         if (resultMeta) {
             const isSaved = plan.isSaved || savedPlans.some(sp => sp.id === plan.id);
@@ -4034,11 +4216,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const stylePrefix = payload?.travel_style ? payload.travel_style.split('/')[0].replace(/[🌿⚡🍽️📸👨‍👩‍👧‍👦🎒]/g, '').trim() : '맞춤';
         const planIndex = generatedPlans.length + 1;
 
+        const subRegion = payload?.sub_region || "";
+        const titleStr = subRegion ? `${dest} (${subRegion}) ${dur} (${stylePrefix})` : `${dest} ${dur} (${stylePrefix})`;
+        const shortTitleStr = subRegion ? `계획 ${planIndex}: ${subRegion}` : `계획 ${planIndex}: ${stylePrefix}`;
+
         const newPlan = {
             id: "plan_" + Date.now(),
-            title: `${dest} ${dur} (${stylePrefix})`,
-            shortTitle: `계획 ${planIndex}: ${stylePrefix}`,
+            title: titleStr,
+            shortTitle: shortTitleStr,
             dest: dest,
+            subRegion: subRegion,
             dur: dur,
             budget: payload?.budget || "예산 확인 필요",
             style: payload?.travel_style || "표준 여행",
@@ -4106,6 +4293,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         output += `━━━━━━━━━━━━━━━━━━━━\n`;
         output += `📍 여행 장소: ${plan.dest}\n`;
+        if (plan.subRegion) {
+            output += `🎯 한정 세부 지역: ${plan.subRegion} (전 일정 집중 투어)\n`;
+        }
         if (plan.startDate && plan.endDate) {
             output += `📅 여행 기간: ${plan.startDate} ~ ${plan.endDate} (${plan.dur})\n`;
         }
